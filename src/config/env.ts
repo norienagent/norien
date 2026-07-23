@@ -68,6 +68,18 @@ const envSchema = z.object({
   DEV_PRINCIPAL_HEADER: z.string().default('x-norien-actor'),
   DEV_PRINCIPAL_FALLBACK: z.string().default('anonymous'),
 
+  /**
+   * Supabase project URL. When set, a `Authorization: Bearer <jwt>` header is
+   * verified against the project's public JWKS and resolves to a real principal.
+   * Optional: unset, the registry falls back to header-based identification, so
+   * the CLI and existing flows are unaffected.
+   */
+  SUPABASE_URL: z
+    .string()
+    .url()
+    .optional()
+    .transform((value) => (value && value.trim().length > 0 ? value.trim().replace(/\/+$/, '') : undefined)),
+
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(300),
   RATE_LIMIT_WINDOW: z.string().default('1 minute'),
 

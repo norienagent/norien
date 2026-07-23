@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
-import { AuthNotice, AuthShell, OAuthButtons } from '@/components/auth';
+import { AuthShell } from '@/components/auth';
+import { OAuthButtons } from '@/components/auth-buttons';
 import { ButtonLink } from '@/components/ui';
 
 export const metadata = { title: 'Sign in' };
@@ -20,7 +21,6 @@ export default function LoginPage() {
       }
     >
       <OAuthButtons verb="Continue" />
-      <AuthNotice />
 
       <div className="mt-6 border-t border-line pt-6">
         <p className="text-sm leading-relaxed text-muted">

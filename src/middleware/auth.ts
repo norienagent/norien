@@ -6,6 +6,7 @@ import { ANONYMOUS_PRINCIPAL, type Principal } from '../core/principal.js';
 import { getDb } from '../db/client.js';
 import { UserRepository } from '../repositories/user.repository.js';
 import { isValidSlug } from '../utils/slug.js';
+import { verifySupabaseToken } from './supabase.js';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -13,18 +14,38 @@ declare module 'fastify' {
   }
 }
 
+const USER_SCOPES = ['agents:write', 'tools:write', 'install'] as const;
+
 /**
- * Principal resolution.
+ * Principal resolution — two paths, tried in order.
  *
- * Today a development header is trusted so that ownership, visibility, and
- * install attribution are exercised end to end without a login flow. A later phase
- * replaces the body of `resolvePrincipal` with session/API-key verification;
- * nothing downstream changes, because every service already depends only on
- * the `Principal` interface.
+ * 1. A Supabase session JWT (`Authorization: Bearer <jwt>`), the way a web user
+ *    authenticates after signing in with GitHub or Google. Verified against the
+ *    project's public JWKS.
+ * 2. The development handle header (`x-norien-actor`), the way the CLI and every
+ *    existing flow identify themselves. Unchanged.
+ *
+ * The JWT path is additive: anything that is not a valid Supabase token falls
+ * through to the header, so adding real auth breaks neither the CLI nor the
+ * tests. Every service still depends only on the `Principal` interface.
  */
 async function resolvePrincipal(request: FastifyRequest): Promise<Principal> {
-  const header = request.headers[env.DEV_PRINCIPAL_HEADER];
-  const raw = Array.isArray(header) ? header[0] : header;
+  const authorization = firstHeader(request.headers.authorization);
+  const identity = await verifySupabaseToken(authorization);
+
+  if (identity) {
+    const db = await getDb();
+    const user = await new UserRepository(db).findByHandle(identity.handle);
+    return {
+      kind: 'user',
+      userId: user?.id ?? null,
+      handle: identity.handle,
+      organisationId: null,
+      scopes: [...USER_SCOPES],
+    };
+  }
+
+  const raw = firstHeader(request.headers[env.DEV_PRINCIPAL_HEADER]);
   const handle = (raw ?? env.DEV_PRINCIPAL_FALLBACK).trim().toLowerCase();
 
   if (!handle || handle === 'anonymous' || !isValidSlug(handle)) {
@@ -41,15 +62,21 @@ async function resolvePrincipal(request: FastifyRequest): Promise<Principal> {
     userId: user?.id ?? null,
     handle,
     organisationId: null,
-    scopes: ['agents:write', 'tools:write', 'install'],
+    scopes: [...USER_SCOPES],
   };
 }
 
+function firstHeader(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 export const authPlugin = fp(async (app: FastifyInstance) => {
-  if (isProduction) {
+  if (isProduction && !env.SUPABASE_URL) {
     app.log.warn(
-      'Running with development principal resolution. Replace middleware/auth.ts before exposing this registry publicly.',
+      'No SUPABASE_URL set: only header-based identification is active. Set it to verify Supabase session JWTs before treating writes as authenticated.',
     );
+  } else if (env.SUPABASE_URL) {
+    app.log.info('Supabase session verification enabled.');
   }
 
   // Declared without a value: Fastify 5 refuses reference-type defaults on

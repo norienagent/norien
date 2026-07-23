@@ -1,18 +1,20 @@
 import { Suspense } from 'react';
 
 import { api } from '@/lib/api';
+import { getSessionUser } from '@/lib/supabase/server';
 import { InstallCommand } from '@/components/registry';
 import { AgentPanelList } from '@/components/registry';
-import { ButtonLink, Card, Empty, SectionHeading, Skeleton } from '@/components/ui';
+import { SignOutButton } from '@/components/sign-out';
+import { Badge, ButtonLink, Card, Empty, Row, SectionHeading, Skeleton } from '@/components/ui';
 
 export const metadata = { title: 'Profile' };
 
 /**
  * Profile.
  *
- * No session exists yet, so the page does not invent one. It shows the signed-out
- * state and, because publishing is already attributed by handle, what the
- * registry does record about authors today.
+ * Shows the signed-in account when a Supabase session exists, and the signed-out
+ * state otherwise. Publishing is attributed by handle either way — the account
+ * just makes that identity verified rather than merely claimed.
  */
 export default function ProfilePage() {
   return (
@@ -20,20 +22,9 @@ export default function ProfilePage() {
       <SectionHeading title="Profile" detail="Your account, publications, and installations." />
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card title="Account">
-          <Empty
-            title="Not signed in"
-            detail="Authentication is not wired up yet. Signing in with GitHub or Google will attach your publications, installations, and API keys to an account."
-            action={
-              <div className="flex flex-wrap justify-center gap-2">
-                <ButtonLink href="/login">Sign in</ButtonLink>
-                <ButtonLink href="/signup" tone="secondary">
-                  Create account
-                </ButtonLink>
-              </div>
-            }
-          />
-        </Card>
+        <Suspense fallback={<Card title="Account"><Skeleton height={120} /></Card>}>
+          <AccountCard />
+        </Suspense>
 
         <Card title="How authorship works today">
           <p className="text-sm leading-relaxed text-muted">
@@ -63,6 +54,79 @@ export default function ProfilePage() {
         </Suspense>
       </div>
     </>
+  );
+}
+
+/**
+ * The signed-in account, or an invitation to sign in.
+ *
+ * Reads the Supabase session server-side. The handle shown here is the same one
+ * the backend derives from the OAuth identity, so a user's publications line up
+ * with their account.
+ */
+async function AccountCard() {
+  const user = await getSessionUser();
+
+  if (!user) {
+    return (
+      <Card title="Account">
+        <Empty
+          title="Not signed in"
+          detail="Sign in with GitHub or Google to attach your publications and installations to a verified account."
+          action={
+            <div className="flex flex-wrap justify-center gap-2">
+              <ButtonLink href="/login">Sign in</ButtonLink>
+              <ButtonLink href="/signup" tone="secondary">
+                Create account
+              </ButtonLink>
+            </div>
+          }
+        />
+      </Card>
+    );
+  }
+
+  const metadata = user.user_metadata ?? {};
+  const name = metadata.name ?? metadata.full_name ?? metadata.user_name ?? 'Signed in';
+  const handle = metadata.user_name ?? metadata.preferred_username ?? user.email?.split('@')[0] ?? user.id;
+  const avatar = metadata.avatar_url as string | undefined;
+  const provider = user.app_metadata?.provider;
+
+  return (
+    <Card title="Account">
+      <div className="flex items-center gap-4">
+        {avatar ? (
+          // eslint-disable-next-line @next/next/no-img-element -- provider avatar CDN
+          <img
+            src={avatar}
+            alt=""
+            className="size-14 shrink-0 rounded-full border border-line bg-sunken object-cover"
+          />
+        ) : (
+          <span aria-hidden className="size-14 shrink-0 rounded-full border border-line bg-sunken" />
+        )}
+        <div className="min-w-0">
+          <div className="truncate text-base font-semibold text-ink">{String(name)}</div>
+          <div className="truncate text-sm text-muted">{user.email}</div>
+        </div>
+      </div>
+
+      <dl className="mt-5">
+        <Row label="Handle">
+          <span className="font-mono text-xs">{String(handle)}</span>
+        </Row>
+        <Row label="Signed in with">
+          {provider ? <Badge tone="accent">{String(provider)}</Badge> : '—'}
+        </Row>
+        <Row label="User ID">
+          <span className="font-mono text-xs break-all">{user.id}</span>
+        </Row>
+      </dl>
+
+      <div className="mt-5 border-t border-line pt-4">
+        <SignOutButton />
+      </div>
+    </Card>
   );
 }
 
