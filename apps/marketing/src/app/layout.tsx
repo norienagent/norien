@@ -7,7 +7,7 @@ const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? 'Norien';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://norien.live';
 const TITLE = `${APP_NAME} — the registry for AI agents`;
 const DESCRIPTION =
-  'Publish agents, install the tools they depend on, run them locally, and read normalized on-chain and market data — all from one API.';
+  'The registry, runtime, and unified data API for AI agents on Robinhood Chain. Publish agents, install their tools, run them locally, and read normalized on-chain and market data — all from one API.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -7,6 +7,44 @@
 
 const EM_DASH = '—';
 
+/**
+ * User-facing names for the data sources behind the unified API.
+ *
+ * The product presents one aggregated data layer, not a list of third-party
+ * vendors — callers integrate with Norien, not with whoever Norien happens to
+ * read. So every surface renders these functional labels, never the underlying
+ * provider's brand.
+ */
+const PROVIDER_LABELS: Record<string, string> = {
+  codex: 'Market data',
+  coingecko: 'Price feed',
+  defillama: 'Protocol data',
+  blockscout: 'Chain explorer',
+  github: 'Repository data',
+  rpc: 'Chain node',
+};
+
+/** The display label for a data source id, never the vendor's brand name. */
+export function providerLabel(id: string): string {
+  const key = id.toLowerCase();
+  if (PROVIDER_LABELS[key]) return PROVIDER_LABELS[key];
+  // Unknown source: title-case the id rather than leak a raw slug.
+  return key.replace(/[-_]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/**
+ * Removes vendor brand names from free-text (a provider's status detail can read
+ * "missing COINGECKO_API_KEY"), so diagnostics never reveal the sources either.
+ */
+export function scrubProviders(text: string | null | undefined): string {
+  if (!text) return EM_DASH;
+  let out = text;
+  for (const [id, label] of Object.entries(PROVIDER_LABELS)) {
+    out = out.replace(new RegExp(id, 'gi'), label);
+  }
+  return out;
+}
+
 /** Compact currency; full precision is unreadable in a dense table. */
 export function usd(value: number | null | undefined): string {
   if (value === null || value === undefined) return EM_DASH;

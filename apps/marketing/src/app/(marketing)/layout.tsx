@@ -66,7 +66,7 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
             <div>
               <Brand />
               <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
-                The registry, runtime, and data layer for autonomous agents.
+                The registry, runtime, and data layer for autonomous agents on Robinhood Chain.
               </p>
             </div>
 

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { ComponentProps, ReactNode } from 'react';
 
 import type { SourceReport } from '../lib/api';
-import { percent } from '../lib/format';
+import { percent, providerLabel } from '../lib/format';
 import { TokenLogo } from './token-logo';
 
 /**
@@ -225,7 +225,7 @@ export function DegradedNotice({ sources, degraded }: { sources: SourceReport[];
         ⚠
       </span>
       <span>
-        Showing partial data — {down.map((source) => source.provider).join(', ')}{' '}
+        Showing partial data — {down.map((source) => providerLabel(source.provider)).join(', ')}{' '}
         {down.length === 1 ? 'is' : 'are'} unavailable right now.
       </span>
     </div>
@@ -250,7 +250,7 @@ export function SourceList({ sources }: { sources: SourceReport[] }) {
           <span aria-hidden className={tone[source.status] ?? 'text-muted'}>
             ●
           </span>
-          <span className="text-ink">{source.provider}</span>
+          <span className="text-ink">{providerLabel(source.provider)}</span>
           <span>{source.status === 'ok' && source.ms ? `${source.ms}ms` : source.status}</span>
         </span>
       ))}

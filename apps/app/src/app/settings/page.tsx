@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 
 import { api, runtimeApi } from '@norien-live/web-ui/api';
 import { API_URL, APP_URL } from '@norien-live/web-ui';
-import { count } from '@norien-live/web-ui';
+import { count, providerLabel, scrubProviders } from '@norien-live/web-ui';
 import { InstallCommand } from '@/components/registry';
 import { Table } from '@/components/table';
 import { Badge, Card, ErrorState, Row, SectionHeading, Skeleton, Stat } from '@norien-live/web-ui';
@@ -154,8 +154,10 @@ async function ProviderHealthPanel() {
           columns={[
             {
               key: 'provider',
-              header: 'Provider',
-              cell: (provider) => <span className="font-medium text-ink">{provider.provider}</span>,
+              header: 'Source',
+              cell: (provider) => (
+                <span className="font-medium text-ink">{providerLabel(provider.provider)}</span>
+              ),
             },
             {
               key: 'configured',
@@ -186,7 +188,7 @@ async function ProviderHealthPanel() {
               key: 'reason',
               header: 'Detail',
               hideBelow: 'md',
-              cell: (provider) => <span className="text-muted">{provider.reason ?? '—'}</span>,
+              cell: (provider) => <span className="text-muted">{scrubProviders(provider.reason)}</span>,
             },
           ]}
         />

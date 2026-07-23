@@ -223,8 +223,8 @@ GET  /api/project/:slug         GET  /api/providers`}</CodeBlock>
               <CodeBlock>{`{
   "data": { "symbol": "USDG", "price": 1.0002, "holders": 31579 },
   "sources": [
-    { "provider": "codex",      "status": "ok", "ms": 210 },
-    { "provider": "coingecko",  "status": "skipped", "reason": "no platform mapping" }
+    { "provider": "market-data", "status": "ok", "ms": 210 },
+    { "provider": "price-feed",  "status": "skipped", "reason": "no platform mapping" }
   ],
   "degraded": false
 }`}</CodeBlock>

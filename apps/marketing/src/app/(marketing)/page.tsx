@@ -47,7 +47,7 @@ function Hero() {
     <Container className="py-20 sm:py-28">
       <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_1fr]">
         <div>
-          <Eyebrow>Agent infrastructure</Eyebrow>
+          <Eyebrow>Agent infrastructure for Robinhood Chain</Eyebrow>
           <h1 className="text-4xl font-semibold leading-[1.1] tracking-tight text-ink sm:text-5xl">
             The registry for
             <br />
@@ -55,7 +55,8 @@ function Hero() {
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">
             Publish an agent, install the tools it depends on, run it locally under a supervisor, and
-            read normalized market and on-chain data — through one API, one CLI, and one SDK.
+            read normalized Robinhood Chain market and on-chain data — through one API, one CLI, and
+            one SDK.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -374,8 +375,8 @@ function Api() {
     "holders": 31579
   },
   "sources": [
-    { "provider": "codex",      "status": "ok" },
-    { "provider": "blockscout", "status": "ok" }
+    { "provider": "market-data",   "status": "ok" },
+    { "provider": "chain-explorer", "status": "ok" }
   ],
   "degraded": false
 }`}</CodeBlock>
