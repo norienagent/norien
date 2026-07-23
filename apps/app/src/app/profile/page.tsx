@@ -4,6 +4,7 @@ import { api } from '@norien-live/web-ui/api';
 import { getSessionUser } from '@norien-live/web-ui/supabase/server';
 import { InstallCommand } from '@/components/registry';
 import { AgentPanelList } from '@/components/registry';
+import { proxiedLogo } from '@norien-live/web-ui';
 import { SignOutButton } from '@norien-live/web-ui';
 import { Badge, ButtonLink, Card, Empty, Row, SectionHeading, Skeleton } from '@norien-live/web-ui';
 
@@ -96,9 +97,9 @@ async function AccountCard() {
     <Card title="Account">
       <div className="flex items-center gap-4">
         {avatar ? (
-          // eslint-disable-next-line @next/next/no-img-element -- provider avatar CDN
+          // eslint-disable-next-line @next/next/no-img-element -- routed through our proxy
           <img
-            src={avatar}
+            src={proxiedLogo(avatar)!}
             alt=""
             className="size-14 shrink-0 rounded-full border border-line bg-sunken object-cover"
           />

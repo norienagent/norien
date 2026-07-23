@@ -1,5 +1,5 @@
 import { api } from '@norien-live/web-ui/api';
-import { count, dash, relativeTime, usd } from '@norien-live/web-ui';
+import { count, dash, proxiedLogo, relativeTime, usd } from '@norien-live/web-ui';
 import { Table } from '@/components/table';
 import {
   Card,
@@ -31,9 +31,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     <>
       <header className="mb-6 flex items-center gap-4">
         {project.logo ? (
-          // eslint-disable-next-line @next/next/no-img-element -- provider CDNs vary
+          // eslint-disable-next-line @next/next/no-img-element -- routed through our proxy
           <img
-            src={project.logo}
+            src={proxiedLogo(project.logo)!}
             alt=""
             className="size-12 shrink-0 rounded-lg border border-line bg-sunken object-cover"
           />
@@ -191,9 +191,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                           className="inline-flex items-center gap-2.5 font-medium text-ink hover:text-accent"
                         >
                           {person.avatar ? (
-                            // eslint-disable-next-line @next/next/no-img-element -- GitHub CDN
+                            // eslint-disable-next-line @next/next/no-img-element -- routed through our proxy
                             <img
-                              src={person.avatar}
+                              src={proxiedLogo(person.avatar)!}
                               alt=""
                               loading="lazy"
                               className="size-6 rounded-full border border-line bg-sunken object-cover"

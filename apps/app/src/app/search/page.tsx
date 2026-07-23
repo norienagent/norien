@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 import { api } from '@norien-live/web-ui/api';
-import { shortAddress } from '@norien-live/web-ui';
+import { shortAddress, TokenLogo } from '@norien-live/web-ui';
 import { SearchBox } from '@/components/search-box';
 import { Badge, Card, DegradedNotice, Empty, ErrorState, SectionHeading, SkeletonRows } from '@norien-live/web-ui';
 
@@ -126,17 +126,7 @@ async function Results({ query }: { query: string }) {
                     href={hrefFor(item.kind, item.id, item.chain?.id)}
                     className="group flex items-center gap-3 px-4 py-3 transition-colors hover:bg-sunken/60"
                   >
-                    {item.logo ? (
-                      // eslint-disable-next-line @next/next/no-img-element -- provider CDNs vary
-                      <img
-                        src={item.logo}
-                        alt=""
-                        loading="lazy"
-                        className="size-7 shrink-0 rounded-full border border-line bg-sunken object-cover"
-                      />
-                    ) : (
-                      <span aria-hidden className="size-7 shrink-0 rounded-full border border-line bg-sunken" />
-                    )}
+                    <TokenLogo src={item.logo} symbol={item.symbol ?? item.name} className="size-7" />
                     <span className="min-w-0 flex-1 truncate">
                       <strong className="font-semibold text-ink group-hover:text-accent">
                         {item.symbol ?? item.name}

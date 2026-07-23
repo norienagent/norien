@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 import { api } from '@norien-live/web-ui/api';
-import { count, usd } from '@norien-live/web-ui';
+import { count, TokenLogo, usd } from '@norien-live/web-ui';
 import { buildQuery, Input, intParam, Pagination, Toolbar } from '@norien-live/web-ui';
 import { Table } from '@/components/table';
 import {
@@ -100,17 +100,7 @@ async function ProjectTable({ q, limit, offset }: { q: string; limit: number; of
               header: 'Project',
               cell: (project) => (
                 <Link href={`/project/${project.slug}`} className="group inline-flex items-center gap-2.5">
-                  {project.logo ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- provider CDNs vary
-                    <img
-                      src={project.logo}
-                      alt=""
-                      loading="lazy"
-                      className="size-6 shrink-0 rounded-full border border-line bg-sunken object-cover"
-                    />
-                  ) : (
-                    <span aria-hidden className="size-6 shrink-0 rounded-full border border-line bg-sunken" />
-                  )}
+                  <TokenLogo src={project.logo} symbol={project.name} className="size-6" />
                   <span className="font-medium text-ink group-hover:text-accent">{project.name}</span>
                 </Link>
               ),

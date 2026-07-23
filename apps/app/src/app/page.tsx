@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 import { api, type Token } from '@norien-live/web-ui/api';
-import { count, usd } from '@norien-live/web-ui';
+import { count, TokenLogo, usd } from '@norien-live/web-ui';
 import { TokenList } from '@/components/token-table';
 import { AgentPanelList, ToolPanelList } from '@/components/registry';
 import {
@@ -224,17 +224,7 @@ async function LatestProjectsPanel() {
         {projects.map((project) => (
           <li key={project.slug} className="border-t border-line py-2.5 first:border-0">
             <Link href={`/project/${project.slug}`} className="group flex items-center gap-2.5">
-              {project.logo ? (
-                // eslint-disable-next-line @next/next/no-img-element -- provider CDNs vary
-                <img
-                  src={project.logo}
-                  alt=""
-                  loading="lazy"
-                  className="size-6 shrink-0 rounded-full border border-line bg-sunken object-cover"
-                />
-              ) : (
-                <span aria-hidden className="size-6 shrink-0 rounded-full border border-line bg-sunken" />
-              )}
+              <TokenLogo src={project.logo} symbol={project.name} className="size-6" />
               <span className="min-w-0 flex-1 truncate text-sm font-medium text-ink group-hover:text-accent">
                 {project.name}
               </span>

@@ -45,6 +45,27 @@ export function scrubProviders(text: string | null | undefined): string {
   return out;
 }
 
+/** base64url without padding, in either the browser or Node. */
+function toBase64Url(input: string): string {
+  const b64 =
+    typeof window === 'undefined'
+      ? Buffer.from(input, 'utf8').toString('base64')
+      : btoa(String.fromCharCode(...new TextEncoder().encode(input)));
+  return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+/**
+ * Rewrites a remote logo URL to go through Norien's own image proxy, so the
+ * source CDN's domain never lands in the page. Same-origin (`/api/*` is
+ * rewritten to the registry) and cached hard downstream. Non-http sources (a
+ * `data:` URI) and empty values pass through untouched.
+ */
+export function proxiedLogo(src: string | null | undefined): string | null {
+  if (!src) return null;
+  if (!/^https?:\/\//i.test(src)) return src;
+  return `/api/img?s=${toBase64Url(src)}`;
+}
+
 /** Compact currency; full precision is unreadable in a dense table. */
 export function usd(value: number | null | undefined): string {
   if (value === null || value === undefined) return EM_DASH;

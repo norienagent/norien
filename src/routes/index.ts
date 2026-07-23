@@ -3,6 +3,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { agentRoutes } from './agents.routes.js';
 import { dataApiRoutes } from './api.routes.js';
 import { healthRoutes } from './health.routes.js';
+import { imageRoutes } from './img.routes.js';
 import { installRoutes } from './install.routes.js';
 import { publishRoutes } from './publish.routes.js';
 import { runtimeRoutes } from './runtime.routes.js';
@@ -24,4 +25,6 @@ export const apiRoutes: FastifyPluginAsyncZod = async (app) => {
   await app.register(publishRoutes);
   // The unified external-data API.
   await app.register(dataApiRoutes);
+  // Logo image proxy, so vendor CDNs never appear in the frontend.
+  await app.register(imageRoutes);
 };
