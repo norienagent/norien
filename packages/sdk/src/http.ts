@@ -27,21 +27,14 @@ export interface NorienClientOptions {
 }
 
 /**
- * Last-resort registry URL.
+ * The hosted registry, used when nothing else supplies a URL.
  *
- * Only reached when nothing else supplies one — the CLI resolves
- * `--registry` → `NORIEN_REGISTRY` → the stored profile → this, and the client
- * below reads `NORIEN_REGISTRY` itself, so this stays a plain constant.
- *
- * ┌─ CHANGE THIS BEFORE PUBLISHING TO npm ────────────────────────────────┐
- * │ Someone who installs the CLI from npm has no local registry running,  │
- * │ so a localhost default fails for them on the first command. Point it  │
- * │ at the deployed API — `https://api.norien.live` — once that actually  │
- * │ resolves. Switching before it does only trades a connection refused   │
- * │ for a DNS failure.                                                    │
- * └───────────────────────────────────────────────────────────────────────┘
+ * Resolution order: `--registry` → `NORIEN_REGISTRY` → the stored profile →
+ * this. So installing the CLI and running a command "just works" against the
+ * public registry, while any of the three overrides points it elsewhere —
+ * `NORIEN_REGISTRY=http://localhost:3000` for local development, for instance.
  */
-export const DEFAULT_BASE_URL = 'http://localhost:3000';
+export const DEFAULT_BASE_URL = 'https://api.norien.live';
 const DEFAULT_TIMEOUT = 30_000;
 const DEFAULT_RETRIES = 2;
 const ACTOR_HEADER = 'x-norien-actor';

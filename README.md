@@ -42,12 +42,15 @@ npm install -g @norien/cli        # once published
 
 ```sh
 norien --help
-norien markets                    # live token data, once pointed at a registry
+norien markets                    # live token data from the hosted registry
 ```
 
-> **Pre-release.** Norien runs locally today. The CLI needs a Norien registry to
-> talk to — run one with `npm run dev` from the source, or point at a deployed
-> instance with `--registry`. A hosted registry and npm packages are on the way.
+The CLI defaults to the hosted registry at **[api.norien.live](https://api.norien.live/docs)**,
+so it works out of the box. Point it elsewhere with `NORIEN_REGISTRY` or
+`--registry` — e.g. a local one via `npm run dev` from the source.
+
+> **Pre-release.** The API is live and the packages install from source today;
+> the `@norien/*` npm packages are on the way.
 
 ---
 
