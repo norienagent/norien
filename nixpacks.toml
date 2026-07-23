@@ -1,0 +1,14 @@
+# Nixpacks build config for the Norien registry (Railway).
+#
+# Install with `npm install`, not `npm ci`. The lockfile is generated on Windows,
+# so it carries only the Windows esbuild/optional binaries; `npm ci` (Nixpacks'
+# default) then fails on Railway's Linux builder with
+#   "Missing: @esbuild/linux-x64 from lock file".
+# `npm install` resolves the correct platform binary at install time.
+[phases.install]
+cmds = ["npm install --no-audit --no-fund"]
+
+# `npm run build` compiles the registry (src -> dist). The install step's
+# `prepare` hook has already built the workspace packages.
+[phases.build]
+cmds = ["npm run build"]
