@@ -4,8 +4,8 @@ import { writeFile } from 'node:fs/promises';
 
 import inquirer from 'inquirer';
 
-import type { Tool } from '@norien/sdk';
-import { NorienError } from '@norien/sdk';
+import type { Tool } from '@norien-live/sdk';
+import { NorienError } from '@norien-live/sdk';
 import {
   ToolError,
   ToolExecutor,
@@ -14,7 +14,7 @@ import {
   generateToolDoc,
   readToolsLockfile,
   validateToolManifest,
-} from '@norien/tools';
+} from '@norien-live/tools';
 
 import { type CommandContext, requireIdentity } from '../context.js';
 import {
@@ -35,7 +35,7 @@ import {
  * `norien tool <command>`
  *
  * Registry-facing commands (search, info, publish) go through the SDK.
- * Local commands (install, remove, list, run) go through @norien/tools, which
+ * Local commands (install, remove, list, run) go through @norien-live/tools, which
  * owns the tool workspace and the plugin executor. This mirrors how the agent
  * commands split between the registry and the runtime.
  */

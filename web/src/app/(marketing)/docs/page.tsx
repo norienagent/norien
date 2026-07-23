@@ -78,7 +78,7 @@ export default function DocsPage() {
               <Prose>
                 <p>
                   The web app is a second process on its own port:{' '}
-                  <code>npm run dev --workspace @norien/web</code> serves it on 3001.
+                  <code>npm run dev --workspace @norien-live/web</code> serves it on 3001.
                 </p>
               </Prose>
             </Doc>
@@ -237,7 +237,7 @@ GET  /api/project/:slug         GET  /api/providers`}</CodeBlock>
                 </p>
               </Prose>
               <div className="grid gap-4 lg:grid-cols-2">
-                <CodeBlock>{`import { Norien } from '@norien/sdk';
+                <CodeBlock>{`import { Norien } from '@norien-live/sdk';
 
 const client = new Norien(API_KEY);
 

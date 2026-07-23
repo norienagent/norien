@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import type { AgentManifest, EnvironmentVariable, ResolvedTool } from '@norien/sdk';
+import type { AgentManifest, EnvironmentVariable, ResolvedTool } from '@norien-live/sdk';
 
 import { RuntimeError } from './errors.js';
 import type { EnvironmentResolution } from './types.js';

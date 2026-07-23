@@ -14,12 +14,12 @@ it wrong means burning a version and bumping to the next one.
 **You need:** an npm account ([npmjs.com/signup](https://www.npmjs.com/signup)),
 and Node 20+.
 
-**The name is free.** Checked on 2026-07-22: both `norien` and `@norien/cli`
+**The name is free.** Checked on 2026-07-22: both `norien` and `@norien-live/cli`
 return 404 on the registry — nobody has taken them. That can change, so check
 again right before you publish:
 
 ```bash
-npm view @norien/cli
+npm view @norien-live/cli
 # 404 = still available
 ```
 
@@ -27,7 +27,7 @@ npm view @norien/cli
 go up first or the install breaks for everyone:
 
 ```
-@norien/sdk  →  @norien/tools  →  @norien/runtime  →  @norien/cli
+@norien-live/sdk  →  @norien-live/tools  →  @norien-live/runtime  →  @norien-live/cli
 ```
 
 ---
@@ -60,7 +60,7 @@ expected.
 
 ## Step 3 — Create the `@norien` organisation
 
-Scoped packages (`@norien/cli`) need the scope to exist and to be yours.
+Scoped packages (`@norien-live/cli`) need the scope to exist and to be yours.
 
 [npmjs.com/org/create](https://www.npmjs.com/org/create) → name it **norien** →
 choose the **Free** plan.
@@ -97,17 +97,17 @@ One at a time, checking each before moving on. Each `npm publish` will prompt
 for your 2FA code.
 
 ```bash
-npm publish --workspace @norien/sdk
-npm view @norien/sdk version        # must print 0.1.0
+npm publish --workspace @norien-live/sdk
+npm view @norien-live/sdk version        # must print 0.1.0
 
-npm publish --workspace @norien/tools
-npm view @norien/tools version
+npm publish --workspace @norien-live/tools
+npm view @norien-live/tools version
 
-npm publish --workspace @norien/runtime
-npm view @norien/runtime version
+npm publish --workspace @norien-live/runtime
+npm view @norien-live/runtime version
 
-npm publish --workspace @norien/cli
-npm view @norien/cli version
+npm publish --workspace @norien-live/cli
+npm view @norien-live/cli version
 ```
 
 If one fails, **stop and fix it before continuing.** Publishing the CLI while
@@ -121,7 +121,7 @@ repository:
 
 ```bash
 cd /tmp
-npm install -g @norien/cli
+npm install -g @norien-live/cli
 norien --version
 norien --help
 norien --registry https://your-deployed-registry.example search trading
@@ -142,8 +142,8 @@ only if nothing depends on it, and even then the version number stays burned.
 installed by default, so it cannot break anyone:
 
 ```bash
-npm publish --workspace @norien/cli --tag next
-npm install -g @norien/cli@next     # opt-in only
+npm publish --workspace @norien-live/cli --tag next
+npm install -g @norien-live/cli@next     # opt-in only
 ```
 
 When it looks right, publish the real version.
@@ -166,7 +166,7 @@ Suggested split, matching how the two processes already work:
 
 | Host | Serves | Process |
 | --- | --- | --- |
-| `norien.live` | The web app — marketing site and `/app` | `@norien/web`, port 3001 |
+| `norien.live` | The web app — marketing site and `/app` | `@norien-live/web`, port 3001 |
 | `api.norien.live` | The registry and the unified data API | the Fastify server, port 3000 |
 
 Both need to be public: the CLI and both SDKs talk to `api.norien.live`
@@ -240,7 +240,7 @@ environment:
 ```bash
 NORIEN_API_URL=https://api.norien.live \
 NEXT_PUBLIC_APP_URL=https://norien.live \
-  npm run build --workspace @norien/web
+  npm run build --workspace @norien-live/web
 ```
 
 On Vercel, Netlify, or Railway, set them as **build environment variables**. If

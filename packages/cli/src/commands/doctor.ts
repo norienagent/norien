@@ -2,7 +2,7 @@ import { execFile } from 'node:child_process';
 import { access } from 'node:fs/promises';
 import { promisify } from 'node:util';
 
-import { NorienError } from '@norien/sdk';
+import { NorienError } from '@norien-live/sdk';
 
 import { configPath } from '../config.js';
 import type { CommandContext } from '../context.js';

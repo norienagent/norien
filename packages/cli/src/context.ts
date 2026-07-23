@@ -1,4 +1,4 @@
-import { NorienClient } from '@norien/sdk';
+import { NorienClient } from '@norien-live/sdk';
 
 import { type ResolvedCredentials, resolveCredentials } from './config.js';
 import { CliError } from './ui.js';
@@ -35,7 +35,7 @@ export async function createContext(options: GlobalOptions): Promise<CommandCont
     baseUrl: credentials.registry,
     ...(credentials.apiKey ? { apiKey: credentials.apiKey } : {}),
     ...(credentials.handle ? { actor: credentials.handle } : {}),
-    userAgent: '@norien/cli',
+    userAgent: '@norien-live/cli',
   });
 
   return {

@@ -8,8 +8,8 @@ import {
   MANIFEST_FILENAME,
   METADATA_FILENAME,
   README_FILENAME,
-} from '@norien/runtime';
-import type { InstallResult } from '@norien/sdk';
+} from '@norien-live/runtime';
+import type { InstallResult } from '@norien-live/sdk';
 
 /**
  * Local install state.
@@ -20,7 +20,7 @@ import type { InstallResult } from '@norien/sdk';
  * single record of what is installed at which version.
  */
 
-// The layout is defined once in @norien/runtime, because the CLI, the
+// The layout is defined once in @norien-live/runtime, because the CLI, the
 // supervisor, and any future worker must all agree on where agents live.
 export {
   AGENTS_DIRNAME,
@@ -29,7 +29,7 @@ export {
   MANIFEST_FILENAME,
   METADATA_FILENAME,
   README_FILENAME,
-} from '@norien/runtime';
+} from '@norien-live/runtime';
 
 const ICON_CANDIDATES = ['icon.png', 'icon.svg', 'icon.jpg', 'icon.jpeg', 'icon.webp'];
 

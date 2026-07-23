@@ -1,5 +1,5 @@
 {
-  "name": "@norien/runtime",
+  "name": "@norien-live/runtime",
   "version": "0.1.0",
   "description": "The Norien runtime supervisor: run installed agents, stream logs, probe health, recover crashes.",
   "license": "MIT",
@@ -32,11 +32,11 @@
   },
   "dependencies": {
     "@fastify/cors": "^11.3.0",
-    "@norien/sdk": "0.1.0",
+    "@norien-live/sdk": "0.1.0",
     "fastify": "^5.10.0",
     "fastify-type-provider-zod": "^7.0.0",
     "zod": "^4.4.3",
-    "@norien/tools": "0.1.0"
+    "@norien-live/tools": "0.1.0"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",

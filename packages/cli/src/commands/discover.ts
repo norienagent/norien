@@ -1,4 +1,4 @@
-import type { Agent, SearchHit, Tool } from '@norien/sdk';
+import type { Agent, SearchHit, Tool } from '@norien-live/sdk';
 
 import type { CommandContext } from '../context.js';
 import {

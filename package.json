@@ -16,12 +16,12 @@
     "db:reset": "node -e \"require('fs').rmSync('.data',{recursive:true,force:true})\"",
     "openapi": "tsx src/scripts/export-openapi.ts",
     "setup": "npm run db:migrate && npm run db:seed",
-    "build:packages": "npm run build --workspace @norien/sdk && npm run build --workspace @norien/tools && npm run build --workspace @norien/runtime && npm run build --workspace @norien/cli",
+    "build:packages": "npm run build --workspace @norien-live/sdk && npm run build --workspace @norien-live/tools && npm run build --workspace @norien-live/runtime && npm run build --workspace @norien-live/cli",
     "cli": "tsx packages/cli/src/index.ts",
-    "cli:link": "npm link --workspace @norien/cli",
-    "cli:unlink": "npm unlink --global @norien/cli",
-    "dev:web": "npm run dev --workspace @norien/web",
-    "build:web": "npm run build --workspace @norien/web"
+    "cli:link": "npm link --workspace @norien-live/cli",
+    "cli:unlink": "npm unlink --global @norien-live/cli",
+    "dev:web": "npm run dev --workspace @norien-live/web",
+    "build:web": "npm run build --workspace @norien-live/web"
   },
   "keywords": [],
   "author": "",

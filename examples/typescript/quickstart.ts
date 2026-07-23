@@ -6,7 +6,7 @@
  *
  * Set NORIEN_REGISTRY, NORIEN_ACTOR, and NORIEN_API_KEY to point elsewhere.
  */
-import { Norien, NorienError } from '@norien/sdk';
+import { Norien, NorienError } from '@norien-live/sdk';
 
 const client = new Norien({
   baseUrl: process.env.NORIEN_REGISTRY ?? 'http://localhost:3000',

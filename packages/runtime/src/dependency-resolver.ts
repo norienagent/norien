@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { NorienClient, type ResolvedTool } from '@norien/sdk';
+import { NorienClient, type ResolvedTool } from '@norien-live/sdk';
 
 import { RuntimeError } from './errors.js';
 import type { DependencyResolution } from './types.js';
@@ -110,7 +110,7 @@ export class DependencyResolver {
       baseUrl: this.options.registry as string,
       ...(this.options.actor ? { actor: this.options.actor } : {}),
       ...(this.options.apiKey ? { apiKey: this.options.apiKey } : {}),
-      userAgent: '@norien/runtime',
+      userAgent: '@norien-live/runtime',
     });
 
     try {

@@ -8,7 +8,7 @@ import { promisify } from 'node:util';
 import type { FastifyInstance } from 'fastify';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { NorienClient } from '@norien/sdk';
+import { NorienClient } from '@norien-live/sdk';
 
 import { buildApp } from '../src/app.js';
 import { env } from '../src/config/env.js';

@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
 
-import { NorienClient } from '@norien/sdk';
+import { NorienClient } from '@norien-live/sdk';
 
 import { DEFAULT_PROFILE, clearConfig, configPath, readConfig, removeProfile, saveProfile } from '../config.js';
 import type { CommandContext } from '../context.js';
@@ -70,7 +70,7 @@ export async function login(
     baseUrl: registry,
     actor: handle,
     ...(apiKey ? { apiKey } : {}),
-    userAgent: '@norien/cli',
+    userAgent: '@norien-live/cli',
   });
 
   try {

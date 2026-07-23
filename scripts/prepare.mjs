@@ -5,7 +5,7 @@
 // environment none of that is needed:
 //
 //   - Vercel builds only the web app, which is standalone and imports no
-//     @norien/* package. It also omits devDependencies, so `tsc` is absent and
+//     @norien-live/* package. It also omits devDependencies, so `tsc` is absent and
 //     `build:packages` would fail with "tsc: command not found" — which is
 //     exactly the error this guard prevents.
 //   - Railway builds only the registry (src -> dist), which is likewise

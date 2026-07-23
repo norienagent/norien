@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import ora, { type Ora } from 'ora';
 
-import { NorienError } from '@norien/sdk';
+import { NorienError } from '@norien-live/sdk';
 
 /**
  * Terminal output.

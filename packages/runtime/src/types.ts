@@ -1,4 +1,4 @@
-import type { AgentManifest, ResolvedTool, RuntimeName } from '@norien/sdk';
+import type { AgentManifest, ResolvedTool, RuntimeName } from '@norien-live/sdk';
 
 /**
  * Runtime domain types.

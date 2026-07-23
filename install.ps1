@@ -4,7 +4,7 @@
 #
 # What it does, in order:
 #   1. Checks for Node.js 20+ and git.
-#   2. If @norien/cli is published to npm, installs it from there (the fast path).
+#   2. If @norien-live/cli is published to npm, installs it from there (the fast path).
 #   3. Otherwise clones this repo, builds it, and links the CLI.
 $ErrorActionPreference = 'Stop'
 
@@ -28,10 +28,10 @@ if (-not (Get-Command npm -ErrorAction SilentlyContinue)) { Die 'npm is required
 
 # --- 2. Fast path: the npm registry -----------------------------------------
 $published = $false
-try { npm view '@norien/cli' version *> $null; $published = $LASTEXITCODE -eq 0 } catch {}
+try { npm view '@norien-live/cli' version *> $null; $published = $LASTEXITCODE -eq 0 } catch {}
 if ($published) {
-  Info 'Installing @norien/cli from npm...'
-  npm install -g '@norien/cli'
+  Info 'Installing @norien-live/cli from npm...'
+  npm install -g '@norien-live/cli'
   Write-Host 'Done. Run: norien --help' -ForegroundColor Cyan
   exit 0
 }
@@ -54,7 +54,7 @@ if (Test-Path (Join-Path $SrcDir '.git')) {
 Set-Location $SrcDir
 Info 'Building (this also builds the SDK, tools, and runtime)...'
 npm install --silent
-npm link --workspace '@norien/cli'
+npm link --workspace '@norien-live/cli'
 
 Write-Host 'Done. Run: norien --help' -ForegroundColor Cyan
 Write-Host ''

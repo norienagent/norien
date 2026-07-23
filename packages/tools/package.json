@@ -1,5 +1,5 @@
 {
-  "name": "@norien/tools",
+  "name": "@norien-live/tools",
   "version": "0.1.0",
   "description": "The Norien tool plugin system: validate, install, and execute marketplace tools.",
   "license": "MIT",
@@ -26,7 +26,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@norien/sdk": "0.1.0"
+    "@norien-live/sdk": "0.1.0"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",

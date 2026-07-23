@@ -12,8 +12,8 @@ import {
   readToolsLockfile,
   validateAgainstSchema,
   validateToolManifest,
-} from '@norien/tools';
-import type { Tool } from '@norien/sdk';
+} from '@norien-live/tools';
+import type { Tool } from '@norien-live/sdk';
 
 /**
  * Tool plugin-system tests.

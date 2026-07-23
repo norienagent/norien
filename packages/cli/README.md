@@ -1,9 +1,9 @@
-# @norien/cli
+# @norien-live/cli
 
 The official command-line interface for the Norien agent registry.
 
 ```bash
-npm install -g @norien/cli
+npm install -g @norien-live/cli
 norien --help
 ```
 
@@ -19,7 +19,7 @@ repository rather than from the registry.
 
 ```bash
 npm install          # builds the packages, then:
-npm run cli:link     # → npm link --workspace @norien/cli
+npm run cli:link     # → npm link --workspace @norien-live/cli
 norien --help        # now works from any directory
 ```
 
@@ -44,7 +44,7 @@ pnpm add --global ./packages/cli             # pnpm 10+, which dropped --global 
 
 [`pnpm-workspace.yaml`](../../pnpm-workspace.yaml) mirrors the npm `workspaces`
 field — pnpm does not read that field — and sets `linkWorkspacePackages: true`
-so `@norien/sdk`, `@norien/tools`, and `@norien/runtime` resolve from this
+so `@norien-live/sdk`, `@norien-live/tools`, and `@norien-live/runtime` resolve from this
 repository instead of being looked up in the public registry, where they do not
 exist.
 
@@ -223,7 +223,7 @@ Last exit
 ```
 
 `--restart-policy on-failure` adds automatic restarts with capped exponential
-backoff. Full details in [@norien/runtime](../runtime/README.md).
+backoff. Full details in [@norien-live/runtime](../runtime/README.md).
 
 ## Scripting
 

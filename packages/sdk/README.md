@@ -1,16 +1,16 @@
-# @norien/sdk
+# @norien-live/sdk
 
 Official TypeScript SDK for the Norien agent registry. Fully typed, one
 dependency (axios), works in Node 20+.
 
 ```bash
-npm install @norien/sdk
+npm install @norien-live/sdk
 ```
 
 ## Quickstart
 
 ```ts
-import { Norien } from '@norien/sdk';
+import { Norien } from '@norien-live/sdk';
 
 const client = new Norien(API_KEY);
 
@@ -115,7 +115,7 @@ Every failure throws a `NorienError` carrying the registry's error envelope.
 Branch on the stable `code`, never on message text.
 
 ```ts
-import { NorienError } from '@norien/sdk';
+import { NorienError } from '@norien-live/sdk';
 
 try {
   await client.publish({ manifest });

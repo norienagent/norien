@@ -1,4 +1,4 @@
-import type { Tool } from '@norien/sdk';
+import type { Tool } from '@norien-live/sdk';
 
 /**
  * Tool documentation generator.
@@ -142,7 +142,7 @@ export function generateToolDoc(tool: Tool, options: ToolDocOptions = {}): strin
     '### SDK — TypeScript',
     '',
     '```ts',
-    `import { Norien } from '@norien/sdk';`,
+    `import { Norien } from '@norien-live/sdk';`,
     '',
     `const client = new Norien(API_KEY);`,
     `const tool = await client.tools.info('${tool.slug}');`,

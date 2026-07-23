@@ -4,7 +4,7 @@ import type {
   MarketProject,
   MarketToken,
   SourceReport,
-} from '@norien/sdk';
+} from '@norien-live/sdk';
 
 import type { CommandContext } from '../context.js';
 import {

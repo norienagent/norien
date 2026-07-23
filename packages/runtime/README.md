@@ -1,4 +1,4 @@
-# @norien/runtime
+# @norien-live/runtime
 
 The Norien agent runtime: a supervisor that executes, monitors, and recovers
 installed agents. Think `systemd` + `docker` for autonomous agents.
@@ -32,7 +32,7 @@ norien restart <agent>      norien runtime start|stop|status
 Or embedded:
 
 ```ts
-import { RuntimeManager } from '@norien/runtime';
+import { RuntimeManager } from '@norien-live/runtime';
 
 const manager = new RuntimeManager({ workspace: process.cwd() });
 

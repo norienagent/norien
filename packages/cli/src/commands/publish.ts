@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import inquirer from 'inquirer';
 
-import type { Diagnostic, NormalizedAgent } from '@norien/sdk';
+import type { Diagnostic, NormalizedAgent } from '@norien-live/sdk';
 
 import { type CommandContext, requireIdentity } from '../context.js';
 import {

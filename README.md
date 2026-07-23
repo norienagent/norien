@@ -37,7 +37,7 @@ The installer checks for Node.js 20+, then installs the `norien` CLI — from np
 once published, or from source until then. Prefer npm directly?
 
 ```sh
-npm install -g @norien/cli        # once published
+npm install -g @norien-live/cli        # once published
 ```
 
 ```sh
@@ -50,7 +50,7 @@ so it works out of the box. Point it elsewhere with `NORIEN_REGISTRY` or
 `--registry` — e.g. a local one via `npm run dev` from the source.
 
 > **Pre-release.** The API is live and the packages install from source today;
-> the `@norien/*` npm packages are on the way.
+> the `@norien-live/*` npm packages are on the way.
 
 ---
 
@@ -82,12 +82,12 @@ No branding, landing page, or payments — those are later phases.
 | Path | What |
 | --- | --- |
 | [src/](src/) | The registry server (Fastify + Drizzle + Postgres) |
-| [packages/cli/](packages/cli/) | `@norien/cli` — the `norien` command |
-| [packages/runtime/](packages/runtime/) | `@norien/runtime` — the supervisor that executes agents |
-| [packages/tools/](packages/tools/) | `@norien/tools` — the tool plugin system (validate, install, execute) |
+| [packages/cli/](packages/cli/) | `@norien-live/cli` — the `norien` command |
+| [packages/runtime/](packages/runtime/) | `@norien-live/runtime` — the supervisor that executes agents |
+| [packages/tools/](packages/tools/) | `@norien-live/tools` — the tool plugin system (validate, install, execute) |
 | [src/services/external/](src/services/external/) | External data integration — six providers behind one unified API |
-| [web/](web/) | `@norien/web` — the product UI (Next.js, port 3001) |
-| [packages/sdk/](packages/sdk/) | `@norien/sdk` — TypeScript SDK |
+| [web/](web/) | `@norien-live/web` — the product UI (Next.js, port 3001) |
+| [packages/sdk/](packages/sdk/) | `@norien-live/sdk` — TypeScript SDK |
 | [sdk-python/](sdk-python/) | `norien` — Python SDK, zero dependencies |
 | [examples/](examples/) | Runnable SDK walkthroughs and 12 example tools |
 
@@ -118,7 +118,7 @@ The product UI is a second process on its own port, so the two never contend:
 
 ```bash
 npm run dev                          # registry  → http://127.0.0.1:3000
-npm run dev --workspace @norien/web  # product UI → http://localhost:3001
+npm run dev --workspace @norien-live/web  # product UI → http://localhost:3001
 ```
 
 ```bash
@@ -348,11 +348,11 @@ Tools: `search`, `http-fetch`, `wallet`, `twitter`, `discord`, `notifications`,
 
 ```bash
 npm install          # the root `prepare` builds the packages
-npm run cli:link     # → npm link --workspace @norien/cli
+npm run cli:link     # → npm link --workspace @norien-live/cli
 norien --help        # available from any directory
 ```
 
-`@norien/cli` is not published, so `norien` is a link into `packages/cli/dist`;
+`@norien-live/cli` is not published, so `norien` is a link into `packages/cli/dist`;
 a `npm run build:packages` is picked up without relinking, and
 `npm run cli:unlink` removes it. pnpm and the Windows shims are covered in
 [packages/cli/README.md](packages/cli/README.md#local-development).
@@ -699,7 +699,7 @@ branch on provenance the same way the UI does.
 Both wrap the same REST API, with matching ergonomics.
 
 ```ts
-import { Norien } from '@norien/sdk';
+import { Norien } from '@norien-live/sdk';
 
 const client = new Norien(API_KEY);
 

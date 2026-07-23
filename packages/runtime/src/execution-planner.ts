@@ -1,9 +1,9 @@
 import { access, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import type { AgentManifest, RuntimeName } from '@norien/sdk';
+import type { AgentManifest, RuntimeName } from '@norien-live/sdk';
 
-import { resolveBinary, type ResolvedBinary } from '@norien/tools';
+import { resolveBinary, type ResolvedBinary } from '@norien-live/tools';
 
 import { RuntimeError } from './errors.js';
 import type { ExecutionPlan, PackageManager } from './types.js';
@@ -58,10 +58,10 @@ async function exists(target: string): Promise<boolean> {
 }
 
 // Binary resolution (including the Windows `.cmd`/`.exe` handling) lives in
-// @norien/tools, the lower-level execution primitive, so it is defined once and
+// @norien-live/tools, the lower-level execution primitive, so it is defined once and
 // shared by the tool executor and this planner.
-export { executableCandidates, resolveBinary } from '@norien/tools';
-export type { ResolvedBinary } from '@norien/tools';
+export { executableCandidates, resolveBinary } from '@norien-live/tools';
+export type { ResolvedBinary } from '@norien-live/tools';
 
 /** Version string only. Kept for callers that do not need the executable name. */
 export async function probeBinary(binary: string, args = ['--version']): Promise<string | null> {

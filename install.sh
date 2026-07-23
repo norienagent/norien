@@ -5,7 +5,7 @@
 #
 # What it does, in order:
 #   1. Checks for Node.js 20+ and git.
-#   2. If @norien/cli is published to npm, installs it from there (the fast path).
+#   2. If @norien-live/cli is published to npm, installs it from there (the fast path).
 #   3. Otherwise clones this repo, builds it, and links the CLI.
 #
 # The same command upgrades a source install to the npm one the day the package
@@ -31,9 +31,9 @@ NODE_MAJOR="$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 
 command -v npm >/dev/null 2>&1 || die "npm is required (it ships with Node.js)."
 
 # --- 2. Fast path: the npm registry -----------------------------------------
-if npm view @norien/cli version >/dev/null 2>&1; then
-  info "Installing @norien/cli from npm..."
-  npm install -g @norien/cli
+if npm view @norien-live/cli version >/dev/null 2>&1; then
+  info "Installing @norien-live/cli from npm..."
+  npm install -g @norien-live/cli
   bold "Done. Run: norien --help"
   exit 0
 fi
@@ -56,7 +56,7 @@ fi
 cd "$SRC_DIR"
 info "Building (this also builds the SDK, tools, and runtime)..."
 npm install --silent
-npm link --workspace @norien/cli >/dev/null 2>&1 || npm link --workspace @norien/cli
+npm link --workspace @norien-live/cli >/dev/null 2>&1 || npm link --workspace @norien-live/cli
 
 bold "Done. Run: norien --help"
 printf '\n'

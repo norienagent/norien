@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { Norien, NorienClient, NorienError, toQuery } from '@norien/sdk';
+import { Norien, NorienClient, NorienError, toQuery } from '@norien-live/sdk';
 
 import { buildApp } from '../src/app.js';
 import { closeDb } from '../src/db/client.js';

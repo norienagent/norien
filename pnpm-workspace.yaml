@@ -4,7 +4,7 @@ packages:
   - 'packages/*'
   - 'web'
 
-# @norien/cli depends on @norien/sdk, @norien/tools and @norien/runtime, none of
+# @norien-live/cli depends on @norien-live/sdk, @norien-live/tools and @norien-live/runtime, none of
 # which are published. pnpm 10+ defaults this to false, which would send it to
 # the public registry for them; true resolves them from this workspace instead.
 linkWorkspacePackages: true

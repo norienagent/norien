@@ -2,8 +2,8 @@ import path from 'node:path';
 
 import inquirer from 'inquirer';
 
-import { NorienError } from '@norien/sdk';
-import { fetchSource, type FetchResult } from '@norien/tools';
+import { NorienError } from '@norien-live/sdk';
+import { fetchSource, type FetchResult } from '@norien-live/tools';
 
 import { type CommandContext, requireIdentity } from '../context.js';
 import {

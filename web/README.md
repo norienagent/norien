@@ -1,10 +1,10 @@
-# @norien/web
+# @norien-live/web
 
 The Norien frontend: a public marketing site and the application, in one Next.js
 15 App Router project on **:3001**, reading the registry on **:3000**.
 
 ```bash
-npm run dev --workspace @norien/web    # :3001, expects the registry on :3000
+npm run dev --workspace @norien-live/web    # :3001, expects the registry on :3000
 ```
 
 The registry must be running (`npm run dev` at the repo root).

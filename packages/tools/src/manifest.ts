@@ -1,4 +1,4 @@
-import type { EnvironmentVariable, ToolAuthentication } from '@norien/sdk';
+import type { EnvironmentVariable, ToolAuthentication } from '@norien-live/sdk';
 
 import { ToolError } from './errors.js';
 import { type JsonSchema, validateAgainstSchema } from './schema-validator.js';

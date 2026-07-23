@@ -1,7 +1,7 @@
 import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
-import type { AgentManifest } from '@norien/sdk';
+import type { AgentManifest } from '@norien-live/sdk';
 
 import { RuntimeError } from './errors.js';
 

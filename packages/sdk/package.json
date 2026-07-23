@@ -1,5 +1,5 @@
 {
-  "name": "@norien/sdk",
+  "name": "@norien-live/sdk",
   "version": "0.1.0",
   "description": "TypeScript SDK for the Norien agent registry, tool marketplace, and unified data API.",
   "license": "MIT",

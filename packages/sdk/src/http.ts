@@ -102,7 +102,7 @@ export class HttpTransport {
 
     const headers: Record<string, string> = {
       accept: 'application/json',
-      'user-agent': options.userAgent ?? '@norien/sdk',
+      'user-agent': options.userAgent ?? '@norien-live/sdk',
       ...options.headers,
     };
 

@@ -1,12 +1,12 @@
 import inquirer from 'inquirer';
 
-import type { LogRecord, RuntimeInstance, RuntimeStatus } from '@norien/runtime';
+import type { LogRecord, RuntimeInstance, RuntimeStatus } from '@norien-live/runtime';
 import {
   clearDaemonRecord,
   isProcessAlive,
   readDaemonRecord,
   startDaemon,
-} from '@norien/runtime';
+} from '@norien-live/runtime';
 
 import type { CommandContext } from '../context.js';
 import { RuntimeClient } from '../runtime-client.js';

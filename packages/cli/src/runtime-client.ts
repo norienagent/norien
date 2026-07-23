@@ -10,8 +10,8 @@ import {
   clearDaemonRecord,
   isProcessAlive,
   readDaemonRecord,
-} from '@norien/runtime';
-import type { LogRecord, RuntimeInstance, RuntimeStatus } from '@norien/runtime';
+} from '@norien-live/runtime';
+import type { LogRecord, RuntimeInstance, RuntimeStatus } from '@norien-live/runtime';
 
 import { CliError } from './ui.js';
 
@@ -114,7 +114,7 @@ export class RuntimeClient {
       baseURL: this.baseUrl,
       timeout: 60_000,
       validateStatus: () => true,
-      headers: { accept: 'application/json', 'user-agent': '@norien/cli' },
+      headers: { accept: 'application/json', 'user-agent': '@norien-live/cli' },
     });
     return this.baseUrl;
   }
@@ -141,7 +141,7 @@ export class RuntimeClient {
    * stdio is discarded because the daemon's own logs are the agents' logs.
    */
   private async spawnDaemon(): Promise<string> {
-    const entry = require.resolve('@norien/runtime/package.json');
+    const entry = require.resolve('@norien-live/runtime/package.json');
     const daemonPath = path.join(path.dirname(entry), 'dist', 'daemon.js');
     const port = this.options.port ?? DEFAULT_DAEMON_PORT;
 

@@ -1,4 +1,4 @@
-# @norien/tools
+# @norien-live/tools
 
 The Norien tool plugin system: validate a `tool.json`, install a tool locally,
 and **execute** it. Think npm packages + MCP tools + Docker images, for
@@ -58,7 +58,7 @@ the protocol; each tool implements it.
 ## Using it
 
 ```ts
-import { ToolInstaller, ToolExecutor, validateToolManifest } from '@norien/tools';
+import { ToolInstaller, ToolExecutor, validateToolManifest } from '@norien-live/tools';
 
 // Install a tool's code into ./norien_tools/<slug>/
 await new ToolInstaller(process.cwd()).installFromLocal('./my-tool', { registry });
@@ -104,7 +104,7 @@ a local path installs manifest-only, and says so.
 | `generateToolDoc` | Generate a Markdown tool page from a manifest |
 | `resolveBinary`, `spawnJson` | Cross-platform process primitives (shared with the runtime) |
 
-The agent runtime (`@norien/runtime`) imports `resolveBinary`/`spawnJson` from
+The agent runtime (`@norien-live/runtime`) imports `resolveBinary`/`spawnJson` from
 here, so binary resolution and the Windows `.cmd` handling live in exactly one
 place.
 

@@ -15,7 +15,7 @@ import {
   buildRuntimeServer,
   parseEnvFile,
   tokenize,
-} from '@norien/runtime';
+} from '@norien-live/runtime';
 import type { FastifyInstance } from 'fastify';
 
 /**

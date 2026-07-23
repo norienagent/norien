@@ -1,7 +1,7 @@
 import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import type { EnvironmentVariable, Tool } from '@norien/sdk';
+import type { EnvironmentVariable, Tool } from '@norien-live/sdk';
 
 import { ToolError } from './errors.js';
 import { type ToolManifest, normalizeEnvironment, validateToolManifest } from './manifest.js';

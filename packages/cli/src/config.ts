@@ -2,7 +2,7 @@ import { chmod, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import path from 'node:path';
 
-import { DEFAULT_BASE_URL } from '@norien/sdk';
+import { DEFAULT_BASE_URL } from '@norien-live/sdk';
 
 /**
  * Credential storage.
