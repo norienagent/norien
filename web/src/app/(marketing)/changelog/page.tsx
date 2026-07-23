@@ -24,7 +24,7 @@ const RELEASES = [
       'Dashboard with eight live widgets across market, ecosystem, and registry data.',
       'Registry, marketplace, runtime, publish, API keys, profile, and settings pages.',
       'Warm cream and brown design system replacing the previous dark theme.',
-      'Authentication UI prepared for GitHub and Google via Supabase Auth.',
+      'GitHub sign-in via Supabase Auth (backend verifies the session JWT).',
     ],
   },
   {

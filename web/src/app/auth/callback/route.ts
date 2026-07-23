@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 /**
  * OAuth callback.
  *
- * Supabase redirects here with a `code` after GitHub/Google sign-in. We exchange
+ * Supabase redirects here with a `code` after GitHub sign-in. We exchange
  * it for a session (which sets the cookies), then send the user on to wherever
  * they were headed — the app by default.
  */

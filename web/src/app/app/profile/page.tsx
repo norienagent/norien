@@ -72,7 +72,7 @@ async function AccountCard() {
       <Card title="Account">
         <Empty
           title="Not signed in"
-          detail="Sign in with GitHub or Google to attach your publications and installations to a verified account."
+          detail="Sign in with GitHub to attach your publications and installations to a verified account."
           action={
             <div className="flex flex-wrap justify-center gap-2">
               <ButtonLink href="/login">Sign in</ButtonLink>
