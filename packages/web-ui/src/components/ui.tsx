@@ -246,7 +246,7 @@ export function SourceList({ sources }: { sources: SourceReport[] }) {
   return (
     <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted">
       {sources.map((source) => (
-        <span key={source.provider} className="inline-flex items-center gap-1.5">
+        <span key={providerLabel(source.provider)} className="inline-flex items-center gap-1.5">
           <span aria-hidden className={tone[source.status] ?? 'text-muted'}>
             ●
           </span>

@@ -150,7 +150,7 @@ async function ProviderHealthPanel() {
       <Card title={`Data providers (${providers.data.length})`} padded={false}>
         <Table
           rows={providers.data}
-          rowKey={(provider) => provider.provider}
+          rowKey={(provider) => providerLabel(provider.provider)}
           columns={[
             {
               key: 'provider',
