@@ -37,7 +37,7 @@ The installer checks for Node.js 20+, then installs the `norien` CLI — from np
 once published, or from source until then. Prefer npm directly?
 
 ```sh
-npm install -g @norien-live/cli        # once published
+npm install -g @norien-live/cli
 ```
 
 ```sh
@@ -49,8 +49,8 @@ The CLI defaults to the hosted registry at **[api.norien.live](https://api.norie
 so it works out of the box. Point it elsewhere with `NORIEN_REGISTRY` or
 `--registry` — e.g. a local one via `npm run dev` from the source.
 
-> **Pre-release.** The API is live and the packages install from source today;
-> the `@norien-live/*` npm packages are on the way.
+> **Pre-release (v0.1.0).** The API, the web app, and the `@norien-live/*` npm
+> packages are all live. Interfaces may still change before v1.
 
 ---
 
