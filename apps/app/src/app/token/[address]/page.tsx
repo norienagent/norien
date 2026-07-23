@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { api } from '@norien-live/web-ui/api';
 import { count, dash, percent, price, shortAddress, usd } from '@norien-live/web-ui';
-import { Badge, Card, Change, DegradedNotice, MissingResource, Row, SourceList, Stat } from '@norien-live/web-ui';
+import { Badge, Card, Change, DegradedNotice, MissingResource, Row, SourceList, Stat, TokenLogo } from '@norien-live/web-ui';
 
 /**
  * Token detail.
@@ -29,16 +29,7 @@ export default async function TokenPage({
   return (
     <>
       <header className="mb-6 flex items-center gap-4">
-        {token.logo ? (
-          // eslint-disable-next-line @next/next/no-img-element -- provider CDNs vary
-          <img
-            src={token.logo}
-            alt=""
-            className="size-12 shrink-0 rounded-full border border-line bg-sunken object-cover"
-          />
-        ) : (
-          <span aria-hidden className="size-12 shrink-0 rounded-full border border-line bg-sunken" />
-        )}
+        <TokenLogo src={token.logo} symbol={token.symbol} className="size-12" />
         <div className="min-w-0">
           <h1 className="truncate text-2xl font-semibold tracking-tight text-ink">
             {token.name} <span className="font-normal text-muted">{token.symbol}</span>

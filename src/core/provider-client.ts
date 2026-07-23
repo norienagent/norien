@@ -86,6 +86,62 @@ export function resetProviderLogger(): void {
 /** Statuses worth retrying: transient server and rate-limit conditions. */
 const RETRIABLE_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
 
+/**
+ * Largest provider body we will buffer into memory. Every legitimate response
+ * here is kilobytes; a multi-megabyte payload is pathological (a provider bug, a
+ * misfiltered "give me everything" query, or an HTML error page). Buffering one
+ * unbounded is how a single request OOM-kills the whole process — so past this
+ * limit the call fails as one degraded provider instead, and the server lives.
+ */
+const MAX_RESPONSE_BYTES = 12 * 1024 * 1024; // 12 MB
+
+/**
+ * Reads and JSON-parses a response body without ever buffering more than
+ * MAX_RESPONSE_BYTES. Streams the body and aborts the moment it grows too large,
+ * so an unbounded payload can never exhaust the heap.
+ */
+async function readCappedJson<T>(
+  response: Response,
+  provider: ProviderName,
+  attempts: number,
+): Promise<T> {
+  const tooLarge = (detail: string) =>
+    new ProviderError(provider, `${provider} response too large (${detail})`, {
+      status: response.status,
+      retriable: false,
+      attempts,
+    });
+
+  const declared = Number(response.headers.get('content-length') ?? '');
+  if (Number.isFinite(declared) && declared > MAX_RESPONSE_BYTES) {
+    throw tooLarge(`${declared} bytes declared`);
+  }
+
+  const reader = response.body?.getReader();
+  if (!reader) {
+    // No readable stream (rare); fall back to a bounded text read.
+    const text = await response.text();
+    if (text.length > MAX_RESPONSE_BYTES) throw tooLarge(`${text.length} bytes`);
+    return JSON.parse(text) as T;
+  }
+
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (!value) continue;
+    total += value.byteLength;
+    if (total > MAX_RESPONSE_BYTES) {
+      await reader.cancel().catch(() => {});
+      throw tooLarge(`streamed past ${MAX_RESPONSE_BYTES} bytes`);
+    }
+    chunks.push(value);
+  }
+
+  return JSON.parse(Buffer.concat(chunks, total).toString('utf8')) as T;
+}
+
 export interface ProviderRequestOptions {
   method?: 'GET' | 'POST';
   headers?: Record<string, string>;
@@ -237,7 +293,7 @@ export class ProviderClient {
           throw lastError;
         }
 
-        const parsed = (await response.json()) as T;
+        const parsed = await readCappedJson<T>(response, provider, attempt + 1);
 
         if (cacheKey) this.#cache.set(cacheKey, parsed, cacheTtlMs);
 

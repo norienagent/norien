@@ -77,7 +77,10 @@ export function Pagination({
     <nav className="mt-4 flex items-center justify-between gap-3 text-sm" aria-label="Pagination">
       <span className="text-muted">
         Showing {offset + 1}–{offset + shown}
-        {total !== undefined ? ` of ${total.toLocaleString('en-US')}` : ''}
+        {/* The API reports a running count, not a grand total, so it only equals
+            the true total once there is no next page. Showing it mid-list would
+            claim "of 20" while more pages exist. */}
+        {total !== undefined && !hasMore ? ` of ${total.toLocaleString('en-US')}` : ''}
       </span>
       <span className="flex gap-2">
         {offset > 0 ? (

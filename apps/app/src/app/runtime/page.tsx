@@ -84,26 +84,27 @@ async function SupervisorPanel() {
     return (
       <>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <Stat label="Supervisor" value={<span className="text-muted">Offline</span>} hint="not reachable" />
+          <Stat label="Supervisor" value={<span className="text-ink">Local</span>} hint="runs on your machine" />
           <Stat label="Running" value="—" />
           <Stat label="Stopped" value="—" />
           <Stat label="Failed" value="—" />
         </div>
 
         <div className="mt-4">
-          <Card title="Supervisor is not running">
+          <Card title="Run agents on your machine">
             <p className="text-sm leading-relaxed text-muted">
-              The runtime supervisor is a separate local process from the registry, listening on{' '}
-              <span className="font-mono text-xs text-ink">{runtimeApi.url}</span>. Nothing is wrong —
-              it simply is not started. Start it from a terminal:
+              By design, the supervisor runs locally, not in the cloud — a shared registry must never
+              execute someone else&apos;s code. It listens on{' '}
+              <span className="font-mono text-xs text-ink">{runtimeApi.url}</span>; start it from a
+              terminal and this page fills in live:
             </p>
             <div className="mt-4 space-y-2">
               <InstallCommand command="norien runtime start" />
               <InstallCommand command="norien run <agent>" />
             </div>
             <p className="mt-4 text-sm leading-relaxed text-muted">
-              This page reads the supervisor directly and will populate once it is up. Agents must be
-              installed locally first — the registry publishes them, the supervisor runs them.
+              Install an agent first — the registry publishes them, the supervisor runs them. The
+              registry and chain below are hosted, so their status is live right now.
             </p>
           </Card>
         </div>

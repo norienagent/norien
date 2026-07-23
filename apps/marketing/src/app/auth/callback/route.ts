@@ -22,7 +22,10 @@ export async function GET(request: Request): Promise<NextResponse> {
     if (supabase) {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
       if (!error) {
-        return NextResponse.redirect(new URL(next, url.origin));
+        // Land on the app with a one-shot flag so it can confirm "Login successful".
+        const target = new URL(next, url.origin);
+        target.searchParams.set('signedin', '1');
+        return NextResponse.redirect(target);
       }
       return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(error.message)}`, url.origin));
     }

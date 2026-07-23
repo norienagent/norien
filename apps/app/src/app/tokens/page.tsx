@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 
 import { api, type Token } from '@norien-live/web-ui/api';
 import { count, price, usd } from '@norien-live/web-ui';
-import { buildQuery, intParam, Pagination } from '@norien-live/web-ui';
+import { buildQuery, intParam, Pagination, TokenLogo } from '@norien-live/web-ui';
 import {
   Card,
   Change,
@@ -126,17 +126,7 @@ function TokenCard({ token }: { token: Token }) {
       className="group block rounded-xl border border-line bg-card p-5 transition-colors hover:border-accent/40"
     >
       <div className="flex items-center gap-3">
-        {token.logo ? (
-          // eslint-disable-next-line @next/next/no-img-element -- provider CDNs vary
-          <img
-            src={token.logo}
-            alt=""
-            loading="lazy"
-            className="size-9 shrink-0 rounded-full border border-line bg-sunken object-cover"
-          />
-        ) : (
-          <span aria-hidden className="size-9 shrink-0 rounded-full border border-line bg-sunken" />
-        )}
+        <TokenLogo src={token.logo} symbol={token.symbol} className="size-9" />
         <div className="min-w-0">
           <div className="truncate text-sm font-semibold text-ink group-hover:text-accent">
             {token.symbol || '—'}

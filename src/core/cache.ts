@@ -62,7 +62,11 @@ export interface TtlCacheOptions {
 
 const DEFAULT_TTL_MS = 300_000;
 const DEFAULT_STALE_MULTIPLIER = 12;
-const DEFAULT_MAX_ENTRIES = 5_000;
+// Entries hold whole provider payloads (token lists, ABIs, transfer histories),
+// which run from kilobytes to a megabyte each. On a modest container 5k of those
+// is enough to exhaust the heap, so the cap is set for the working set, not the
+// theoretical maximum — the hit rate barely moves, the memory ceiling drops a lot.
+const DEFAULT_MAX_ENTRIES = 1_500;
 
 export class TtlCache implements CacheStore {
   readonly #entries = new Map<string, CacheEntry<unknown>>();

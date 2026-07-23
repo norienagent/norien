@@ -3,6 +3,7 @@ import type { ComponentProps, ReactNode } from 'react';
 
 import type { SourceReport } from '../lib/api';
 import { percent } from '../lib/format';
+import { TokenLogo } from './token-logo';
 
 /**
  * Shared presentational primitives.
@@ -267,18 +268,7 @@ export function TokenCell({
       href={`/token/${token.address}?chainId=${token.chain.id}`}
       className="group inline-flex min-w-0 items-center gap-2.5"
     >
-      {token.logo ? (
-        // eslint-disable-next-line @next/next/no-img-element -- remote logos come
-        // from many provider CDNs; configuring each host is not worth it here.
-        <img
-          className="size-6 shrink-0 rounded-full border border-line bg-sunken object-cover"
-          src={token.logo}
-          alt=""
-          loading="lazy"
-        />
-      ) : (
-        <span aria-hidden className="size-6 shrink-0 rounded-full border border-line bg-sunken" />
-      )}
+      <TokenLogo src={token.logo} symbol={token.symbol} className="size-6" />
       <span className="min-w-0 truncate">
         <strong className="font-semibold text-ink group-hover:text-accent">
           {token.symbol || '—'}

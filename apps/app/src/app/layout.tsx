@@ -7,6 +7,7 @@ import { count } from '@norien-live/web-ui';
 
 import './globals.css';
 import { SearchBox } from '@/components/search-box';
+import { SignInToast } from '@/components/sign-in-toast';
 import { DrawerProvider, DrawerToggle, Sidebar } from './sidebar';
 
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? 'Norien';
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
             <main className="px-4 py-6 sm:px-6 sm:py-8">{children}</main>
           </div>
+          <SignInToast />
         </DrawerProvider>
       </body>
     </html>
