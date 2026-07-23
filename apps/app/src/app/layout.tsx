@@ -24,6 +24,14 @@ export const metadata: Metadata = {
 };
 
 /**
+ * The app is a live product dashboard, not a static site: every page reads
+ * current registry, market, and provider data. Rendering on demand (rather than
+ * prerendering at build) keeps the data fresh and — just as importantly — means
+ * the build never blocks on a slow provider. Applies to every route below.
+ */
+export const dynamic = 'force-dynamic';
+
+/**
  * The application document and shell.
  *
  * This app is only ever the product (app.norien.live has no marketing pages),
