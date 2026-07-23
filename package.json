@@ -20,8 +20,12 @@
     "cli": "tsx packages/cli/src/index.ts",
     "cli:link": "npm link --workspace @norien-live/cli",
     "cli:unlink": "npm unlink --global @norien-live/cli",
-    "dev:web": "npm run dev --workspace @norien-live/web",
-    "build:web": "npm run build --workspace @norien-live/web"
+    "dev:marketing": "npm run dev --workspace @norien-live/marketing",
+    "dev:app": "npm run dev --workspace @norien-live/app",
+    "dev:docs": "npm run dev --workspace @norien-live/docs",
+    "build:marketing": "npm run build --workspace @norien-live/marketing",
+    "build:app": "npm run build --workspace @norien-live/app",
+    "build:docs": "npm run build --workspace @norien-live/docs"
   },
   "keywords": [],
   "author": "",
@@ -57,6 +61,6 @@
   },
   "workspaces": [
     "packages/*",
-    "web"
+    "apps/*"
   ]
 }

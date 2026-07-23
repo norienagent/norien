@@ -2,7 +2,7 @@
 # field in package.json. Keep the two lists in sync.
 packages:
   - 'packages/*'
-  - 'web'
+  - 'apps/*'
 
 # @norien-live/cli depends on @norien-live/sdk, @norien-live/tools and @norien-live/runtime, none of
 # which are published. pnpm 10+ defaults this to false, which would send it to

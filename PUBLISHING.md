@@ -162,19 +162,22 @@ the error message does not make the cause obvious.
 
 ## The domain: norien.live
 
-Suggested split, matching how the two processes already work:
+One subdomain per app, each deployed independently:
 
 | Host | Serves | Process |
 | --- | --- | --- |
-| `norien.live` | The web app — marketing site and `/app` | `@norien-live/web`, port 3001 |
+| `norien.live` | The marketing site | `@norien-live/marketing`, port 3001 |
+| `app.norien.live` | The product UI | `@norien-live/app`, port 3002 |
+| `docs.norien.live` | The written documentation | `@norien-live/docs`, port 3003 |
 | `api.norien.live` | The registry and the unified data API | the Fastify server, port 3000 |
 
-Both need to be public: the CLI and both SDKs talk to `api.norien.live`
-directly, so it cannot sit behind the web app's private network.
+`api.norien.live` must be public: the CLI and both SDKs talk to it directly, so
+it cannot sit behind a private network. The three web apps share one session via
+a cookie scoped to `.norien.live` (`NEXT_PUBLIC_COOKIE_DOMAIN`).
 
-`/docs` is a page inside the web app, so it needs no subdomain of its own.
 `api.norien.live/docs` separately serves the live Swagger UI — that is the
-OpenAPI reference, and it is a different thing from the written documentation.
+OpenAPI reference, and it is a different thing from `docs.norien.live`, the
+written documentation.
 
 ### The one line to change before publishing
 
@@ -235,15 +238,22 @@ Two separate reasons, both permanent:
   `process.env` they read is captured then.
 
 So the deployment must pass these to the build step, not just the container
-environment:
+environment. Each app takes the same set (with its own values); the app and
+marketing deployments also need the Supabase public keys and the shared cookie
+domain:
 
 ```bash
 NORIEN_API_URL=https://api.norien.live \
-NEXT_PUBLIC_APP_URL=https://norien.live \
-  npm run build --workspace @norien-live/web
+NEXT_PUBLIC_SITE_URL=https://norien.live \
+NEXT_PUBLIC_APP_URL=https://app.norien.live \
+NEXT_PUBLIC_DOCS_URL=https://docs.norien.live \
+NEXT_PUBLIC_COOKIE_DOMAIN=.norien.live \
+NEXT_PUBLIC_SUPABASE_URL=… NEXT_PUBLIC_SUPABASE_ANON_KEY=… \
+  npm run build:app          # and build:marketing, build:docs
 ```
 
-On Vercel, Netlify, or Railway, set them as **build environment variables**. If
+On Vercel, each app is its own project (Root Directory `apps/app`,
+`apps/marketing`, `apps/docs`); set these as **build environment variables**. If
 your host only offers runtime variables, they will silently have no effect and
 the footer will keep advertising localhost to the public.
 

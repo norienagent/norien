@@ -56,6 +56,6 @@ const banner = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H
   <rect x="${W / 2 - 90}" y="418" width="180" height="2" rx="1" fill="${LINE}"/>
 </svg>`;
 
-const out = path.join(root, 'web/public/banner.png');
+const out = path.join(root, 'apps/marketing/public/banner.png');
 await sharp(Buffer.from(banner)).resize(W, H).png().toFile(out);
 console.log('+ web/public/banner.png', `(${W}×${H})`);

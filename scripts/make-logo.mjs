@@ -52,27 +52,31 @@ async function render(svg, outPath, size) {
   console.log('  +', path.relative(root, outPath), `(${size}×${size})`);
 }
 
-const targets = [
-  // Main brand logo — Twitter profile, token logo, GitHub org avatar.
-  ['web/public/logo.png', 512],
-  ['web/public/logo@1024.png', 1024],
-  // App icons the web app serves.
-  ['web/public/icon-192.png', 192],
-  ['web/public/icon-512.png', 512],
-  // Next.js favicon + Apple touch icon (auto-detected from src/app/).
-  ['web/src/app/icon.png', 256],
-  ['web/src/app/apple-icon.png', 180],
-];
+// Each app is deployed independently, so each serves its own copy of the brand.
+const APPS = ['apps/marketing', 'apps/app', 'apps/docs'];
 
 console.log('Rendering Norien brand assets:');
-for (const [rel, size] of targets) {
-  await render(logoSvg(size), path.join(root, rel), size);
+for (const app of APPS) {
+  const perApp = [
+    // Main brand logo — Twitter profile, token logo, GitHub org avatar, OG.
+    [`${app}/public/logo.png`, 512],
+    [`${app}/public/logo@1024.png`, 1024],
+    // App icons served from /public.
+    [`${app}/public/icon-192.png`, 192],
+    [`${app}/public/icon-512.png`, 512],
+    // Next.js favicon + Apple touch icon (auto-detected from src/app/).
+    [`${app}/src/app/icon.png`, 256],
+    [`${app}/src/app/apple-icon.png`, 180],
+  ];
+  for (const [rel, size] of perApp) {
+    await render(logoSvg(size), path.join(root, rel), size);
+  }
+
+  // A transparent (no-background) mark, handy for light surfaces / press.
+  await render(logoSvg(512, { background: false }), path.join(root, `${app}/public/logo-mark.png`), 512);
+
+  // Keep the source SVG alongside the PNGs so the brand can be re-rendered.
+  await writeFile(path.join(root, `${app}/public/logo.svg`), logoSvg(512), 'utf8');
+  console.log('  +', `${app}/public/logo.svg (source)`);
 }
-
-// A transparent (no-background) mark, handy for light surfaces / press.
-await render(logoSvg(512, { background: false }), path.join(root, 'web/public/logo-mark.png'), 512);
-
-// Keep the source SVG alongside the PNGs so the brand can be re-rendered.
-await writeFile(path.join(root, 'web/public/logo.svg'), logoSvg(512), 'utf8');
-console.log('  +', 'web/public/logo.svg (source)');
 console.log('Done.');

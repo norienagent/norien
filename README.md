@@ -69,7 +69,7 @@ Alongside it runs a **unified data API**: six external providers — market data
 on-chain, repository, and TVL — normalized behind one surface, so a caller never
 learns which one answered.
 
-All of it is usable from the [web app](web/), entirely from the terminal via the
+All of it is usable from the [web app](apps/app/), entirely from the terminal via the
 [CLI](packages/cli), and programmatically via the [TypeScript](packages/sdk) and
 [Python](sdk-python) SDKs. Everything goes through the same public REST API.
 
@@ -86,7 +86,10 @@ No branding, landing page, or payments — those are later phases.
 | [packages/runtime/](packages/runtime/) | `@norien-live/runtime` — the supervisor that executes agents |
 | [packages/tools/](packages/tools/) | `@norien-live/tools` — the tool plugin system (validate, install, execute) |
 | [src/services/external/](src/services/external/) | External data integration — six providers behind one unified API |
-| [web/](web/) | `@norien-live/web` — the product UI (Next.js, port 3001) |
+| [apps/marketing/](apps/marketing/) | `@norien-live/marketing` — the public site, norien.live (Next.js, port 3001) |
+| [apps/app/](apps/app/) | `@norien-live/app` — the product UI, app.norien.live (Next.js, port 3002) |
+| [apps/docs/](apps/docs/) | `@norien-live/docs` — the documentation, docs.norien.live (Next.js, port 3003) |
+| [packages/web-ui/](packages/web-ui/) | `@norien-live/web-ui` — design system, shared components, and data layer for the three apps |
 | [packages/sdk/](packages/sdk/) | `@norien-live/sdk` — TypeScript SDK |
 | [sdk-python/](sdk-python/) | `norien` — Python SDK, zero dependencies |
 | [examples/](examples/) | Runnable SDK walkthroughs and 12 example tools |
@@ -114,11 +117,14 @@ directory. On first boot it applies migrations and seeds a sample catalogue of
 | `/console/` | Minimal browse / inspect / publish page for manual testing |
 | `/health` | Liveness + database check |
 
-The product UI is a second process on its own port, so the two never contend:
+The web is three independently deployable Next.js apps — one per subdomain —
+each a separate process on its own port, so none contend with the registry:
 
 ```bash
-npm run dev                          # registry  → http://127.0.0.1:3000
-npm run dev --workspace @norien-live/web  # product UI → http://localhost:3001
+npm run dev            # registry   → http://127.0.0.1:3000
+npm run dev:marketing  # norien.live      → http://localhost:3001
+npm run dev:app        # app.norien.live  → http://localhost:3002
+npm run dev:docs       # docs.norien.live → http://localhost:3003
 ```
 
 ```bash
@@ -621,47 +627,51 @@ Full details: [src/services/external/README.md](src/services/external/README.md)
 
 ## Product surface
 
-The same unified API is consumed by three clients — a web app, the CLI, and both
+The same unified API is consumed by three clients — the web, the CLI, and both
 SDKs. **None of them knows a provider exists.** They call Norien; Norien calls
 the world.
 
-### Web ([web/](web/))
+### Web (three apps, one design system)
 
-Next.js 15 App Router on **:3001**, server components, warm cream-and-brown
-design system. A public marketing site and the application, in one project:
+Next.js 15 App Router, server components, warm cream-and-brown design system.
+One subdomain per concern, each an independently deployable app that shares
+[`packages/web-ui/`](packages/web-ui/) — the design system, components, and data
+layer:
 
-| Group | Routes |
-| --- | --- |
-| Marketing | `/`, `/docs`, `/pricing`, `/blog`, `/changelog`, `/about`, `/contact`, `/privacy`, `/terms` |
-| Auth | `/login`, `/signup` — prepared for GitHub and Google, not yet wired |
-| Application | `/app` and everything under it |
+| App | Subdomain (dev port) | Routes |
+| --- | --- | --- |
+| [apps/marketing/](apps/marketing/) | norien.live (:3001) | `/`, `/pricing`, `/blog`, `/changelog`, `/about`, `/contact`, `/privacy`, `/terms`, `/login`, `/signup` |
+| [apps/app/](apps/app/) | app.norien.live (:3002) | the application — every route below |
+| [apps/docs/](apps/docs/) | docs.norien.live (:3003) | the written documentation |
 
-`/` is a marketing page; the dashboard is `/app`. Every `/app/*` route shares one
-shell — sidebar, topbar, content column — collapsing to a drawer on mobile.
+The application has no `/app` prefix — every route lives at the root of
+app.norien.live and shares one shell (sidebar, topbar, content column),
+collapsing to a drawer on mobile:
 
 | Route | Shows |
 | --- | --- |
-| `/app` | Trending, new launches, highest volume, biggest gainers, latest projects, latest registry, latest tools, network status |
-| `/app/markets`, `/app/tokens` | Live token table and card directory — search, sort, filter, paginate |
-| `/app/token/:address` | Price, market cap, liquidity, holders, 24h range, supply, contract, links |
-| `/app/wallet/:address` | Balance, per-token holdings, transactions, token transfers |
-| `/app/contract/:address` | Verification, creator, read functions, events, ABI, source |
-| `/app/projects`, `/app/project/:slug` | TVL rankings; TVL by chain, GitHub health, contributors |
-| `/app/registry`, `/app/registry/:slug` | Published agents; manifest, requirements, runtime readiness, versions |
-| `/app/tools`, `/app/tools/:slug` | The marketplace; schemas, permissions, dependencies, versions |
-| `/app/runtime` | Supervisor state, per-agent status and health, registry and chain connectivity |
-| `/app/publish` | Validates a pasted `agent.json` against the live registry |
-| `/app/search` | Global search across market data **and** the registry |
-| `/app/api-keys`, `/app/profile`, `/app/settings` | Identification model, account state, live provider health |
-| `/app/address/:address` | Classifies an address and 307s to contract or wallet |
+| `/` | Trending, new launches, highest volume, biggest gainers, latest projects, latest registry, latest tools, network status |
+| `/markets`, `/tokens` | Live token table and card directory — search, sort, filter, paginate |
+| `/token/:address` | Price, market cap, liquidity, holders, 24h range, supply, contract, links |
+| `/wallet/:address` | Balance, per-token holdings, transactions, token transfers |
+| `/contract/:address` | Verification, creator, read functions, events, ABI, source |
+| `/projects`, `/project/:slug` | TVL rankings; TVL by chain, GitHub health, contributors |
+| `/registry`, `/registry/:slug` | Published agents; manifest, requirements, runtime readiness, versions |
+| `/tools`, `/tools/:slug` | The marketplace; schemas, permissions, dependencies, versions |
+| `/runtime` | Supervisor state, per-agent status and health, registry and chain connectivity |
+| `/publish` | Validates a pasted `agent.json` against the live registry |
+| `/search` | Global search across market data **and** the registry |
+| `/api-keys`, `/profile`, `/settings` | Identification model, account state, live provider health |
+| `/address/:address` | Classifies an address and 307s to contract or wallet |
+
+Sign-in (Supabase, GitHub OAuth) happens on the marketing site; the session
+cookie is scoped to `.norien.live`, so it carries over to the app subdomain.
 
 Every page handles four states: loading (skeletons), empty, error, and
 **partial** — `DegradedNotice` surfaces the API's `sources`/`degraded` report
 rather than presenting an incomplete answer as a complete one. The dashboard
 suspends each of its eight widgets separately, so one slow provider delays only
 its own card. No page uses mock data.
-
-Full details: [web/README.md](web/README.md).
 
 ### CLI
 
