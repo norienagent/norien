@@ -1,6 +1,27 @@
 import 'server-only';
 
 import { API_URL, RUNTIME_URL } from './config';
+import { proxiedLogo } from './format';
+
+/**
+ * Fields that hold a remote image URL. Every response is walked once so these
+ * are rewritten to Norien's image proxy at the boundary — before the data
+ * reaches any component (and, crucially, before a client component serializes
+ * one as a prop). After this, no vendor image domain exists anywhere in a page.
+ */
+const LOGO_KEYS = new Set(['logo', 'avatar', 'avatarUrl', 'avatar_url']);
+
+function proxyLogos(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(proxyLogos);
+  if (value && typeof value === 'object') {
+    const out: Record<string, unknown> = {};
+    for (const [key, val] of Object.entries(value)) {
+      out[key] = LOGO_KEYS.has(key) && typeof val === 'string' ? proxiedLogo(val) : proxyLogos(val);
+    }
+    return out;
+  }
+  return value;
+}
 
 /**
  * The web app's only data source.
@@ -416,7 +437,7 @@ async function request<T>(path: string, options: FetchOptions = {}): Promise<T |
     throw new ApiError(message, response.status);
   }
 
-  return (await response.json()) as T;
+  return proxyLogos(await response.json()) as T;
 }
 
 const query = (params: Record<string, string | number | undefined>): string => {
