@@ -1,0 +1,58 @@
+{
+  "name": "@norien/cli",
+  "version": "0.1.0",
+  "description": "Official command-line interface for the Norien agent registry.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "norien": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@norien/sdk": "0.1.0",
+    "axios": "^1.7.0",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "inquirer": "^12.0.0",
+    "ora": "^8.1.0",
+    "@norien/runtime": "0.1.0",
+    "@norien/tools": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "typescript": "^7.0.2"
+  },
+  "keywords": [
+    "norien",
+    "cli",
+    "agent",
+    "registry",
+    "ai-agents",
+    "marketplace"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://norien.live",
+  "bugs": {
+    "url": "https://norien.live/contact"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/norienagent/norien.git",
+    "directory": "packages/cli"
+  }
+}

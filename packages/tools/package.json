@@ -1,0 +1,54 @@
+{
+  "name": "@norien/tools",
+  "version": "0.1.0",
+  "description": "The Norien tool plugin system: validate, install, and execute marketplace tools.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@norien/sdk": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "typescript": "^7.0.2"
+  },
+  "keywords": [
+    "norien",
+    "tools",
+    "plugin",
+    "ai-agents",
+    "marketplace"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://norien.live",
+  "bugs": {
+    "url": "https://norien.live/contact"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/norienagent/norien.git",
+    "directory": "packages/tools"
+  }
+}

@@ -1,0 +1,17 @@
+* text=auto eol=lf
+
+# The CLI entrypoint starts with `#!/usr/bin/env node`. If a clone on Windows
+# rewrote it to CRLF, the kernel would read the interpreter as "node\r" and the
+# binary would fail to launch on macOS and Linux. Pin these to LF regardless of
+# platform or core.autocrlf.
+packages/cli/src/index.ts eol=lf
+*.js eol=lf
+*.mjs eol=lf
+*.cjs eol=lf
+*.ts eol=lf
+*.sh eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary

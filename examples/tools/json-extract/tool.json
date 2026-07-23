@@ -1,0 +1,43 @@
+{
+  "name": "JSON Extract",
+  "slug": "json-extract",
+  "version": "1.0.0",
+  "description": "Pull values out of a JSON document by dot-path, so one tool's output can feed another's input.",
+  "category": "utility",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "input_schema": {
+    "type": "object",
+    "required": ["data", "paths"],
+    "properties": {
+      "data": {
+        "description": "Any JSON value to read from."
+      },
+      "paths": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Dot-paths to extract, e.g. \"user.name\" or \"items.0.id\". Use \"*\" to map over an array."
+      },
+      "defaultValue": {
+        "description": "Returned for a path that does not resolve. Defaults to null."
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": ["values"],
+    "properties": {
+      "values": {
+        "type": "object",
+        "description": "One entry per requested path, keyed by the path."
+      },
+      "missing": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Paths that did not resolve."
+      }
+    }
+  },
+  "permissions": [],
+  "license": "MIT"
+}

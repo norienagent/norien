@@ -1,0 +1,80 @@
+/**
+ * Display formatting.
+ *
+ * Defined once and shared by every page, so a market cap is rendered the same
+ * way in a table row, a stat tile, and a detail header.
+ */
+
+const EM_DASH = '—';
+
+/** Compact currency; full precision is unreadable in a dense table. */
+export function usd(value: number | null | undefined): string {
+  if (value === null || value === undefined) return EM_DASH;
+
+  const abs = Math.abs(value);
+  if (abs >= 1e12) return `$${(value / 1e12).toFixed(2)}T`;
+  if (abs >= 1e9) return `$${(value / 1e9).toFixed(2)}B`;
+  if (abs >= 1e6) return `$${(value / 1e6).toFixed(2)}M`;
+  if (abs >= 1e3) return `$${(value / 1e3).toFixed(1)}K`;
+  return `$${value.toFixed(2)}`;
+}
+
+/** Prices span many orders of magnitude, so precision adapts to size. */
+export function price(value: number | null | undefined): string {
+  if (value === null || value === undefined) return EM_DASH;
+  if (value === 0) return '$0';
+
+  const abs = Math.abs(value);
+  if (abs >= 1000) return `$${value.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+  if (abs >= 1) return `$${value.toFixed(4)}`;
+  if (abs >= 0.0001) return `$${value.toFixed(6)}`;
+  return `$${value.toExponential(2)}`;
+}
+
+export function percent(value: number | null | undefined): string {
+  if (value === null || value === undefined) return EM_DASH;
+  return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
+}
+
+export function count(value: number | null | undefined): string {
+  return value === null || value === undefined ? EM_DASH : value.toLocaleString('en-US');
+}
+
+export function shortAddress(address: string, size = 6): string {
+  return address.length > size * 2 + 2
+    ? `${address.slice(0, size + 2)}…${address.slice(-size)}`
+    : address;
+}
+
+/** Integer-safe: token balances routinely exceed Number precision. */
+export function tokenAmount(value: string, decimals: number | null): string {
+  if (decimals === null) return value;
+
+  try {
+    const negative = value.startsWith('-');
+    const digits = (negative ? value.slice(1) : value).padStart(decimals + 1, '0');
+    const whole = digits.slice(0, digits.length - decimals);
+    const fraction = digits.slice(digits.length - decimals).replace(/0+$/, '').slice(0, 6);
+    const formatted = Number(whole).toLocaleString('en-US');
+    return `${negative ? '-' : ''}${formatted}${fraction ? `.${fraction}` : ''}`;
+  } catch {
+    return value;
+  }
+}
+
+export function relativeTime(iso: string | null): string {
+  if (!iso) return EM_DASH;
+
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return EM_DASH;
+
+  const seconds = Math.max(0, Math.round((Date.now() - then) / 1000));
+  if (seconds < 60) return `${seconds}s ago`;
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86_400) return `${Math.floor(seconds / 3600)}h ago`;
+  if (seconds < 2_592_000) return `${Math.floor(seconds / 86_400)}d ago`;
+  if (seconds < 31_536_000) return `${Math.floor(seconds / 2_592_000)}mo ago`;
+  return `${Math.floor(seconds / 31_536_000)}y ago`;
+}
+
+export const dash = EM_DASH;

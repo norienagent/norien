@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "agents": {
+    "market-monitor": {
+      "granted": [
+        "network:fetch"
+      ],
+      "grantedAt": "2026-07-22T17:18:00.793Z"
+    },
+    "research-agent": {
+      "granted": [
+        "network:fetch",
+        "storage:write"
+      ],
+      "grantedAt": "2026-07-22T17:04:27.896Z"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+# pnpm reads its workspace layout from this file; it ignores the "workspaces"
+# field in package.json. Keep the two lists in sync.
+packages:
+  - 'packages/*'
+  - 'web'
+
+# @norien/cli depends on @norien/sdk, @norien/tools and @norien/runtime, none of
+# which are published. pnpm 10+ defaults this to false, which would send it to
+# the public registry for them; true resolves them from this workspace instead.
+linkWorkspacePackages: true

@@ -1,0 +1,33 @@
+{
+  "name": "Filesystem",
+  "slug": "filesystem",
+  "version": "1.0.0",
+  "description": "Read, write, and list files within a sandboxed root directory.",
+  "category": "filesystem",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "input_schema": {
+    "type": "object",
+    "required": ["action", "path"],
+    "properties": {
+      "action": { "type": "string", "enum": ["read", "write", "list", "delete"] },
+      "path": { "type": "string", "description": "Path relative to the sandbox root." },
+      "content": { "type": "string", "description": "Content for the write action." }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "action": { "type": "string" },
+      "path": { "type": "string" },
+      "content": { "type": "string" },
+      "entries": { "type": "array", "items": { "type": "string" } },
+      "bytes": { "type": "integer" }
+    }
+  },
+  "environment": [
+    { "name": "NORIEN_FS_ROOT", "description": "Sandbox root. Defaults to the tool directory.", "required": false, "secret": false }
+  ],
+  "permissions": ["filesystem:read", "filesystem:write"],
+  "license": "MIT"
+}

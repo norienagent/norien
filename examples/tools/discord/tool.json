@@ -1,0 +1,27 @@
+{
+  "name": "Discord",
+  "slug": "discord",
+  "version": "1.0.0",
+  "description": "Post a message to a Discord channel via an incoming webhook.",
+  "category": "discord",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "input_schema": {
+    "type": "object",
+    "required": ["content"],
+    "properties": {
+      "content": { "type": "string", "maxLength": 2000 },
+      "username": { "type": "string" }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": ["delivered"],
+    "properties": { "delivered": { "type": "boolean" }, "status": { "type": "integer" } }
+  },
+  "environment": [
+    { "name": "DISCORD_WEBHOOK_URL", "description": "Discord incoming webhook URL.", "required": true, "secret": true }
+  ],
+  "permissions": ["network:fetch", "chat:write"],
+  "license": "MIT"
+}

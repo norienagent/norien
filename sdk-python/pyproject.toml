@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "norien"
+version = "0.1.0"
+description = "Official Python SDK for the Norien agent registry."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = ["norien", "agents", "registry", "ai", "sdk"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Typing :: Typed",
+]
+
+# No runtime dependencies on purpose: the SDK is a thin REST client, and a
+# zero-dependency package installs cleanly into any environment, including the
+# constrained ones agents themselves often run in.
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.urls]
+Homepage = "https://github.com/norien/norien"
+
+[tool.hatch.build.targets.wheel]
+packages = ["norien"]

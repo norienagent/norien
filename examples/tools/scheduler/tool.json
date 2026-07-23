@@ -1,0 +1,24 @@
+{
+  "name": "Scheduler",
+  "slug": "scheduler",
+  "version": "1.0.0",
+  "description": "Compute the next run times for an interval or daily schedule.",
+  "category": "utility",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "every_seconds": { "type": "integer", "minimum": 1 },
+      "at": { "type": "string", "description": "Daily time as HH:MM (UTC)." },
+      "count": { "type": "integer", "minimum": 1, "maximum": 100 },
+      "from": { "type": "string", "description": "ISO start time; defaults to now." }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": ["runs"],
+    "properties": { "runs": { "type": "array", "items": { "type": "string" } } }
+  },
+  "license": "MIT"
+}

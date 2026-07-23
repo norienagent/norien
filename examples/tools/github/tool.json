@@ -1,0 +1,31 @@
+{
+  "name": "GitHub",
+  "slug": "github",
+  "version": "1.0.0",
+  "description": "Fetch public repository metadata from the GitHub REST API.",
+  "category": "github",
+  "runtime": "http",
+  "entrypoint": "https://api.github.com/repos/{owner}/{repo}",
+  "http": { "method": "GET" },
+  "input_schema": {
+    "type": "object",
+    "required": ["owner", "repo"],
+    "properties": {
+      "owner": { "type": "string" },
+      "repo": { "type": "string" }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "full_name": { "type": "string" },
+      "description": { "type": "string" },
+      "stargazers_count": { "type": "integer" },
+      "language": { "type": "string" }
+    }
+  },
+  "authentication": { "type": "bearer", "description": "Optional GITHUB_TOKEN raises the rate limit." },
+  "permissions": ["network:fetch"],
+  "license": "MIT",
+  "homepage": "https://docs.github.com/rest"
+}

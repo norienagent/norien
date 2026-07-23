@@ -1,0 +1,9 @@
+{
+  "name": "market-monitor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Watches token prices through Norien's data API.",
+  "type": "module",
+  "main": "index.js",
+  "engines": { "node": ">=20" }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "Telegram",
+  "slug": "telegram",
+  "version": "1.0.0",
+  "description": "Send a message through the Telegram Bot API.",
+  "category": "telegram",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "input_schema": {
+    "type": "object",
+    "required": ["chat_id", "text"],
+    "properties": {
+      "chat_id": { "type": "string" },
+      "text": { "type": "string" },
+      "parse_mode": { "type": "string", "enum": ["Markdown", "HTML"] }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": ["delivered"],
+    "properties": { "delivered": { "type": "boolean" }, "message_id": { "type": "integer" } }
+  },
+  "environment": [
+    { "name": "TELEGRAM_BOT_TOKEN", "description": "Bot token from @BotFather.", "required": true, "secret": true }
+  ],
+  "permissions": ["network:fetch", "chat:write"],
+  "license": "MIT"
+}

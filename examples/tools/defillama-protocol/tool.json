@@ -1,0 +1,39 @@
+{
+  "name": "DeFiLlama Protocol",
+  "slug": "defillama-protocol",
+  "version": "1.0.0",
+  "description": "Look up a DeFi protocol's TVL, category, and supported chains by slug.",
+  "category": "blockchain",
+  "runtime": "http",
+  "entrypoint": "https://api.llama.fi/protocol/{slug}",
+  "http": {
+    "method": "GET"
+  },
+  "input_schema": {
+    "type": "object",
+    "required": ["slug"],
+    "properties": {
+      "slug": {
+        "type": "string",
+        "description": "DeFiLlama protocol slug, e.g. \"aave\" or \"uniswap\"."
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "id": { "type": "string" },
+      "name": { "type": "string" },
+      "symbol": { "type": "string" },
+      "category": { "type": "string" },
+      "url": { "type": "string" },
+      "description": { "type": "string" },
+      "chains": { "type": "array", "items": { "type": "string" } },
+      "currentChainTvls": { "type": "object" }
+    }
+  },
+  "permissions": ["network:fetch"],
+  "license": "MIT",
+  "homepage": "https://defillama.com",
+  "documentation": "https://defillama.com/docs/api"
+}

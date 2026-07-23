@@ -1,0 +1,64 @@
+{
+  "name": "@norien/runtime",
+  "version": "0.1.0",
+  "description": "The Norien runtime supervisor: run installed agents, stream logs, probe health, recover crashes.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./daemon": "./dist/daemon.js",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "norien-runtime": "./dist/daemon.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.3.0",
+    "@norien/sdk": "0.1.0",
+    "fastify": "^5.10.0",
+    "fastify-type-provider-zod": "^7.0.0",
+    "zod": "^4.4.3",
+    "@norien/tools": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "typescript": "^7.0.2"
+  },
+  "keywords": [
+    "norien",
+    "runtime",
+    "supervisor",
+    "ai-agents",
+    "process-manager"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://norien.live",
+  "bugs": {
+    "url": "https://norien.live/contact"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/norienagent/norien.git",
+    "directory": "packages/runtime"
+  }
+}

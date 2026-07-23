@@ -1,0 +1,51 @@
+{
+  "name": "Market Monitor",
+  "version": "1.0.0",
+  "description": "Watches token prices through Norien's data API and reports movements above a threshold.",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "commands": {
+    "start": "node index.js",
+    "health": "/health"
+  },
+  "tools": [
+    "json-extract"
+  ],
+  "permissions": [
+    "network:fetch"
+  ],
+  "environment": [
+    {
+      "name": "WATCH_INTERVAL_SECONDS",
+      "required": false,
+      "secret": false,
+      "default": "30",
+      "description": "How often to poll the market API."
+    },
+    {
+      "name": "MOVE_THRESHOLD_PERCENT",
+      "required": false,
+      "secret": false,
+      "default": "1",
+      "description": "Report a token when its 24h change exceeds this, in percent."
+    },
+    {
+      "name": "WATCH_LIMIT",
+      "required": false,
+      "secret": false,
+      "default": "10",
+      "description": "How many tokens to watch, ranked by 24h volume."
+    }
+  ],
+  "tags": [
+    "market",
+    "monitoring",
+    "defi"
+  ],
+  "license": "MIT",
+  "source": {
+    "type": "git",
+    "url": "https://github.com/norienagent/norien",
+    "directory": "examples/agents/market-monitor"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "Web Scraper",
+  "slug": "web-scraper",
+  "version": "1.0.0",
+  "description": "Fetch a page and extract its title, links, or visible text.",
+  "category": "browser",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "input_schema": {
+    "type": "object",
+    "required": ["url"],
+    "properties": {
+      "url": { "type": "string", "format": "uri" },
+      "extract": { "type": "string", "enum": ["title", "links", "text"] }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "url": { "type": "string" },
+      "title": { "type": "string" },
+      "links": { "type": "array", "items": { "type": "string" } },
+      "text": { "type": "string" }
+    }
+  },
+  "permissions": ["network:fetch"],
+  "license": "MIT"
+}

@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Registry Console</title>
+    <!--
+      Deliberately plain. This is a manual-testing surface, not a
+      product interface: no branding, no colour system, no layout opinions.
+      Those decisions belong to a later phase.
+    -->
+    <style>
+      body { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin: 2rem auto; max-width: 60rem; padding: 0 1rem; line-height: 1.5; }
+      fieldset { border: 1px solid currentColor; margin-bottom: 1.5rem; padding: 1rem; }
+      legend { padding: 0 .5rem; font-weight: bold; }
+      label { display: inline-block; margin-right: 1rem; }
+      input, select, button, textarea { font: inherit; padding: .25rem; }
+      textarea { width: 100%; }
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid currentColor; padding: .35rem .5rem; text-align: left; vertical-align: top; font-size: .9em; }
+      pre { border: 1px solid currentColor; padding: .75rem; overflow-x: auto; white-space: pre-wrap; }
+      .meta { opacity: .7; font-size: .85em; }
+    </style>
+  </head>
+  <body>
+    <h1>Registry Console</h1>
+    <p class="meta">
+      Manual test surface. Full API reference at <a href="/docs">/docs</a>.
+      Requests are sent as the actor below (stands in for authentication).
+    </p>
+
+    <fieldset>
+      <legend>Actor</legend>
+      <label>handle <input id="actor" value="anonymous" /></label>
+      <span class="meta">Sent as the <code>x-norien-actor</code> header.</span>
+    </fieldset>
+
+    <fieldset>
+      <legend>Browse</legend>
+      <label>query <input id="q" placeholder="e.g. sql" /></label>
+      <label>
+        type
+        <select id="type">
+          <option value="all">all</option>
+          <option value="agent">agents</option>
+          <option value="tool">tools</option>
+        </select>
+      </label>
+      <label>tag <input id="tag" placeholder="data" size="10" /></label>
+      <label>limit <input id="limit" type="number" value="20" min="1" max="100" size="4" /></label>
+      <button id="go">Search</button>
+      <button id="reset">List all</button>
+      <p id="status" class="meta"></p>
+      <table>
+        <thead>
+          <tr><th>type</th><th>slug</th><th>version</th><th>runtime</th><th>author</th><th>description</th><th></th></tr>
+        </thead>
+        <tbody id="results"></tbody>
+      </table>
+    </fieldset>
+
+    <fieldset>
+      <legend>Detail</legend>
+      <pre id="detail">Select a row above.</pre>
+    </fieldset>
+
+    <fieldset>
+      <legend>Publish</legend>
+      <p class="meta">Inspect validates the manifest via <code>/runtime/inspect</code> without publishing. Publish POSTs verbatim to <code>/publish</code>.</p>
+      <textarea id="payload" rows="16"></textarea>
+      <p>
+        <button id="inspect">Inspect (dry run)</button>
+        <button id="publish">Publish</button>
+      </p>
+      <pre id="publishResult"></pre>
+    </fieldset>
+
+    <script type="module">
+      const $ = (id) => document.getElementById(id);
+
+      const EXAMPLE = {
+        type: 'agent',
+        tags: ['example'],
+        manifest: {
+          name: 'Example Agent',
+          version: '1.0.0',
+          description: 'A minimal agent used to exercise the publish endpoint.',
+          runtime: 'node',
+          entrypoint: 'dist/index.js',
+          tools: ['http-fetch'],
+          permissions: ['network:fetch'],
+          environment: [{ name: 'API_KEY', required: true, secret: true }],
+          commands: { start: 'node dist/index.js', health: '/health' },
+        },
+      };
+      $('payload').value = JSON.stringify(EXAMPLE, null, 2);
+
+      const headers = () => {
+        const actor = $('actor').value.trim();
+        return actor && actor !== 'anonymous' ? { 'x-norien-actor': actor } : {};
+      };
+
+      async function call(path, options = {}) {
+        const response = await fetch(path, {
+          ...options,
+          headers: { 'content-type': 'application/json', ...headers(), ...(options.headers ?? {}) },
+        });
+        const body = await response.json().catch(() => null);
+        return { ok: response.ok, status: response.status, body };
+      }
+
+      function render(rows, meta) {
+        const tbody = $('results');
+        tbody.replaceChildren();
+
+        for (const row of rows) {
+          const tr = document.createElement('tr');
+          for (const value of [row.type, row.slug, row.version, row.runtime ?? '', row.author, row.description]) {
+            const td = document.createElement('td');
+            td.textContent = value ?? '';
+            tr.append(td);
+          }
+
+          const actions = document.createElement('td');
+          const view = document.createElement('button');
+          view.textContent = 'view';
+          view.addEventListener('click', () => show(row));
+          actions.append(view);
+
+          if (row.type === 'agent') {
+            const runtime = document.createElement('button');
+            runtime.textContent = 'runtime';
+            runtime.addEventListener('click', () => showRuntime(row.slug));
+            actions.append(' ', runtime);
+
+            const install = document.createElement('button');
+            install.textContent = 'install';
+            install.addEventListener('click', () => doInstall(row.slug));
+            actions.append(' ', install);
+          }
+
+          tr.append(actions);
+          tbody.append(tr);
+        }
+
+        $('status').textContent = meta
+          ? `${rows.length} shown of ${meta.total} total`
+          : `${rows.length} shown`;
+      }
+
+      async function show(row) {
+        const path = row.type === 'agent' ? `/agents/${row.slug}` : `/tools/${row.slug}`;
+        const { body } = await call(path);
+        $('detail').textContent = JSON.stringify(body, null, 2);
+      }
+
+      async function showRuntime(slug) {
+        const { body } = await call(`/agents/${slug}/runtime`);
+        $('detail').textContent = JSON.stringify(body, null, 2);
+      }
+
+      async function doInstall(slug) {
+        const { status, body } = await call('/install', {
+          method: 'POST',
+          body: JSON.stringify({ agent: slug }),
+        });
+        $('detail').textContent = `HTTP ${status}\n\n${JSON.stringify(body, null, 2)}`;
+      }
+
+      function flatten(payload, kind) {
+        return payload.data.map((item) =>
+          'item' in item
+            ? { type: item.type, ...item.item }
+            : { type: kind, ...item },
+        );
+      }
+
+      async function search() {
+        const q = $('q').value.trim();
+        const type = $('type').value;
+        const tag = $('tag').value.trim();
+        const limit = $('limit').value;
+
+        if (q) {
+          const params = new URLSearchParams({ q, type, limit });
+          if (tag) params.set('tag', tag);
+          const { body } = await call(`/search?${params}`);
+          return render(flatten(body), body.meta);
+        }
+
+        const params = new URLSearchParams({ limit });
+        if (tag) params.set('tag', tag);
+
+        if (type === 'tool') {
+          const { body } = await call(`/tools?${params}`);
+          return render(flatten(body, 'tool'), body.meta);
+        }
+
+        if (type === 'agent') {
+          const { body } = await call(`/agents?${params}`);
+          return render(flatten(body, 'agent'), body.meta);
+        }
+
+        const [agents, tools] = await Promise.all([
+          call(`/agents?${params}`),
+          call(`/tools?${params}`),
+        ]);
+
+        render(
+          [...flatten(agents.body, 'agent'), ...flatten(tools.body, 'tool')],
+          { total: agents.body.meta.total + tools.body.meta.total },
+        );
+      }
+
+      $('go').addEventListener('click', search);
+      $('reset').addEventListener('click', () => {
+        $('q').value = '';
+        $('tag').value = '';
+        search();
+      });
+      $('q').addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') search();
+      });
+
+      $('inspect').addEventListener('click', async () => {
+        let parsed;
+        try {
+          parsed = JSON.parse($('payload').value);
+        } catch (error) {
+          $('publishResult').textContent = `Invalid JSON: ${error.message}`;
+          return;
+        }
+
+        const { status, body } = await call('/runtime/inspect', {
+          method: 'POST',
+          body: JSON.stringify({ manifest: parsed.manifest ?? parsed }),
+        });
+        $('publishResult').textContent = `HTTP ${status}
+
+${JSON.stringify(body, null, 2)}`;
+      });
+
+      $('publish').addEventListener('click', async () => {
+        let parsed;
+        try {
+          parsed = JSON.parse($('payload').value);
+        } catch (error) {
+          $('publishResult').textContent = `Invalid JSON: ${error.message}`;
+          return;
+        }
+
+        const { status, body } = await call('/publish', {
+          method: 'POST',
+          body: JSON.stringify(parsed),
+        });
+        $('publishResult').textContent = `HTTP ${status}\n\n${JSON.stringify(body, null, 2)}`;
+        if (status === 201) search();
+      });
+
+      search();
+    </script>
+  </body>
+</html>

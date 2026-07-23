@@ -1,0 +1,32 @@
+{
+  "name": "Logger",
+  "slug": "logger",
+  "version": "1.0.0",
+  "description": "Append a structured, timestamped log entry to a file.",
+  "category": "utility",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "input_schema": {
+    "type": "object",
+    "required": ["message"],
+    "properties": {
+      "level": { "type": "string", "enum": ["debug", "info", "warn", "error"] },
+      "message": { "type": "string" },
+      "fields": { "type": "object" }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": ["written"],
+    "properties": {
+      "written": { "type": "boolean" },
+      "file": { "type": "string" },
+      "entry": { "type": "object" }
+    }
+  },
+  "environment": [
+    { "name": "NORIEN_LOG_FILE", "description": "Log file path. Defaults to ./norien.tool.log.", "required": false, "secret": false }
+  ],
+  "permissions": ["filesystem:write"],
+  "license": "MIT"
+}

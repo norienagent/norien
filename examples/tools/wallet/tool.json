@@ -1,0 +1,31 @@
+{
+  "name": "Wallet",
+  "slug": "wallet",
+  "version": "1.0.0",
+  "description": "Read an EVM address balance over JSON-RPC.",
+  "category": "wallet",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "input_schema": {
+    "type": "object",
+    "required": ["address"],
+    "properties": {
+      "address": { "type": "string", "description": "0x-prefixed EVM address." },
+      "rpc_url": { "type": "string", "description": "JSON-RPC endpoint; overrides RPC_URL." }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": ["address", "wei"],
+    "properties": {
+      "address": { "type": "string" },
+      "wei": { "type": "string" },
+      "eth": { "type": "string" }
+    }
+  },
+  "environment": [
+    { "name": "RPC_URL", "description": "Default JSON-RPC endpoint.", "required": false, "secret": false }
+  ],
+  "permissions": ["network:fetch", "wallet:read"],
+  "license": "MIT"
+}

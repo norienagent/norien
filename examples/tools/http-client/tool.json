@@ -1,0 +1,30 @@
+{
+  "name": "HTTP Client",
+  "slug": "http-client",
+  "version": "1.0.0",
+  "description": "Perform an HTTP request and return the status, headers, and body.",
+  "category": "http",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "input_schema": {
+    "type": "object",
+    "required": ["url"],
+    "properties": {
+      "url": { "type": "string", "format": "uri" },
+      "method": { "type": "string", "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+      "headers": { "type": "object" },
+      "body": { "type": "string" }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": ["status"],
+    "properties": {
+      "status": { "type": "integer" },
+      "headers": { "type": "object" },
+      "body": { "type": "string" }
+    }
+  },
+  "permissions": ["network:fetch"],
+  "license": "MIT"
+}

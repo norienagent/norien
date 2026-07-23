@@ -1,0 +1,9 @@
+{
+  "pid": 22780,
+  "port": 4123,
+  "host": "127.0.0.1",
+  "url": "http://127.0.0.1:4123",
+  "workspace": "C:\\norien agent",
+  "startedAt": "2026-07-22T17:00:58.918Z",
+  "version": "0.1.0"
+}

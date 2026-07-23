@@ -1,0 +1,25 @@
+# Dependencies and build output
+node_modules/
+dist/
+.next/
+*.tsbuildinfo
+coverage/
+
+# Embedded database
+.data/
+
+# Secrets and environment. .env.local holds live provider keys — never commit it.
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Local install artefacts — the OUTPUT of `norien install`, like node_modules.
+# The agents and tools themselves live in examples/; these are throwaway copies,
+# and they can contain a filled-in .env.
+norien_agents/
+norien_tools/
+norien.lock.json
+norien.tools.lock.json

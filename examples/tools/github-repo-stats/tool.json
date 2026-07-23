@@ -1,0 +1,39 @@
+{
+  "name": "GitHub Repo Stats",
+  "slug": "github-repo-stats",
+  "version": "1.0.0",
+  "description": "Read a public GitHub repository's stars, forks, open issues, language, and license.",
+  "category": "github",
+  "runtime": "http",
+  "entrypoint": "https://api.github.com/repos/{owner}/{repo}",
+  "http": {
+    "method": "GET"
+  },
+  "input_schema": {
+    "type": "object",
+    "required": ["owner", "repo"],
+    "properties": {
+      "owner": { "type": "string", "description": "Repository owner or organisation." },
+      "repo": { "type": "string", "description": "Repository name." }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "full_name": { "type": "string" },
+      "description": { "type": "string" },
+      "html_url": { "type": "string" },
+      "stargazers_count": { "type": "integer" },
+      "forks_count": { "type": "integer" },
+      "open_issues_count": { "type": "integer" },
+      "watchers_count": { "type": "integer" },
+      "language": { "type": "string" },
+      "default_branch": { "type": "string" },
+      "pushed_at": { "type": "string" }
+    }
+  },
+  "permissions": ["network:fetch"],
+  "license": "MIT",
+  "homepage": "https://docs.github.com/rest",
+  "documentation": "https://docs.github.com/en/rest/repos/repos#get-a-repository"
+}

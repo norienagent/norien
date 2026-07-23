@@ -1,0 +1,27 @@
+{
+  "name": "Web Search",
+  "slug": "web-search",
+  "version": "1.0.0",
+  "description": "Search the web via the DuckDuckGo instant-answer API (no key required).",
+  "category": "search",
+  "runtime": "http",
+  "entrypoint": "https://api.duckduckgo.com/?format=json&no_html=1&skip_disambig=1",
+  "input_schema": {
+    "type": "object",
+    "required": ["q"],
+    "additionalProperties": true,
+    "properties": { "q": { "type": "string", "description": "Search query." } }
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "Heading": { "type": "string" },
+      "AbstractText": { "type": "string" },
+      "AbstractURL": { "type": "string" }
+    }
+  },
+  "http": { "method": "GET" },
+  "permissions": ["network:fetch"],
+  "license": "MIT",
+  "homepage": "https://duckduckgo.com"
+}
