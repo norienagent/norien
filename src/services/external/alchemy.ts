@@ -16,7 +16,8 @@ const NETWORKS: { network: string; label: string; nativeSymbol: string }[] = [
   { network: 'base-mainnet', label: 'Base', nativeSymbol: 'ETH' },
   { network: 'arb-mainnet', label: 'Arbitrum', nativeSymbol: 'ETH' },
   { network: 'opt-mainnet', label: 'Optimism', nativeSymbol: 'ETH' },
-  { network: 'polygon-mainnet', label: 'Polygon', nativeSymbol: 'POL' },
+  // Alchemy's Data API canonicalises Polygon to `matic-mainnet` in responses.
+  { network: 'matic-mainnet', label: 'Polygon', nativeSymbol: 'POL' },
 ];
 
 const META = new Map(NETWORKS.map((n) => [n.network, n]));
