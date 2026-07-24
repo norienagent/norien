@@ -46,9 +46,13 @@ export function Card({
 export function Stat({ label, value, hint }: { label: string; value: ReactNode; hint?: ReactNode }) {
   return (
     <div className="rounded-xl border border-line bg-card p-4 sm:p-5">
-      <div className="text-xs font-medium uppercase tracking-wide text-muted">{label}</div>
-      <div className="mt-1.5 text-xl font-semibold tracking-tight text-ink">{value}</div>
-      {hint ? <div className="mt-1 text-xs text-muted">{hint}</div> : null}
+      <div className="truncate text-[0.7rem] font-medium uppercase tracking-wide text-muted sm:text-xs">
+        {label}
+      </div>
+      <div className="mt-1.5 text-lg font-semibold tracking-tight text-ink tabular-nums sm:text-xl">
+        {value}
+      </div>
+      {hint ? <div className="mt-1 truncate text-xs text-muted">{hint}</div> : null}
     </div>
   );
 }
@@ -63,10 +67,10 @@ export function SectionHeading({
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">{title}</h1>
-        {detail ? <p className="mt-1 text-sm text-muted">{detail}</p> : null}
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-3 sm:mb-6">
+      <div className="min-w-0">
+        <h1 className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">{title}</h1>
+        {detail ? <p className="mt-1 text-sm leading-relaxed text-muted">{detail}</p> : null}
       </div>
       {action}
     </div>
@@ -131,7 +135,7 @@ const buttonTones: Record<ButtonTone, string> = {
 };
 
 const buttonBase =
-  'inline-flex items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50';
+  'inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-[colors,transform] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100';
 
 export function Button({
   tone = 'primary',

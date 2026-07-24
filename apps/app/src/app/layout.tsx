@@ -61,7 +61,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               </div>
             </header>
 
-            <main className="px-4 py-6 sm:px-6 sm:py-8">{children}</main>
+            <main className="px-4 pb-16 pt-5 sm:px-6 sm:pb-20 sm:pt-8">{children}</main>
           </div>
           <SignInToast />
         </DrawerProvider>

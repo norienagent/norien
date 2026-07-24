@@ -35,7 +35,7 @@ export default function DashboardPage() {
 
       <Suspense
         fallback={
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
             <SkeletonCards count={4} />
           </div>
         }
@@ -43,7 +43,7 @@ export default function DashboardPage() {
         <NetworkStatus />
       </Suspense>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+      <div className="mt-4 grid gap-4 sm:mt-6 lg:grid-cols-2">
         <Suspense fallback={<PanelSkeleton title="Trending tokens" />}>
           <TrendingPanel />
         </Suspense>
@@ -58,7 +58,7 @@ export default function DashboardPage() {
         </Suspense>
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-3">
+      <div className="mt-4 grid gap-4 sm:mt-6 lg:grid-cols-3">
         <Suspense fallback={<PanelSkeleton title="Latest projects" />}>
           <LatestProjectsPanel />
         </Suspense>
@@ -103,7 +103,7 @@ async function NetworkStatus() {
   const holders = items.reduce((sum, token) => sum + (token.holders ?? 0), 0);
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
       <Stat
         label="Block height"
         value={chain ? count(chain.data.blockNumber) : '—'}
