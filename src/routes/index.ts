@@ -1,6 +1,7 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 
 import { agentRoutes } from './agents.routes.js';
+import { aiRoutes } from './ai.routes.js';
 import { dataApiRoutes } from './api.routes.js';
 import { chatRoutes } from './chat.routes.js';
 import { healthRoutes } from './health.routes.js';
@@ -35,4 +36,6 @@ export const apiRoutes: FastifyPluginAsyncZod = async (app) => {
   await app.register(keyRoutes);
   // Chat with an agent (Virtuals Compute).
   await app.register(chatRoutes);
+  // AI helpers — manifest generation (Groq).
+  await app.register(aiRoutes);
 };

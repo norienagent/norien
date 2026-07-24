@@ -119,6 +119,12 @@ const envSchema = z.object({
   VIRTUALS_COMPUTE_URL: z.string().url().default('https://compute.virtuals.io/v1'),
   VIRTUALS_COMPUTE_MODEL: z.string().default('anthropic-claude-sonnet-5'),
 
+  // Groq — fast, free LLM inference for AI helpers (manifest generation, etc.).
+  // Optional: no key disables those helpers.
+  GROQ_API_KEY: optionalString,
+  GROQ_URL: z.string().url().default('https://api.groq.com/openai/v1'),
+  GROQ_MODEL: z.string().default('llama-3.3-70b-versatile'),
+
   /** Per-request timeout for every outbound provider call, in milliseconds. */
   REQUEST_TIMEOUT: z.coerce.number().int().positive().default(10_000),
   /** Default cache lifetime for provider responses, in seconds. */

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 
 import { Textarea } from '@norien-live/web-ui';
 import { InstallCommand } from '@/components/registry';
@@ -35,32 +35,96 @@ const INITIAL: InspectState = { status: 'idle' };
  */
 export function PublishForm() {
   const [state, formAction, pending] = useActionState(inspectManifest, INITIAL);
+  const [manifest, setManifest] = useState(EXAMPLE);
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <Card title="agent.json">
-        <form action={formAction}>
-          <Textarea
-            name="manifest"
-            rows={20}
-            defaultValue={state.manifest ?? EXAMPLE}
-            aria-label="Agent manifest"
-            className="w-full text-xs"
-            placeholder="Paste your agent.json here"
-          />
-          <div className="mt-3 flex items-center gap-3">
-            <Button type="submit" disabled={pending}>
-              {pending ? 'Validating…' : 'Validate manifest'}
-            </Button>
-            <span className="text-xs text-muted">Nothing is stored — this only validates.</span>
-          </div>
-        </form>
-      </Card>
+    <div className="space-y-4">
+      <ManifestGenerator onGenerate={setManifest} />
 
-      <Card title="Result">
-        <Result state={state} />
-      </Card>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card title="agent.json">
+          <form action={formAction}>
+            <Textarea
+              name="manifest"
+              rows={20}
+              value={manifest}
+              onChange={(e) => setManifest(e.target.value)}
+              aria-label="Agent manifest"
+              className="w-full text-xs"
+              placeholder="Paste your agent.json here"
+            />
+            <div className="mt-3 flex items-center gap-3">
+              <Button type="submit" disabled={pending}>
+                {pending ? 'Validating…' : 'Validate manifest'}
+              </Button>
+              <span className="text-xs text-muted">Nothing is stored — this only validates.</span>
+            </div>
+          </form>
+        </Card>
+
+        <Card title="Result">
+          <Result state={state} />
+        </Card>
+      </div>
     </div>
+  );
+}
+
+/**
+ * Draft a manifest from a plain-English description (Groq). It fills the editor
+ * below with a starting point the author refines and validates — never a
+ * substitute for review.
+ */
+function ManifestGenerator({ onGenerate }: { onGenerate: (json: string) => void }) {
+  const [description, setDescription] = useState('');
+  const [generating, setGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function generate() {
+    const text = description.trim();
+    if (text.length < 5 || generating) return;
+
+    setGenerating(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/ai/manifest', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ description: text }),
+      });
+      if (!response.ok) {
+        const body = (await response.json().catch(() => null)) as { error?: { message?: string } } | null;
+        throw new Error(body?.error?.message ?? 'Could not generate a manifest.');
+      }
+      const { manifest } = (await response.json()) as { manifest: unknown };
+      onGenerate(JSON.stringify(manifest, null, 2));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Something went wrong.');
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  return (
+    <Card title="Generate from a description">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+        <Textarea
+          rows={2}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="e.g. A Python agent that fetches crypto news hourly, summarises it, and posts to a webhook."
+          aria-label="Describe your agent"
+          className="w-full text-sm sm:flex-1"
+        />
+        <Button onClick={generate} disabled={generating || description.trim().length < 5}>
+          {generating ? 'Generating…' : 'Generate ✨'}
+        </Button>
+      </div>
+      {error ? <p className="mt-2 text-sm text-down">{error}</p> : null}
+      <p className="mt-2 text-xs text-muted">
+        A draft to refine — review it, then validate below before publishing.
+      </p>
+    </Card>
   );
 }
 
