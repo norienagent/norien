@@ -7,6 +7,7 @@ import { imageRoutes } from './img.routes.js';
 import { installRoutes } from './install.routes.js';
 import { keyRoutes } from './keys.routes.js';
 import { publishRoutes } from './publish.routes.js';
+import { rootRoutes } from './root.routes.js';
 import { runtimeRoutes } from './runtime.routes.js';
 import { searchRoutes } from './search.routes.js';
 import { toolRoutes } from './tools.routes.js';
@@ -17,6 +18,7 @@ import { toolRoutes } from './tools.routes.js';
  * a prefix, so it stays a one-line change.
  */
 export const apiRoutes: FastifyPluginAsyncZod = async (app) => {
+  await app.register(rootRoutes);
   await app.register(healthRoutes);
   await app.register(agentRoutes);
   await app.register(toolRoutes);

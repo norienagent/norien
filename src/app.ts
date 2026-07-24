@@ -98,6 +98,36 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(swaggerUi, {
     routePrefix: '/docs',
     uiConfig: { docExpansion: 'list', deepLinking: true },
+    theme: {
+      title: 'Norien API — Reference',
+      // Reskin Swagger UI in the Norien design system so the reference is
+      // consistent with the site, app, and docs.
+      css: [
+        {
+          filename: 'norien.css',
+          content: `
+            body, .swagger-ui { background:#F6F2EA; font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif; }
+            .swagger-ui .topbar { background:#2E261F; padding:10px 0; }
+            .swagger-ui .topbar .download-url-wrapper { display:none; }
+            .swagger-ui .topbar-wrapper img { display:none; }
+            .swagger-ui .topbar-wrapper::before { content:'norien · API'; color:#F6F2EA; font-weight:600; font-size:1.05rem; letter-spacing:-.01em; }
+            .swagger-ui .info .title { color:#2E261F; }
+            .swagger-ui .info a, .swagger-ui a { color:#7A5A3A; }
+            .swagger-ui .scheme-container { background:transparent; box-shadow:none; border-bottom:1px solid #DDD2C2; }
+            .swagger-ui .opblock-tag { color:#2E261F; border-bottom:1px solid #DDD2C2; }
+            .swagger-ui .opblock { border-radius:12px; box-shadow:none; border:1px solid #DDD2C2; background:#fff; }
+            .swagger-ui .opblock .opblock-summary { border-radius:12px; }
+            .swagger-ui .opblock.opblock-get .opblock-summary-method { background:#3f6b47; }
+            .swagger-ui .opblock.opblock-post .opblock-summary-method { background:#7A5A3A; }
+            .swagger-ui .opblock.opblock-delete .opblock-summary-method { background:#a3442f; }
+            .swagger-ui .btn.authorize, .swagger-ui .btn.execute { background:#7A5A3A; border-color:#7A5A3A; color:#fff; box-shadow:none; }
+            .swagger-ui .btn.authorize svg { fill:#fff; }
+            .swagger-ui .btn { border-radius:8px; }
+            .swagger-ui select, .swagger-ui input { border-radius:8px; }
+          `,
+        },
+      ],
+    },
   });
 
   await app.register(authPlugin);

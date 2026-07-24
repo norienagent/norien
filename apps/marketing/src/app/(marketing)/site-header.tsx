@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { APP_URL, Brand, ButtonLink, Container, DOCS_URL, XLink } from '@norien-live/web-ui';
+import { APP_URL, Brand, ButtonLink, Container, DOCS_URL, GitHubLink, XLink } from '@norien-live/web-ui';
 
 /**
  * The marketing site header.
@@ -43,11 +43,12 @@ export function SiteHeader() {
               <NavLink key={link.href} link={link} active={isActive(pathname, link)} />
             ))}
           </nav>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
+            <GitHubLink />
             <XLink />
             <Link
               href="/login"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-ink"
+              className="ml-1 rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-ink"
             >
               Sign in
             </Link>
@@ -125,6 +126,10 @@ export function SiteHeader() {
               <ButtonLink href={APP_URL} className="w-full justify-center py-2.5">
                 Open app
               </ButtonLink>
+              <div className="flex items-center gap-1 pt-1">
+                <GitHubLink />
+                <XLink />
+              </div>
             </div>
           </nav>
         </Container>

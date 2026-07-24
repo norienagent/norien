@@ -1,11 +1,11 @@
 {
   "name": "@norien-live/cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Official command-line interface for the Norien agent registry.",
   "license": "MIT",
   "type": "module",
   "bin": {
-    "norien": "./dist/index.js"
+    "norien": "dist/index.js"
   },
   "main": "./dist/index.js",
   "files": [

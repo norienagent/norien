@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import { Brand } from '@norien-live/web-ui';
+import { Brand, GitHubLink, XLink } from '@norien-live/web-ui';
 import { API_URL, DOCS_URL } from '@norien-live/web-ui';
-import { Container } from '@norien-live/web-ui';
+import { Container, MobileHint } from '@norien-live/web-ui';
 import { SiteHeader } from './site-header';
 
 /**
@@ -49,6 +49,10 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
               <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
                 The registry, runtime, and data layer for autonomous agents on Robinhood Chain.
               </p>
+              <div className="mt-4 flex items-center gap-1">
+                <GitHubLink className="-ml-2" />
+                <XLink />
+              </div>
             </div>
 
             <FooterColumn title="Product" links={PRODUCT} />
@@ -62,6 +66,8 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
           </div>
         </Container>
       </footer>
+
+      <MobileHint />
     </div>
   );
 }

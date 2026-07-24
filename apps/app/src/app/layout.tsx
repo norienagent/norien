@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { Suspense, type ReactNode } from 'react';
 
 import { api } from '@norien-live/web-ui/api';
-import { count } from '@norien-live/web-ui';
+import { count, MobileHint } from '@norien-live/web-ui';
 
 import './globals.css';
 import { SearchBox } from '@/components/search-box';
@@ -64,6 +64,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <main className="px-4 pb-16 pt-5 sm:px-6 sm:pb-20 sm:pt-8">{children}</main>
           </div>
           <SignInToast />
+          <MobileHint />
         </DrawerProvider>
       </body>
     </html>

@@ -1,7 +1,17 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
-import { APP_URL, Brand, ButtonLink, Container, DOCS_URL, SITE_URL, XLink } from '@norien-live/web-ui';
+import {
+  APP_URL,
+  Brand,
+  ButtonLink,
+  Container,
+  DOCS_URL,
+  GitHubLink,
+  MobileHint,
+  SITE_URL,
+  XLink,
+} from '@norien-live/web-ui';
 
 import './globals.css';
 import { DocsSidebar } from './sidebar';
@@ -42,7 +52,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Container>
               <div className="flex h-16 items-center justify-between gap-4">
                 <Brand href={SITE_URL} />
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1">
+                  <GitHubLink className="hidden sm:inline-flex" />
                   <XLink />
                   <a
                     href={SITE_URL}
@@ -74,6 +85,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </Container>
           </footer>
         </div>
+        <MobileHint />
       </body>
     </html>
   );
