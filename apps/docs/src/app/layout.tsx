@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
-import { APP_URL, Brand, ButtonLink, Container, DOCS_URL, SITE_URL } from '@norien-live/web-ui';
+import { APP_URL, Brand, ButtonLink, Container, DOCS_URL, SITE_URL, XLink } from '@norien-live/web-ui';
 
 import './globals.css';
 import { DocsSidebar } from './sidebar';
@@ -42,14 +42,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Container>
               <div className="flex h-16 items-center justify-between gap-4">
                 <Brand href={SITE_URL} />
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
+                  <XLink />
                   <a
                     href={SITE_URL}
                     className="hidden rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-ink sm:inline-flex"
                   >
-                    Home
+                    Main site
                   </a>
-                  <ButtonLink href={APP_URL} className="px-3 py-1.5 sm:px-4 sm:py-2">
+                  <ButtonLink href={APP_URL} className="px-3.5 py-2 sm:px-4">
                     Open app
                   </ButtonLink>
                 </div>

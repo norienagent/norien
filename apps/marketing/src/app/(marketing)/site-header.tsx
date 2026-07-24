@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { APP_URL, Brand, ButtonLink, Container, DOCS_URL } from '@norien-live/web-ui';
+import { APP_URL, Brand, ButtonLink, Container, DOCS_URL, XLink } from '@norien-live/web-ui';
 
 /**
  * The marketing site header.
@@ -43,7 +43,8 @@ export function SiteHeader() {
               <NavLink key={link.href} link={link} active={isActive(pathname, link)} />
             ))}
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <XLink />
             <Link
               href="/login"
               className="rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-ink"
@@ -56,33 +57,32 @@ export function SiteHeader() {
           </div>
         </div>
 
-        {/* Mobile: logo · centered toggle · action */}
-        <div className="grid h-16 grid-cols-3 items-center md:hidden">
-          <div className="justify-self-start">
-            <Brand />
-          </div>
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            aria-controls="site-mobile-nav"
-            aria-label={open ? 'Close menu' : 'Open menu'}
-            className="flex size-11 items-center justify-center justify-self-center rounded-lg border border-line bg-card text-ink transition-colors active:bg-sunken"
-          >
-            <svg viewBox="0 0 20 20" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.75">
-              {open ? (
-                <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />
-              ) : (
-                <path d="M3 6h14M3 10h14M3 14h14" strokeLinecap="round" />
-              )}
-            </svg>
-          </button>
-          <div className="justify-self-end">
+        {/* Mobile: logo left, actions right — never a centered toggle */}
+        <div className="flex h-16 items-center justify-between md:hidden">
+          <Brand />
+          <div className="flex items-center gap-1">
+            <XLink />
             {open ? null : (
               <ButtonLink href={APP_URL} className="px-3.5 py-2 text-sm">
                 Open app
               </ButtonLink>
             )}
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              aria-expanded={open}
+              aria-controls="site-mobile-nav"
+              aria-label={open ? 'Close menu' : 'Open menu'}
+              className="flex size-10 items-center justify-center rounded-lg text-ink transition-colors hover:bg-sunken active:bg-sunken"
+            >
+              <svg viewBox="0 0 20 20" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.75">
+                {open ? (
+                  <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />
+                ) : (
+                  <path d="M3 6h14M3 10h14M3 14h14" strokeLinecap="round" />
+                )}
+              </svg>
+            </button>
           </div>
         </div>
       </Container>

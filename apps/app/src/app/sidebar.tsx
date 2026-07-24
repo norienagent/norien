@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 
-import { Brand, SITE_URL } from '@norien-live/web-ui';
+import { Brand, SITE_URL, XLink } from '@norien-live/web-ui';
 
 /**
  * Application navigation.
@@ -132,8 +132,12 @@ export function Sidebar() {
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-sunken hover:text-ink"
           >
             <IconHome />
-            Back to site
+            Main site
           </a>
+          <div className="mt-1 flex items-center justify-between px-3">
+            <span className="text-xs text-muted">norien.live</span>
+            <XLink className="size-8" />
+          </div>
         </div>
       </aside>
     </>

@@ -132,32 +132,33 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Terminal traffic-lights: a slow, staggered cycle through the palette. */
+  /* Terminal traffic-lights: a slow, staggered cycle through bright, saturated
+     colours (they sit on a dark surface, so they can afford to be vivid). */
   @keyframes dot-pulse {
     0% {
-      background-color: #3f6b47;
+      background-color: #22c55e;
+      box-shadow: 0 0 8px #22c55e88;
       transform: scale(1);
-      opacity: 0.85;
     }
     25% {
-      background-color: #8a6a1f;
-      transform: scale(1.18);
-      opacity: 1;
+      background-color: #fbbf24;
+      box-shadow: 0 0 8px #fbbf2488;
+      transform: scale(1.25);
     }
     50% {
-      background-color: #3b6ea5;
+      background-color: #38bdf8;
+      box-shadow: 0 0 8px #38bdf888;
       transform: scale(1);
-      opacity: 0.85;
     }
     75% {
-      background-color: #e9e0d2;
-      transform: scale(1.18);
-      opacity: 1;
+      background-color: #f4f4f5;
+      box-shadow: 0 0 8px #ffffff88;
+      transform: scale(1.25);
     }
     100% {
-      background-color: #3f6b47;
+      background-color: #22c55e;
+      box-shadow: 0 0 8px #22c55e88;
       transform: scale(1);
-      opacity: 0.85;
     }
   }
 
