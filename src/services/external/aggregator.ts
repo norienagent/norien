@@ -319,6 +319,14 @@ export class AggregatorService {
     reports.push(detail.report);
 
     if (!detail.value) {
+      // The detail endpoint does not serve every listed entry (CEXs, etc.). Fall
+      // back to the catalogue record so the page shows the summary it does have
+      // rather than an empty "not found".
+      const listed = await this.llama.findProtocol(slug).catch(() => null);
+      if (listed) {
+        reports.push({ provider: 'github', status: 'skipped', reason: 'no repository linked' });
+        return wrap(this.toProject(listed, []), reports);
+      }
       reports.push({ provider: 'github', status: 'skipped', reason: 'project not found' });
       return wrap(null, reports);
     }

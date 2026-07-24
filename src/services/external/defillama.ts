@@ -166,6 +166,16 @@ export class DefiLlamaService {
     return { items: filtered.slice(offset, offset + limit), total: filtered.length };
   }
 
+  /**
+   * One protocol from the catalogue by exact slug. The detail endpoint does not
+   * serve every listed entry (CEXs, for one), so this is the fallback that lets
+   * a detail page show the listing record rather than a dead end.
+   */
+  async findProtocol(slug: string): Promise<LlamaProtocol | null> {
+    const all = await this.allProtocols();
+    return all.find((protocol) => protocol.slug === slug) ?? null;
+  }
+
   /** One protocol, with its per-chain TVL breakdown. */
   async getProtocol(
     slug: string,

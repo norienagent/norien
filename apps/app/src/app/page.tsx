@@ -8,6 +8,7 @@ import { AgentPanelList, ToolPanelList } from '@/components/registry';
 import {
   Card,
   DegradedNotice,
+  Empty,
   ErrorState,
   SectionHeading,
   SkeletonCards,
@@ -158,7 +159,10 @@ async function VolumePanel() {
 }
 
 async function GainersPanel() {
-  const result = await api.tokens({ limit: 5, sort: 'change24' }).catch(() => null);
+  // Rank by change, but over-fetch and keep only tradeable tokens: a token with
+  // no volume and no liquidity, or a six-figure percentage, is broken provider
+  // data, not a real gainer.
+  const result = await api.tokens({ limit: 50, sort: 'change24' }).catch(() => null);
   if (!result) {
     return (
       <Card title="Biggest gainers">
@@ -167,10 +171,24 @@ async function GainersPanel() {
     );
   }
 
+  const gainers = result.data.items
+    .filter(
+      (t) =>
+        t.change24h !== null &&
+        Number.isFinite(t.change24h) &&
+        Math.abs(t.change24h) < 100_000 &&
+        ((t.volume24h ?? 0) > 0 || (t.liquidity ?? 0) > 0),
+    )
+    .slice(0, 5);
+
   return (
     <Card title="Biggest gainers" action={<ViewAll href="/markets?sort=change24" />}>
       <DegradedNotice sources={result.sources} degraded={result.degraded} />
-      <TokenList tokens={result.data.items} metric="change" />
+      {gainers.length > 0 ? (
+        <TokenList tokens={gainers} metric="change" />
+      ) : (
+        <Empty title="No qualifying gainers" detail="No token with real liquidity moved today." />
+      )}
     </Card>
   );
 }

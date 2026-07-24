@@ -19,6 +19,7 @@ const ALLOWED_HOST_SUFFIXES = [
   'coingecko.com',
   'defined.fi',
   'llama.fi',
+  'llamao.fi',
   'blockscout.com',
   'githubusercontent.com',
 ];

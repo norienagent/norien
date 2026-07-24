@@ -71,6 +71,9 @@ export function usd(value: number | null | undefined): string {
   if (value === null || value === undefined) return EM_DASH;
 
   const abs = Math.abs(value);
+  // Beyond a quadrillion the value is bogus provider data (a dead token with a
+  // broken price). Render it compactly so it can never blow out a table cell.
+  if (abs >= 1e15) return `$${value.toExponential(2)}`;
   if (abs >= 1e12) return `$${(value / 1e12).toFixed(2)}T`;
   if (abs >= 1e9) return `$${(value / 1e9).toFixed(2)}B`;
   if (abs >= 1e6) return `$${(value / 1e6).toFixed(2)}M`;
@@ -84,6 +87,9 @@ export function price(value: number | null | undefined): string {
   if (value === 0) return '$0';
 
   const abs = Math.abs(value);
+  // No real token costs a trillion dollars; past that it is broken data, shown
+  // compactly rather than as a 40-digit string.
+  if (abs >= 1e12) return `$${value.toExponential(2)}`;
   if (abs >= 1000) return `$${value.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
   if (abs >= 1) return `$${value.toFixed(4)}`;
   if (abs >= 0.0001) return `$${value.toFixed(6)}`;
@@ -92,6 +98,8 @@ export function price(value: number | null | undefined): string {
 
 export function percent(value: number | null | undefined): string {
   if (value === null || value === undefined) return EM_DASH;
+  // A six-figure percentage is not a real move; keep it to one cell.
+  if (Math.abs(value) >= 1e5) return `${value >= 0 ? '+' : ''}${value.toExponential(1)}%`;
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
 }
 
