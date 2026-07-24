@@ -10,7 +10,9 @@ import type { ReactNode } from 'react';
  */
 
 export function Container({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`mx-auto w-full max-w-6xl px-5 sm:px-8 ${className}`}>{children}</div>;
+  // 16px gutters on phones, wider on larger screens; the max-width only bites on
+  // desktop, so content fills the viewport on mobile with no dead right margin.
+  return <div className={`mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 ${className}`}>{children}</div>;
 }
 
 export function Section({
@@ -49,9 +51,19 @@ export function Terminal({ lines, caption }: { lines: string[]; caption?: string
   return (
     <div className="overflow-hidden rounded-xl border border-line bg-ink">
       <div className="flex items-center gap-1.5 border-b border-white/10 px-4 py-2.5">
-        <span aria-hidden className="size-2.5 rounded-full bg-white/20" />
-        <span aria-hidden className="size-2.5 rounded-full bg-white/20" />
-        <span aria-hidden className="size-2.5 rounded-full bg-white/20" />
+        {/* Each cycles green → amber → blue → white on its own offset, so no two
+            are ever the same colour and they never pulse together. */}
+        <span aria-hidden className="size-2.5 rounded-full bg-white/20 [animation:dot-pulse_5.4s_ease-in-out_infinite]" />
+        <span
+          aria-hidden
+          className="size-2.5 rounded-full bg-white/20 [animation:dot-pulse_5.4s_ease-in-out_infinite]"
+          style={{ animationDelay: '-1.8s' }}
+        />
+        <span
+          aria-hidden
+          className="size-2.5 rounded-full bg-white/20 [animation:dot-pulse_5.4s_ease-in-out_infinite]"
+          style={{ animationDelay: '-3.6s' }}
+        />
         {caption ? <span className="ml-2 text-xs text-white/40">{caption}</span> : null}
       </div>
       <pre className="scroll-x px-4 py-4 font-mono text-[0.8125rem] leading-relaxed text-code-fg">

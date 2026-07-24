@@ -2,10 +2,9 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 import { Brand } from '@norien-live/web-ui';
-import { API_URL, APP_URL, DOCS_URL } from '@norien-live/web-ui';
+import { API_URL, DOCS_URL } from '@norien-live/web-ui';
 import { Container } from '@norien-live/web-ui';
-import { ButtonLink } from '@norien-live/web-ui';
-import { MarketingNav } from './nav';
+import { SiteHeader } from './site-header';
 
 /**
  * The public site shell.
@@ -38,25 +37,7 @@ const COMPANY = [
 export default function MarketingLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-40 border-b border-line bg-canvas/85 backdrop-blur-sm">
-        <Container>
-          <div className="flex h-16 items-center justify-between gap-4">
-            <Brand />
-            <MarketingNav />
-            <div className="flex items-center gap-2">
-              <Link
-                href="/login"
-                className="hidden rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-ink sm:inline-flex"
-              >
-                Sign in
-              </Link>
-              <ButtonLink href={APP_URL} className="px-3 py-1.5 sm:px-4 sm:py-2">
-                Open app
-              </ButtonLink>
-            </div>
-          </div>
-        </Container>
-      </header>
+      <SiteHeader />
 
       <main className="flex-1">{children}</main>
 

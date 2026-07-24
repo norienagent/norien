@@ -71,6 +71,10 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* Never let a stray wide element scroll the whole page sideways on a phone;
+       `clip` (unlike `hidden`) does not break sticky headers. */
+    overflow-x: clip;
+    overflow-wrap: break-word;
   }
 
   /* One visible focus treatment for every interactive element, so keyboard
@@ -126,6 +130,41 @@
   .scroll-x {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+  }
+
+  /* Terminal traffic-lights: a slow, staggered cycle through the palette. */
+  @keyframes dot-pulse {
+    0% {
+      background-color: #3f6b47;
+      transform: scale(1);
+      opacity: 0.85;
+    }
+    25% {
+      background-color: #8a6a1f;
+      transform: scale(1.18);
+      opacity: 1;
+    }
+    50% {
+      background-color: #3b6ea5;
+      transform: scale(1);
+      opacity: 0.85;
+    }
+    75% {
+      background-color: #e9e0d2;
+      transform: scale(1.18);
+      opacity: 1;
+    }
+    100% {
+      background-color: #3f6b47;
+      transform: scale(1);
+      opacity: 0.85;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [class*='dot-pulse'] {
+      animation: none !important;
+    }
   }
 
   /* The success check on the post-sign-in page: a small confident pop. */

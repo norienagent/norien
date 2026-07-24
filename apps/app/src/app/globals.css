@@ -71,6 +71,10 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* Never let a stray wide element scroll the whole page sideways on a phone;
+       `clip` (unlike `hidden`) does not break sticky headers. */
+    overflow-x: clip;
+    overflow-wrap: break-word;
   }
 
   /* One visible focus treatment for every interactive element, so keyboard
