@@ -1,12 +1,55 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Badge, Button } from '@norien-live/web-ui';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+}
+
+/** Inline **bold** and `code`, returned as React nodes (never raw HTML). */
+function inline(text: string): ReactNode[] {
+  return text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) return <strong key={i}>{part.slice(2, -2)}</strong>;
+    if (part.startsWith('`') && part.endsWith('`')) {
+      return (
+        <code key={i} className="rounded bg-sunken px-1 py-0.5 font-mono text-[0.85em] text-ink">
+          {part.slice(1, -1)}
+        </code>
+      );
+    }
+    return part;
+  });
+}
+
+/** A light markdown renderer for replies: paragraphs and bullet lists. */
+function renderReply(text: string): ReactNode {
+  const lines = text.split('\n');
+  const out: ReactNode[] = [];
+  let bullets: ReactNode[] = [];
+  const flush = () => {
+    if (bullets.length) {
+      out.push(
+        <ul key={`ul-${out.length}`} className="my-1 ml-4 list-disc space-y-0.5">
+          {bullets}
+        </ul>,
+      );
+      bullets = [];
+    }
+  };
+  lines.forEach((line, i) => {
+    const bullet = line.match(/^\s*[-*•]\s+(.*)/);
+    if (bullet) {
+      bullets.push(<li key={i}>{inline(bullet[1])}</li>);
+    } else {
+      flush();
+      if (line.trim()) out.push(<p key={i}>{inline(line)}</p>);
+    }
+  });
+  flush();
+  return <div className="space-y-1.5">{out}</div>;
 }
 
 /**
@@ -75,7 +118,21 @@ export function ChatPanel({
     <section className="flex flex-col rounded-xl border border-line bg-card">
       <header className="flex items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-5">
         <h2 className="text-sm font-semibold tracking-tight text-ink">Chat with {agent.name}</h2>
-        <Badge>preview</Badge>
+        <div className="flex items-center gap-2">
+          {messages.length > 0 ? (
+            <button
+              type="button"
+              onClick={() => {
+                setMessages([]);
+                setError(null);
+              }}
+              className="text-xs font-medium text-muted transition-colors hover:text-ink"
+            >
+              New chat
+            </button>
+          ) : null}
+          <Badge>preview</Badge>
+        </div>
       </header>
 
       <div ref={scrollRef} className="max-h-[24rem] min-h-[12rem] overflow-y-auto px-4 py-4 sm:px-5">
@@ -103,13 +160,13 @@ export function ChatPanel({
             {messages.map((m, i) => (
               <li key={i} className={m.role === 'user' ? 'flex justify-end' : 'flex justify-start'}>
                 <span
-                  className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2 text-sm leading-relaxed ${
+                  className={`max-w-[85%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed ${
                     m.role === 'user'
-                      ? 'bg-accent text-white'
+                      ? 'whitespace-pre-wrap bg-accent text-white'
                       : 'border border-line bg-canvas text-ink'
                   }`}
                 >
-                  {m.content}
+                  {m.role === 'user' ? m.content : renderReply(m.content)}
                 </span>
               </li>
             ))}

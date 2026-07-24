@@ -80,8 +80,9 @@ function ManifestGenerator({ onGenerate }: { onGenerate: (json: string) => void 
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function generate() {
-    const text = description.trim();
+  async function generate(override?: string) {
+    const text = (override ?? description).trim();
+    if (override) setDescription(override);
     if (text.length < 5 || generating) return;
 
     setGenerating(true);
@@ -116,10 +117,29 @@ function ManifestGenerator({ onGenerate }: { onGenerate: (json: string) => void 
           aria-label="Describe your agent"
           className="w-full text-sm sm:flex-1"
         />
-        <Button onClick={generate} disabled={generating || description.trim().length < 5}>
+        <Button onClick={() => generate()} disabled={generating || description.trim().length < 5}>
           {generating ? 'Generating…' : 'Generate ✨'}
         </Button>
       </div>
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        {[
+          'A Python agent that summarizes crypto news hourly and posts to Discord',
+          'A Node.js agent that alerts on large wallet transfers',
+          'A trading agent that scans tokens and suggests entries',
+        ].map((example) => (
+          <button
+            key={example}
+            type="button"
+            onClick={() => generate(example)}
+            disabled={generating}
+            className="rounded-full border border-line bg-canvas px-3 py-1.5 text-xs text-muted transition-colors hover:border-accent/40 hover:text-accent disabled:opacity-50"
+          >
+            {example}
+          </button>
+        ))}
+      </div>
+
       {error ? <p className="mt-2 text-sm text-down">{error}</p> : null}
       <p className="mt-2 text-xs text-muted">
         A draft to refine — review it, then validate below before publishing.

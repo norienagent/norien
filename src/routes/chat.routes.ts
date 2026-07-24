@@ -2,8 +2,20 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
 import { AppError } from '../core/errors.js';
+import { groqService } from '../services/ai/groq.js';
 import { type ChatMessage, virtualsComputeService } from '../services/ai/virtuals.js';
 import { errorResponseSchema } from '../validation/common.js';
+
+/**
+ * The chat runs on Groq's Llama by default — fast and free — falling back to
+ * Virtuals Compute only if Groq is not configured. Both expose the same
+ * `chat(messages, options)` surface.
+ */
+function chatProvider() {
+  if (groqService.configured) return groqService;
+  if (virtualsComputeService.configured) return virtualsComputeService;
+  return null;
+}
 
 /**
  * Chat with an agent.
@@ -107,7 +119,8 @@ export const chatRoutes: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      if (!virtualsComputeService.configured) {
+      const provider = chatProvider();
+      if (!provider) {
         throw AppError.badRequest('Chat is not enabled on this deployment.');
       }
 
@@ -118,7 +131,7 @@ export const chatRoutes: FastifyPluginAsyncZod = async (app) => {
       ];
 
       try {
-        const answer = await virtualsComputeService.chat(conversation, { maxTokens: 800 });
+        const answer = await provider.chat(conversation, { maxTokens: 800 });
         const clean = scrubIdentity(answer, agent?.name ?? 'this agent');
         return reply.send({ reply: clean || '…' });
       } catch (error) {

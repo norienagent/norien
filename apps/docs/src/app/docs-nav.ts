@@ -37,6 +37,14 @@ export const DOCS_NAV: DocGroup[] = [
     ],
   },
   {
+    title: 'Features',
+    links: [
+      { href: '/features/portfolio', label: 'Multi-chain portfolio' },
+      { href: '/features/chat', label: 'Chat with an agent' },
+      { href: '/features/ai', label: 'AI manifest generator' },
+    ],
+  },
+  {
     title: 'Architecture',
     links: [{ href: '/architecture', label: 'System overview' }],
   },
