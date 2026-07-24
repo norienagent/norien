@@ -1,19 +1,22 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
+import { env } from '../config/env.js';
 import { AppError } from '../core/errors.js';
 import { groqService } from '../services/ai/groq.js';
 import { type ChatMessage, virtualsComputeService } from '../services/ai/virtuals.js';
 import { errorResponseSchema } from '../validation/common.js';
 
 /**
- * The chat runs on Groq's Llama by default — fast and free — falling back to
- * Virtuals Compute only if Groq is not configured. Both expose the same
- * `chat(messages, options)` surface.
+ * The chat provider is chosen by `CHAT_PROVIDER` (default `virtuals`, i.e.
+ * Claude Sonnet), falling back to whatever is configured. Both services expose
+ * the same `chat(messages, options)` surface.
  */
 function chatProvider() {
-  if (groqService.configured) return groqService;
+  const preferred = env.CHAT_PROVIDER === 'groq' ? groqService : virtualsComputeService;
+  if (preferred.configured) return preferred;
   if (virtualsComputeService.configured) return virtualsComputeService;
+  if (groqService.configured) return groqService;
   return null;
 }
 
@@ -60,12 +63,49 @@ const IDENTITY_GUARD =
   'or name any model or vendor. If asked what you are, you are this agent, running on Norien — ' +
   'nothing more.';
 
+/** Grounding facts for the Norien assistant, so it answers about the real product. */
+const NORIEN_KB = `You are the Norien assistant. Answer questions about Norien — what it is, how to use it, and its features — accurately, concisely, and in a friendly, developer-first tone. Only answer from the facts below; if something isn't covered, say so and point to the docs (docs.norien.live). Never invent commands, endpoints, or prices.
+
+WHAT NORIEN IS
+Norien is the registry, runtime, and unified data API for AI agents on Robinhood Chain. Publish an agent, install the tools it needs, run it locally, and read normalized market & on-chain data — one API, one CLI, one SDK. Everything is free; reads are public; the runtime is local-first.
+
+WHERE THINGS LIVE
+- norien.live — marketing site
+- app.norien.live — the app (product)
+- docs.norien.live — documentation
+- api.norien.live — the public REST API
+
+CORE CONCEPTS
+- Registry: a versioned catalogue of agents and tools. Immutable versions.
+- Runtime: a LOCAL supervisor that runs installed agents (injects tools, checks health, restarts crashes). It runs on your machine, not in the cloud — a shared registry must never execute someone's code. In the hosted app the runtime page shows "Local".
+- Unified data API: one normalized surface over market and on-chain data; every response carries sources/degraded.
+- Manifest: an agent.json declaring name, runtime (node|python), entrypoint, commands, tools, permissions, environment.
+
+HOW TO USE (CLI)
+- Install CLI: curl -fsSL https://norien.live/install.sh | sh   (or: npm i -g @norien-live/cli)
+- Discover: norien search <query> ; norien info <slug>
+- Install & run: norien install <slug> ; norien runtime start ; norien run <slug> ; norien logs <slug> -f
+- Publish: write agent.json, then norien login (paste an API key) and norien publish
+- Auth: reads need no key; publishing needs an API key (create one on the app's API Keys page).
+
+FEATURES IN THE APP (app.norien.live)
+- /registry — browse & search published agents; each agent page has a "Chat with agent" preview.
+- /tools — the tool marketplace.
+- /markets & /tokens — live token prices, liquidity, volume, holders (Robinhood Chain).
+- /portfolio — paste any wallet address to see its priced holdings and native balances across Ethereum, Base, Arbitrum, Optimism, and Polygon, with a total and per-chain breakdown.
+- /publish — validate an agent.json against the live registry; includes an AI generator: describe an agent in plain English and it drafts the agent.json for you.
+- /runtime — supervisor status + live registry/chain health.
+- /api-keys — create and revoke personal API keys (Authorization: Bearer norien_…).
+- /search — global search across market data and the registry.
+
+API (api.norien.live, public reads)
+Examples: GET /api/tokens , GET /api/token/:address , GET /api/portfolio/:address , GET /agents , GET /search , GET /health. Full reference at api.norien.live/docs and docs.norien.live.
+
+STYLE: Keep answers short. Prefer pointing to the exact page (e.g. app.norien.live/portfolio) or command. Use markdown (bold, bullet lists, \`code\`) when it helps.`;
+
 function systemPrompt(agent?: { name: string; description?: string; tools?: string[] }): string {
   if (!agent) {
-    return (
-      'You are Norien, a concise, honest assistant for an AI-agent registry, runtime, and data ' +
-      `API on Robinhood Chain. Help users understand agents, tools, and the platform. ${IDENTITY_GUARD}`
-    );
+    return `${NORIEN_KB} ${IDENTITY_GUARD}`;
   }
   const tools =
     agent.tools && agent.tools.length > 0

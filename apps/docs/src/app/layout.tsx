@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 
 import {
   APP_URL,
+  AskNorien,
   Brand,
   ButtonLink,
   Container,
@@ -86,6 +87,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </footer>
         </div>
         <MobileHint />
+        <AskNorien />
       </body>
     </html>
   );

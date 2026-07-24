@@ -6,6 +6,7 @@ export * from './lib/config';
 export * from './components/ui';
 export * from './components/token-logo';
 export * from './components/mobile-hint';
+export * from './components/ask-norien';
 export * from './components/controls';
 export * from './components/brand';
 export * from './components/marketing';

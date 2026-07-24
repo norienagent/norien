@@ -125,6 +125,10 @@ const envSchema = z.object({
   GROQ_URL: z.string().url().default('https://api.groq.com/openai/v1'),
   GROQ_MODEL: z.string().default('llama-3.3-70b-versatile'),
 
+  // Which provider powers chat (agent chat + the Norien assistant). Falls back
+  // to the other if the preferred one has no key.
+  CHAT_PROVIDER: z.enum(['virtuals', 'groq']).default('virtuals'),
+
   /** Per-request timeout for every outbound provider call, in milliseconds. */
   REQUEST_TIMEOUT: z.coerce.number().int().positive().default(10_000),
   /** Default cache lifetime for provider responses, in seconds. */

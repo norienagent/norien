@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 import { Brand, GitHubLink, XLink } from '@norien-live/web-ui';
 import { API_URL, DOCS_URL } from '@norien-live/web-ui';
-import { Container, MobileHint } from '@norien-live/web-ui';
+import { AskNorien, Container, MobileHint } from '@norien-live/web-ui';
 import { SiteHeader } from './site-header';
 
 /**
@@ -68,6 +68,7 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
       </footer>
 
       <MobileHint />
+      <AskNorien />
     </div>
   );
 }
