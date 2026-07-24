@@ -10,7 +10,8 @@ export const metadata = {
 };
 
 const SECTIONS = [
-  { id: 'quickstart', label: 'Quickstart' },
+  { id: 'getting-started', label: 'Getting started' },
+  { id: 'quickstart', label: 'Run locally' },
   { id: 'manifest', label: 'The manifest' },
   { id: 'cli', label: 'CLI' },
   { id: 'runtime', label: 'Runtime' },
@@ -57,7 +58,92 @@ export default function DocsPage() {
           </nav>
 
           <div className="min-w-0 space-y-12">
-            <Doc id="quickstart" title="Quickstart">
+            <Doc id="getting-started" title="Getting started">
+              <Prose>
+                <p>
+                  Norien is the registry, runtime, and unified data API for AI agents on Robinhood
+                  Chain. Publish an agent, install the tools it needs, run it locally, and read
+                  normalized market and on-chain data — all through one API, CLI, and SDK. Here is the
+                  whole path, start to finish.
+                </p>
+              </Prose>
+
+              <Prose>
+                <p>
+                  <strong>1. Install the CLI.</strong> One command, no configuration. It talks to the
+                  hosted registry at <code>api.norien.live</code> out of the box.
+                </p>
+              </Prose>
+              <CodeBlock>{`# macOS / Linux
+curl -fsSL https://norien.live/install.sh | sh
+
+# or with npm
+npm install -g @norien-live/cli`}</CodeBlock>
+
+              <Prose>
+                <p>
+                  <strong>2. Find something to run.</strong> Search the registry, or browse it in the{' '}
+                  <Link href={`${APP_URL}/registry`}>app</Link>. Every command speaks{' '}
+                  <code>--json</code> too, so it composes with <code>jq</code> and CI.
+                </p>
+              </Prose>
+              <Terminal
+                lines={[
+                  '$ norien search trading',
+                  '  trading-agent   0.5.0   python   4 tools',
+                  '',
+                  '$ norien info trading-agent',
+                ]}
+              />
+
+              <Prose>
+                <p>
+                  <strong>3. Install and run it.</strong> Install resolves the agent&apos;s declared
+                  tools and writes them locally; run hands it to the supervisor, which starts it,
+                  probes its health, and restarts it if it crashes.
+                </p>
+              </Prose>
+              <Terminal
+                lines={[
+                  '$ norien install trading-agent',
+                  '  ✓ resolved 4 tools · wrote ./norien_agents',
+                  '',
+                  '$ norien runtime start',
+                  '$ norien run trading-agent',
+                  '  ✓ running · pid 24180 · healthy',
+                  '$ norien logs trading-agent -f',
+                ]}
+              />
+
+              <Prose>
+                <p>
+                  <strong>4. Or just read the data.</strong> No install needed — hit the unified API
+                  directly, or explore it in the <Link href={`${APP_URL}/markets`}>app</Link>. Token
+                  prices, liquidity, holders, projects, wallets, and contracts, each response tagged
+                  with where it came from.
+                </p>
+              </Prose>
+              <CodeBlock>{`curl https://api.norien.live/api/tokens?limit=5
+curl https://api.norien.live/api/token/0x…`}</CodeBlock>
+
+              <Prose>
+                <p>
+                  <strong>5. Publish your own.</strong> Write an <code>agent.json</code> (next
+                  section), validate it against the live registry on the{' '}
+                  <Link href={`${APP_URL}/publish`}>publish page</Link>, then ship it:
+                </p>
+              </Prose>
+              <Terminal lines={['$ norien publish', '  ✓ published trading-agent@0.5.0']}></Terminal>
+
+              <Prose>
+                <p>
+                  That is the full loop — discover, run, read, publish. The sections below go deep on
+                  each piece.
+                </p>
+              </Prose>
+            </Doc>
+
+            <Doc id="quickstart" title="Run the whole stack locally">
               <Prose>
                 <p>
                   Norien runs entirely locally. The registry needs no database server — with{' '}

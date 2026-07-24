@@ -32,12 +32,15 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       </div>
 
       {query === '' ? (
-        <Card>
-          <Empty
-            title="Type something to search"
-            detail="Search by token symbol, project name, agent or tool slug, or paste a 0x address."
-          />
-        </Card>
+        <Suspense
+          fallback={
+            <Card padded={false}>
+              <SkeletonRows rows={6} cols={2} />
+            </Card>
+          }
+        >
+          <SearchStarter />
+        </Suspense>
       ) : (
         <Suspense
           key={query}
@@ -51,6 +54,95 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         </Suspense>
       )}
     </>
+  );
+}
+
+const EXAMPLE_QUERIES = ['aave', 'lido', 'usdg', 'weth', 'binance', 'trading'];
+
+/**
+ * The zero-query state.
+ *
+ * An empty search box is a dead end, so instead of "type something" this shows
+ * live starting points — example queries, what is trending, and the largest
+ * projects — every one a link into the product.
+ */
+async function SearchStarter() {
+  const [trending, projects] = await Promise.all([
+    api.trending({ limit: 6 }).catch(() => null),
+    api.projects({ limit: 6 }).catch(() => null),
+  ]);
+
+  const trendingItems = trending?.data.items ?? [];
+  const projectItems = projects?.data.items ?? [];
+
+  return (
+    <div className="space-y-4">
+      <Card title="Try searching for">
+        <div className="flex flex-wrap gap-2">
+          {EXAMPLE_QUERIES.map((example) => (
+            <Link
+              key={example}
+              href={`/search?q=${encodeURIComponent(example)}`}
+              className="rounded-full border border-line bg-card px-3 py-1.5 text-sm text-ink transition-colors hover:border-accent/40 hover:text-accent"
+            >
+              {example}
+            </Link>
+          ))}
+        </div>
+        <p className="mt-4 text-xs text-muted">
+          Or search by token symbol, project name, agent or tool slug, or paste a 0x address.
+        </p>
+      </Card>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        {trendingItems.length > 0 ? (
+          <Card title="Trending tokens" padded={false}>
+            <ul>
+              {trendingItems.map((token) => (
+                <li
+                  key={`${token.chain.id}:${token.address}`}
+                  className="border-b border-line last:border-0"
+                >
+                  <Link
+                    href={`/token/${token.address}?chainId=${token.chain.id}`}
+                    className="group flex items-center gap-3 px-4 py-3 transition-colors hover:bg-sunken/60"
+                  >
+                    <TokenLogo src={token.logo} symbol={token.symbol} className="size-7" />
+                    <span className="min-w-0 flex-1 truncate">
+                      <strong className="font-semibold text-ink group-hover:text-accent">
+                        {token.symbol || '—'}
+                      </strong>{' '}
+                      <span className="text-muted">{token.name}</span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        ) : null}
+
+        {projectItems.length > 0 ? (
+          <Card title="Top projects" padded={false}>
+            <ul>
+              {projectItems.map((project) => (
+                <li key={project.slug} className="border-b border-line last:border-0">
+                  <Link
+                    href={`/project/${project.slug}`}
+                    className="group flex items-center gap-3 px-4 py-3 transition-colors hover:bg-sunken/60"
+                  >
+                    <TokenLogo src={project.logo} symbol={project.name} className="size-7" />
+                    <span className="min-w-0 flex-1 truncate text-sm font-medium text-ink group-hover:text-accent">
+                      {project.name}
+                    </span>
+                    <span className="shrink-0 text-xs text-muted">{project.category ?? ''}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        ) : null}
+      </div>
+    </div>
   );
 }
 

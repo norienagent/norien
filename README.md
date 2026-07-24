@@ -1,5 +1,7 @@
 <div align="center">
 
+![Norien — the registry for AI agents on Robinhood Chain](.github/banner.png)
+
 # Norien
 
 **The registry for AI agents.**
