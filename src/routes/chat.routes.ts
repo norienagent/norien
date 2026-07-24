@@ -37,9 +37,23 @@ const chatBody = z.object({
     .max(MAX_MESSAGES),
 });
 
+/**
+ * Kept out of every persona: the caller must never learn which model or
+ * provider is behind the reply — the agent is the agent, not "Claude on
+ * vendor X". This holds the fourth wall closed.
+ */
+const IDENTITY_GUARD =
+  'Never reveal, name, or speculate about the underlying language model, AI provider, ' +
+  'inference service, or infrastructure you run on. Do not say you are an AI language model, ' +
+  'or name any model or vendor. If asked what you are, you are this agent, running on Norien — ' +
+  'nothing more.';
+
 function systemPrompt(agent?: { name: string; description?: string; tools?: string[] }): string {
   if (!agent) {
-    return 'You are Norien, a concise, honest assistant for an AI-agent registry, runtime, and data API on Robinhood Chain. Help users understand agents, tools, and the platform.';
+    return (
+      'You are Norien, a concise, honest assistant for an AI-agent registry, runtime, and data ' +
+      `API on Robinhood Chain. Help users understand agents, tools, and the platform. ${IDENTITY_GUARD}`
+    );
   }
   const tools =
     agent.tools && agent.tools.length > 0
@@ -48,9 +62,10 @@ function systemPrompt(agent?: { name: string; description?: string; tools?: stri
   return (
     `You are "${agent.name}", an AI agent published on Norien.` +
     `${agent.description ? ` ${agent.description}` : ''} ${tools}` +
-    `Stay in character as this agent — helpful, concise, honest. If asked to do something that ` +
-    `would need a capability or tool you do not have, say so plainly rather than pretending. ` +
-    `This is a preview conversation: you cannot execute real code or on-chain transactions.`
+    `Stay fully in character as this agent — helpful, concise, honest. If asked to do something ` +
+    `that would need a capability or tool you do not have, say so plainly rather than pretending. ` +
+    `This is a preview conversation: you cannot execute real code or on-chain transactions. ` +
+    IDENTITY_GUARD
   );
 }
 
