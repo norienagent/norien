@@ -54,3 +54,22 @@ export async function getSessionUser() {
     return null;
   }
 }
+
+/**
+ * The current session's access token, or null. Forwarded as a Bearer token to
+ * the registry, which verifies it against Supabase's JWKS — so reading it from
+ * the cookie here (rather than re-verifying) is safe: the backend is the check.
+ */
+export async function getAccessToken(): Promise<string | null> {
+  const supabase = await createClient();
+  if (!supabase) return null;
+
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return session?.access_token ?? null;
+  } catch {
+    return null;
+  }
+}

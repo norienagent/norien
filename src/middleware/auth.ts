@@ -4,7 +4,9 @@ import fp from 'fastify-plugin';
 import { env, isProduction } from '../config/env.js';
 import { ANONYMOUS_PRINCIPAL, type Principal } from '../core/principal.js';
 import { getDb } from '../db/client.js';
+import { ApiKeyRepository } from '../repositories/api-key.repository.js';
 import { UserRepository } from '../repositories/user.repository.js';
+import { hashKey, isApiKey } from '../services/api-key.service.js';
 import { isValidSlug } from '../utils/slug.js';
 import { verifySupabaseToken } from './supabase.js';
 
@@ -31,6 +33,30 @@ const USER_SCOPES = ['agents:write', 'tools:write', 'install'] as const;
  */
 async function resolvePrincipal(request: FastifyRequest): Promise<Principal> {
   const authorization = firstHeader(request.headers.authorization);
+  const bearer = authorization?.replace(/^Bearer\s+/i, '').trim();
+
+  // 0. A personal API key (`Bearer norien_…`). Resolved by hash, and treated as
+  //    the owning handle — the same principal a session JWT would produce.
+  if (isApiKey(bearer)) {
+    const db = await getDb();
+    const keys = new ApiKeyRepository(db);
+    const key = await keys.findActiveByHash(hashKey(bearer));
+    if (key) {
+      // Best-effort usage stamp; never let it delay or fail the request.
+      void keys.touch(key.id).catch(() => {});
+      const user = await new UserRepository(db).findByHandle(key.handle);
+      return {
+        kind: 'user',
+        userId: user?.id ?? null,
+        handle: key.handle,
+        organisationId: null,
+        scopes: [...USER_SCOPES],
+      };
+    }
+    // An unknown or revoked key is anonymous, not an error — reads still work.
+    return ANONYMOUS_PRINCIPAL;
+  }
+
   const identity = await verifySupabaseToken(authorization);
 
   if (identity) {

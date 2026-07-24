@@ -29,6 +29,13 @@
       "when": 1784704256121,
       "tag": "0003_tool_marketplace",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1784879708450,
+      "tag": "0004_nifty_champions",
+      "breakpoints": true
     }
   ]
 }

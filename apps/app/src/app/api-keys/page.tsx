@@ -1,80 +1,58 @@
-import Link from 'next/link';
-
-import { API_URL } from '@norien-live/web-ui';
+import { API_URL, DOCS_URL, SITE_URL } from '@norien-live/web-ui';
+import { getAccessToken } from '@norien-live/web-ui/supabase/server';
 import { InstallCommand } from '@/components/registry';
-import { Badge, Card, Empty, Row, SectionHeading } from '@norien-live/web-ui';
+import { ButtonLink, Card, Empty, SectionHeading } from '@norien-live/web-ui';
+
+import type { KeySummary } from './actions';
+import { ApiKeysManager } from './manager';
 
 export const metadata = { title: 'API Keys' };
 
 /**
  * API keys.
  *
- * There is no key store yet — issuing one would mean inventing a credential
- * that authorises nothing. Instead this documents the identification mechanism
- * that is actually in place, and what changes when verification lands.
+ * A signed-in user mints keys here to authenticate the CLI, the SDKs, or their
+ * own scripts as themselves. Reads stay public and free; a key is only needed
+ * to be identified — for publishing and for higher, per-account treatment.
  */
-export default function ApiKeysPage() {
+export default async function ApiKeysPage() {
+  const token = await getAccessToken();
+
   return (
     <>
       <SectionHeading
         title="API Keys"
-        detail="How requests to Norien are identified today, and what arrives with authentication."
+        detail="Create a key to authenticate the CLI, SDKs, and your own scripts as you. Every read stays public and free."
       />
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card title="Your keys">
-          <Empty
-            title="No keys issued"
-            detail="Key management arrives with authentication. Until then the registry identifies callers by handle rather than by a verified secret — issuing a key here would hand you a credential that authorises nothing."
-          />
-        </Card>
-
-        <Card title="Current behaviour">
-          <dl>
-            <Row label="Mechanism">
-              <span className="font-mono text-xs">x-norien-actor</span>
-            </Row>
-            <Row label="Verification">
-              <Badge tone="warn">not enforced</Badge>
-            </Row>
-            <Row label="Bearer token">
-              <span className="text-muted">declared in OpenAPI, not checked</span>
-            </Row>
-            <Row label="Scope">public read, identified write</Row>
-          </dl>
-
-          <p className="mt-4 text-sm leading-relaxed text-muted">
-            The CLI and both SDKs already send an{' '}
-            <span className="font-mono text-xs text-ink">Authorization: Bearer</span> header alongside
-            the handle, so nothing in a client changes when the server starts verifying it. Treat the
-            current setup as identification, not as a security boundary.
-          </p>
-        </Card>
-      </div>
+      {token ? <SignedIn token={token} /> : <SignedOut />}
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <Card title="Authenticating from the CLI">
+        <Card title="Use your key">
           <p className="text-sm leading-relaxed text-muted">
-            Credentials are stored per profile in{' '}
-            <span className="font-mono text-xs text-ink">~/.norien/config.json</span>:
+            Send it as a Bearer token — the CLI, both SDKs, and plain{' '}
+            <span className="font-mono text-xs text-ink">curl</span> all accept it:
           </p>
           <div className="mt-4 space-y-2">
-            <InstallCommand command="norien login" />
-            <InstallCommand command="norien whoami" />
-            <InstallCommand command="norien profiles" />
+            <InstallCommand command={`curl -H "Authorization: Bearer norien_…" ${API_URL}/agents`} />
+            <InstallCommand command="norien login   # paste your key when prompted" />
           </div>
+          <p className="mt-4 text-sm leading-relaxed text-muted">
+            The same key lets you <span className="font-mono text-xs text-ink">norien publish</span>{' '}
+            an agent or tool under your handle.
+          </p>
         </Card>
 
-        <Card title="Calling the API directly">
+        <Card title="Calling the API">
           <p className="text-sm leading-relaxed text-muted">
-            Every read is public and needs no credential at all:
+            Every read is public and needs no key at all:
           </p>
           <div className="mt-4 space-y-2">
             <InstallCommand command={`curl ${API_URL}/api/tokens?limit=5`} />
             <InstallCommand command={`curl ${API_URL}/agents`} />
           </div>
           <p className="mt-4 text-sm leading-relaxed text-muted">
-            The full surface is documented in the{' '}
+            The full surface is in the{' '}
             <a
               href={`${API_URL}/docs`}
               target="_blank"
@@ -83,14 +61,46 @@ export default function ApiKeysPage() {
             >
               OpenAPI reference ↗
             </a>{' '}
-            or in the{' '}
-            <Link href="/docs" className="text-accent underline underline-offset-2">
+            or the{' '}
+            <a href={DOCS_URL} className="text-accent underline underline-offset-2">
               documentation
-            </Link>
+            </a>
             .
           </p>
         </Card>
       </div>
     </>
   );
+}
+
+async function SignedIn({ token }: { token: string }) {
+  const keys = await fetchKeys(token);
+  return (
+    <Card title="Your keys">
+      <ApiKeysManager initialKeys={keys} />
+    </Card>
+  );
+}
+
+function SignedOut() {
+  return (
+    <Card title="Your keys">
+      <Empty
+        title="Sign in to create keys"
+        detail="API keys are tied to your account, so nothing is issued to an anonymous caller. Sign in and your keys appear here."
+        action={<ButtonLink href={`${SITE_URL}/login`}>Sign in</ButtonLink>}
+      />
+    </Card>
+  );
+}
+
+async function fetchKeys(token: string): Promise<KeySummary[]> {
+  const response = await fetch(`${API_URL}/api/keys`, {
+    headers: { authorization: `Bearer ${token}` },
+    cache: 'no-store',
+  }).catch(() => null);
+
+  if (!response || !response.ok) return [];
+  const body = (await response.json()) as { data: KeySummary[] };
+  return body.data ?? [];
 }
