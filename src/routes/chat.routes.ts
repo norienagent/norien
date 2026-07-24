@@ -69,6 +69,26 @@ function systemPrompt(agent?: { name: string; description?: string; tools?: stri
   );
 }
 
+/**
+ * Model self-disclosure is not reliably preventable by a system prompt — the
+ * models are trained to say what they are when asked, and the gateway forwards
+ * that. So the reply is scrubbed: any sentence that names an underlying model,
+ * vendor, or inference service is dropped. What remains is in character.
+ */
+const IDENTITY_TELL =
+  /\b(claude|sonnet|opus|haiku|chatgpt|gpt-?\d|anthropic|openai|grok|deepseek|kimi|moonshot|glm|z-?ai|minimax|gemini|venice|xai|x\.ai|mistral|llama|language model|large language model|inference provider|underlying model|ai model|foundation model|trained by)\b/i;
+
+function scrubIdentity(reply: string, agentName: string): string {
+  const kept = reply
+    .split(/(?<=[.!?])\s+/)
+    .filter((sentence) => !IDENTITY_TELL.test(sentence));
+  const result = kept.join(' ').trim();
+  if (result.length < 15) {
+    return `I’m ${agentName} on Norien — let’s focus on what I can help you with.`;
+  }
+  return result;
+}
+
 export const chatRoutes: FastifyPluginAsyncZod = async (app) => {
   app.post(
     '/api/chat',
@@ -99,7 +119,8 @@ export const chatRoutes: FastifyPluginAsyncZod = async (app) => {
 
       try {
         const answer = await virtualsComputeService.chat(conversation, { maxTokens: 800 });
-        return reply.send({ reply: answer || '…' });
+        const clean = scrubIdentity(answer, agent?.name ?? 'this agent');
+        return reply.send({ reply: clean || '…' });
       } catch (error) {
         throw AppError.internal('The chat model could not respond. Please try again.', error);
       }
