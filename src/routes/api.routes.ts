@@ -12,6 +12,7 @@ import {
   listProjectsQuery,
   listTokensQuery,
   paged,
+  portfolioSchema,
   projectParams,
   projectSchema,
   providersResponseSchema,
@@ -194,6 +195,21 @@ export const dataApiRoutes: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request) => aggregatorService.getWallet(request.params.address, request.query.limit),
+  );
+
+  app.get(
+    '/api/portfolio/:address',
+    {
+      schema: {
+        tags: ['Chain'],
+        summary: 'Cross-chain portfolio',
+        description:
+          'A wallet’s priced token holdings and native balances across Ethereum, Base, Arbitrum, Optimism, and Polygon, with a total and per-chain breakdown.',
+        params: addressParams,
+        response: { 200: envelope(portfolioSchema), 422: errorResponseSchema },
+      },
+    },
+    async (request) => aggregatorService.getPortfolio(request.params.address),
   );
 
   app.get(

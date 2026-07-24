@@ -1,5 +1,11 @@
 import { env } from '../../config/env.js';
 import { isProviderError } from '../../core/provider-client.js';
+import {
+  alchemyService,
+  type AlchemyService,
+  type NativeBalance,
+  type PortfolioToken,
+} from './alchemy.js';
 import { blockscoutService, type BlockscoutService } from './blockscout.js';
 import { codexService, type CodexService, type CodexTokenRow } from './codex.js';
 import { coinGeckoService, type CoinGeckoService } from './coingecko.js';
@@ -83,6 +89,15 @@ const COINGECKO_PLATFORM_BY_CHAIN_ID: Readonly<Record<number, string>> = {
   43114: 'avalanche',
 };
 
+/** A wallet's cross-chain holdings, rolled up. */
+export interface Portfolio {
+  address: string;
+  totalUsd: number;
+  chains: { label: string; usd: number }[];
+  native: NativeBalance[];
+  tokens: PortfolioToken[];
+}
+
 export class AggregatorService {
   constructor(
     private readonly codex: CodexService = codexService,
@@ -91,6 +106,7 @@ export class AggregatorService {
     private readonly github: GitHubService = gitHubService,
     private readonly blockscout: BlockscoutService = blockscoutService,
     private readonly rpc: RpcService = rpcService,
+    private readonly alchemy: AlchemyService = alchemyService,
   ) {}
 
   private get nativeChain(): ChainRef {
@@ -436,6 +452,41 @@ export class AggregatorService {
     };
 
     return wrap(wallet, reports);
+  }
+
+  /**
+   * A wallet's cross-chain portfolio (Alchemy): priced ERC-20 holdings and
+   * native balances across the major EVM chains, rolled up to a total and a
+   * per-chain breakdown. Independent of the Robinhood-Chain wallet view above.
+   */
+  async getPortfolio(address: string): Promise<Aggregated<Portfolio>> {
+    const [tokensResult, nativeResult] = await Promise.all([
+      attempt('alchemy', this.alchemy.configured, () => this.alchemy.getWalletTokens(address)),
+      attempt('alchemy', this.alchemy.configured, () => this.alchemy.getNativeBalances(address)),
+    ]);
+
+    const tokens = (tokensResult.value ?? [])
+      .slice()
+      .sort((a, b) => (b.usd ?? 0) - (a.usd ?? 0));
+    const native = nativeResult.value ?? [];
+
+    const chainUsd = new Map<string, number>();
+    const add = (label: string, usd: number | null) => {
+      if (usd === null) return;
+      chainUsd.set(label, (chainUsd.get(label) ?? 0) + usd);
+    };
+    tokens.forEach((t) => add(t.networkLabel, t.usd));
+    native.forEach((n) => add(n.chainLabel, n.usd));
+
+    const chains = [...chainUsd.entries()]
+      .map(([label, usd]) => ({ label, usd }))
+      .sort((a, b) => b.usd - a.usd);
+    const totalUsd = chains.reduce((sum, c) => sum + c.usd, 0);
+
+    return wrap(
+      { address, totalUsd, chains, native, tokens },
+      [tokensResult.report, { ...nativeResult.report, provider: 'alchemy' }],
+    );
   }
 
   async getChainStatus(): Promise<Aggregated<ChainStatus | null>> {

@@ -109,6 +109,10 @@ const envSchema = z.object({
   ROBINHOOD_NATIVE_CURRENCY: z.string().default('ETH'),
   ROBINHOOD_BLOCK_EXPLORER: optionalString,
 
+  // Multi-chain on-chain data via Alchemy (RPC + Data/Portfolio + Prices APIs).
+  // Optional: a missing key disables it, leaving the rest of the API unaffected.
+  ALCHEMY_API_KEY: optionalString,
+
   /** Per-request timeout for every outbound provider call, in milliseconds. */
   REQUEST_TIMEOUT: z.coerce.number().int().positive().default(10_000),
   /** Default cache lifetime for provider responses, in seconds. */

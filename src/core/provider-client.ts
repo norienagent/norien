@@ -10,7 +10,14 @@ import { type CacheStore, providerCache } from './cache.js';
  * `fetch` against a third party.
  */
 
-export type ProviderName = 'codex' | 'github' | 'coingecko' | 'defillama' | 'blockscout' | 'rpc';
+export type ProviderName =
+  | 'codex'
+  | 'github'
+  | 'coingecko'
+  | 'defillama'
+  | 'blockscout'
+  | 'rpc'
+  | 'alchemy';
 
 /** A provider call that failed in a way the caller can reason about. */
 export class ProviderError extends Error {

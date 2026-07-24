@@ -17,6 +17,7 @@ import { Brand, GitHubLink, SITE_URL, XLink } from '@norien-live/web-ui';
 const NAV: { href: string; label: string; icon: ReactNode }[] = [
   { href: '/', label: 'Dashboard', icon: <IconGrid /> },
   { href: '/markets', label: 'Markets', icon: <IconChart /> },
+  { href: '/portfolio', label: 'Portfolio', icon: <IconWallet /> },
   { href: '/search', label: 'Search', icon: <IconSearch /> },
   { href: '/projects', label: 'Projects', icon: <IconLayers /> },
   { href: '/registry', label: 'Registry', icon: <IconBox /> },
@@ -178,6 +179,16 @@ function IconChart() {
   return (
     <svg {...iconProps}>
       <path d="M3 16.5V9M8 16.5V4M13 16.5v-5M18 16.5V7" />
+    </svg>
+  );
+}
+
+function IconWallet() {
+  return (
+    <svg {...iconProps}>
+      <rect x="2.5" y="4.5" width="15" height="11" rx="2" />
+      <path d="M2.5 8h15" />
+      <circle cx="14" cy="11.5" r="1" />
     </svg>
   );
 }

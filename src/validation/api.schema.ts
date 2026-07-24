@@ -245,6 +245,36 @@ export const walletSchema = z.object({
   tokenTransfers: z.array(tokenTransferSchema),
 });
 
+/** A wallet's cross-chain portfolio (Alchemy). */
+export const portfolioSchema = z.object({
+  address: z.string(),
+  totalUsd: z.number(),
+  chains: z.array(z.object({ label: z.string(), usd: z.number() })),
+  native: z.array(
+    z.object({
+      chain: z.string(),
+      chainLabel: z.string(),
+      symbol: z.string(),
+      balance: z.string(),
+      usdPrice: z.number().nullable(),
+      usd: z.number().nullable(),
+    }),
+  ),
+  tokens: z.array(
+    z.object({
+      network: z.string(),
+      networkLabel: z.string(),
+      address: z.string(),
+      symbol: z.string(),
+      name: z.string(),
+      logo: z.string().nullable(),
+      balance: z.string(),
+      usdPrice: z.number().nullable(),
+      usd: z.number().nullable(),
+    }),
+  ),
+});
+
 export const searchResultSchema = z.object({
   kind: z.enum(['token', 'project', 'address']),
   id: z.string(),

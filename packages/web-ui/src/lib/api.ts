@@ -179,6 +179,35 @@ export interface Wallet {
   tokenTransfers: TokenTransfer[];
 }
 
+export interface PortfolioToken {
+  network: string;
+  networkLabel: string;
+  address: string;
+  symbol: string;
+  name: string;
+  logo: string | null;
+  balance: string;
+  usdPrice: number | null;
+  usd: number | null;
+}
+
+export interface PortfolioNative {
+  chain: string;
+  chainLabel: string;
+  symbol: string;
+  balance: string;
+  usdPrice: number | null;
+  usd: number | null;
+}
+
+export interface Portfolio {
+  address: string;
+  totalUsd: number;
+  chains: { label: string; usd: number }[];
+  native: PortfolioNative[];
+  tokens: PortfolioToken[];
+}
+
 export interface ChainStatus {
   chain: ChainRef;
   blockNumber: number;
@@ -488,6 +517,10 @@ export const api = {
     return request<Aggregated<Wallet>>(`/api/wallets/${address}${query({ limit })}`, {
       revalidate: 15,
     });
+  },
+
+  portfolio(address: string) {
+    return request<Aggregated<Portfolio>>(`/api/portfolio/${address}`, { revalidate: 30 });
   },
 
   search(q: string, limit = 20) {
