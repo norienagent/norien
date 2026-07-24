@@ -22,9 +22,11 @@ export async function GET(request: Request): Promise<NextResponse> {
     if (supabase) {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
       if (!error) {
-        // Land on the app with a one-shot flag so it can confirm "Login successful".
-        const target = new URL(next, url.origin);
-        target.searchParams.set('signedin', '1');
+        // Land on a confirmation page — a clear "you're in" beat with a button
+        // on to the app — rather than dropping the user straight into it. The
+        // intended destination rides along so the button goes to the right place.
+        const target = new URL('/welcome', url.origin);
+        if (next && next !== APP_URL) target.searchParams.set('next', next);
         return NextResponse.redirect(target);
       }
       return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(error.message)}`, url.origin));
