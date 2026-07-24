@@ -113,6 +113,12 @@ const envSchema = z.object({
   // Optional: a missing key disables it, leaving the rest of the API unaffected.
   ALCHEMY_API_KEY: optionalString,
 
+  // Virtuals Compute — an OpenAI-compatible multi-model LLM gateway that powers
+  // "chat with an agent". Optional: no key disables the chat feature.
+  VIRTUALS_COMPUTE_API_KEY: optionalString,
+  VIRTUALS_COMPUTE_URL: z.string().url().default('https://compute.virtuals.io/v1'),
+  VIRTUALS_COMPUTE_MODEL: z.string().default('anthropic-claude-sonnet-5'),
+
   /** Per-request timeout for every outbound provider call, in milliseconds. */
   REQUEST_TIMEOUT: z.coerce.number().int().positive().default(10_000),
   /** Default cache lifetime for provider responses, in seconds. */

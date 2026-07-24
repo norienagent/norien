@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 
 import { api } from '@norien-live/web-ui/api';
 import { relativeTime } from '@norien-live/web-ui';
+import { ChatPanel } from '@/components/chat-panel';
 import { InstallCommand, RuntimeBadge } from '@/components/registry';
 import { Table } from '@/components/table';
 import {
@@ -52,6 +53,16 @@ export default async function AgentPage({ params }: { params: Promise<{ slug: st
         <Stat label="Required tools" value={agent.required_tools.length} />
         <Stat label="Permissions" value={agent.permissions.length} />
         <Stat label="Environment" value={agent.environment_variables.length} hint="declared variables" />
+      </div>
+
+      <div className="mt-4">
+        <ChatPanel
+          agent={{
+            name: agent.name,
+            description: agent.description,
+            tools: agent.required_tools,
+          }}
+        />
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">

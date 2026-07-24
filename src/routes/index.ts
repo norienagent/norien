@@ -2,6 +2,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 
 import { agentRoutes } from './agents.routes.js';
 import { dataApiRoutes } from './api.routes.js';
+import { chatRoutes } from './chat.routes.js';
 import { healthRoutes } from './health.routes.js';
 import { imageRoutes } from './img.routes.js';
 import { installRoutes } from './install.routes.js';
@@ -32,4 +33,6 @@ export const apiRoutes: FastifyPluginAsyncZod = async (app) => {
   await app.register(imageRoutes);
   // Personal API key management.
   await app.register(keyRoutes);
+  // Chat with an agent (Virtuals Compute).
+  await app.register(chatRoutes);
 };
