@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { APP_URL, Brand, ButtonLink, Container, DOCS_URL, SITE_URL } from '@norien-live/web-ui';
 
 import './globals.css';
+import { DocsSidebar } from './sidebar';
 
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? 'Norien';
 const TITLE = `${APP_NAME} Docs`;
@@ -56,7 +57,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </Container>
           </header>
 
-          <main className="flex-1">{children}</main>
+          <main className="flex-1">
+            <Container className="grid gap-6 py-8 lg:grid-cols-[15rem_1fr] lg:gap-12 lg:py-14">
+              <DocsSidebar />
+              {children}
+            </Container>
+          </main>
 
           <footer className="border-t border-line bg-card">
             <Container className="flex flex-col gap-3 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">

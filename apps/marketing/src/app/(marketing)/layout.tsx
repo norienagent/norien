@@ -14,10 +14,10 @@ import { SiteHeader } from './site-header';
  */
 
 const PRODUCT = [
-  { href: '/#registry', label: 'Registry' },
-  { href: '/#runtime', label: 'Runtime' },
-  { href: '/#marketplace', label: 'Marketplace' },
-  { href: '/#api', label: 'API' },
+  { href: `${DOCS_URL}/concepts/registry`, label: 'Registry' },
+  { href: `${DOCS_URL}/concepts/runtime`, label: 'Runtime' },
+  { href: `${DOCS_URL}/concepts/tools`, label: 'Marketplace' },
+  { href: `${DOCS_URL}/concepts/api`, label: 'API' },
 ];
 
 const RESOURCES = [
