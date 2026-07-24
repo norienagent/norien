@@ -460,33 +460,35 @@ export class AggregatorService {
    * per-chain breakdown. Independent of the Robinhood-Chain wallet view above.
    */
   async getPortfolio(address: string): Promise<Aggregated<Portfolio>> {
-    const [tokensResult, nativeResult] = await Promise.all([
-      attempt('alchemy', this.alchemy.configured, () => this.alchemy.getWalletTokens(address)),
-      attempt('alchemy', this.alchemy.configured, () => this.alchemy.getNativeBalances(address)),
-    ]);
+    const result = await attempt('alchemy', this.alchemy.configured, () =>
+      this.alchemy.getWalletTokens(address),
+    );
 
-    const tokens = (tokensResult.value ?? [])
-      .slice()
-      .sort((a, b) => (b.usd ?? 0) - (a.usd ?? 0));
-    const native = nativeResult.value ?? [];
+    const all = result.value ?? [];
+
+    const tokens = all.filter((t) => !t.isNative).sort((a, b) => (b.usd ?? 0) - (a.usd ?? 0));
+    const native: NativeBalance[] = all
+      .filter((t) => t.isNative)
+      .sort((a, b) => (b.usd ?? 0) - (a.usd ?? 0))
+      .map((t) => ({
+        chain: t.network,
+        chainLabel: t.networkLabel,
+        symbol: t.symbol,
+        balance: t.balance,
+        usdPrice: t.usdPrice,
+        usd: t.usd,
+      }));
 
     const chainUsd = new Map<string, number>();
-    const add = (label: string, usd: number | null) => {
-      if (usd === null) return;
-      chainUsd.set(label, (chainUsd.get(label) ?? 0) + usd);
-    };
-    tokens.forEach((t) => add(t.networkLabel, t.usd));
-    native.forEach((n) => add(n.chainLabel, n.usd));
-
+    for (const t of all) {
+      if (t.usd !== null) chainUsd.set(t.networkLabel, (chainUsd.get(t.networkLabel) ?? 0) + t.usd);
+    }
     const chains = [...chainUsd.entries()]
       .map(([label, usd]) => ({ label, usd }))
       .sort((a, b) => b.usd - a.usd);
     const totalUsd = chains.reduce((sum, c) => sum + c.usd, 0);
 
-    return wrap(
-      { address, totalUsd, chains, native, tokens },
-      [tokensResult.report, { ...nativeResult.report, provider: 'alchemy' }],
-    );
+    return wrap({ address, totalUsd, chains, native, tokens }, [result.report]);
   }
 
   async getChainStatus(): Promise<Aggregated<ChainStatus | null>> {
