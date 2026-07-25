@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from 'react';
 
-const KEY = 'norien-desktop-hint';
+const KEY = 'norien-mobile-hint-v3';
 
 /**
- * A gentle nudge for phones to switch on "Desktop site".
+ * A gentle nudge for touch devices stuck in "Desktop site" mode.
  *
- * Norien is data-dense — registry tables, market rows, multi-chain portfolios —
- * and that reads far better with the full desktop layout. A touch device in a
- * narrow viewport is a phone in its normal mobile view, so we suggest turning on
- * "Desktop site", once, and remember the dismissal.
+ * The app is mobile-first now (tables collapse their columns, names truncate),
+ * so a phone forced into desktop mode just gets a shrunken page. A coarse
+ * pointer in a desktop-width viewport is that tell — we suggest turning
+ * "Desktop site" off, once, and remember the dismissal.
  */
 export function MobileHint() {
   const [show, setShow] = useState(false);
@@ -23,8 +23,8 @@ export function MobileHint() {
       // no storage — still fine to show once per load
     }
     const coarse = window.matchMedia('(pointer: coarse)').matches;
-    const narrow = window.innerWidth < 820;
-    if (coarse && narrow) setShow(true);
+    const wide = window.innerWidth >= 900;
+    if (coarse && wide) setShow(true);
   }, []);
 
   function dismiss() {
@@ -48,8 +48,8 @@ export function MobileHint() {
         </svg>
       </span>
       <div className="min-w-0 flex-1 text-sm leading-relaxed text-ink">
-        Norien is data-dense. Turn on <span className="font-medium">“Desktop site”</span> in your
-        browser for the best experience on mobile.
+        Norien works great on mobile. Turn off <span className="font-medium">“Desktop site”</span> in
+        your browser for the best experience.
         <button
           type="button"
           onClick={dismiss}

@@ -270,7 +270,10 @@ export function TokenCell({
   return (
     <Link
       href={`/token/${token.address}?chainId=${token.chain.id}`}
-      className="group inline-flex min-w-0 items-center gap-2.5"
+      // Capped on phones so a long name truncates instead of forcing the whole
+      // table wider than the screen (which turned Markets into a horizontal
+      // scroll on mobile); unconstrained from `sm` up.
+      className="group inline-flex min-w-0 max-w-[52vw] items-center gap-2.5 sm:max-w-none"
     >
       <TokenLogo src={token.logo} symbol={token.symbol} className="size-6" />
       <span className="min-w-0 truncate">

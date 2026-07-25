@@ -158,32 +158,43 @@ export class AggregatorService {
 
     const networks = await this.networkMap();
 
+    // The "biggest gainers" ranking is polluted by broken provider data —
+    // freshly-listed tokens with meaningless % changes and no liquidity, which
+    // the source ranks first. For that view we over-fetch a pool, drop the
+    // noise, and re-rank by the real change, so it shows actual movers.
+    const gainers = options.ranking === 'change24';
+    const fetchLimit = gainers ? Math.min(120, offset + limit + 80) : limit;
+    const fetchOffset = gainers ? 0 : offset;
+
     const { value, report } = await attempt('codex', this.codex.configured, () =>
       this.codex.listTokens({
         ...(options.chainId !== undefined ? { networkIds: [options.chainId] } : {}),
-        limit,
-        offset,
+        limit: fetchLimit,
+        offset: fetchOffset,
         ...(options.ranking ? { ranking: options.ranking } : {}),
         ...(options.query ? { phrase: options.query } : {}),
       }),
     );
 
-    const items = (value ?? []).map((row) => this.toToken(row, networks));
+    let items = (value ?? []).map((row) => this.toToken(row, networks));
+    let total: number;
+    let hasMore: boolean;
 
-    return wrap(
-      {
-        items,
-        meta: {
-          // Codex does not return a stable total for filtered queries, so the
-          // page reports what it actually has rather than inventing a count.
-          total: offset + items.length,
-          limit,
-          offset,
-          hasMore: items.length === limit,
-        },
-      },
-      [report],
-    );
+    if (gainers) {
+      const ranked = items
+        .filter((t) => t.change24h !== null && ((t.volume24h ?? 0) > 0 || (t.liquidity ?? 0) > 0))
+        .sort((a, b) => (b.change24h ?? 0) - (a.change24h ?? 0));
+      total = ranked.length;
+      items = ranked.slice(offset, offset + limit);
+      hasMore = offset + items.length < total;
+    } else {
+      // Codex does not return a stable total for filtered queries, so the page
+      // reports what it actually has rather than inventing a count.
+      total = offset + items.length;
+      hasMore = items.length === limit;
+    }
+
+    return wrap({ items, meta: { total, limit, offset, hasMore } }, [report]);
   }
 
   async getTrending(chainId: number | undefined, limit: number): Promise<Aggregated<Paged<Token>>> {

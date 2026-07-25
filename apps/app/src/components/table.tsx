@@ -47,7 +47,7 @@ export function Table<T>({
                 key={column.key}
                 scope="col"
                 className={[
-                  'whitespace-nowrap px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted',
+                  'whitespace-nowrap px-3 py-2.5 text-xs font-medium uppercase tracking-wide text-muted sm:px-4',
                   column.align === 'right' ? 'text-right' : 'text-left',
                   column.hideBelow ? hideClass[column.hideBelow] : '',
                 ].join(' ')}
@@ -67,7 +67,7 @@ export function Table<T>({
                 <td
                   key={column.key}
                   className={[
-                    'whitespace-nowrap px-4 py-3 text-ink',
+                    'whitespace-nowrap px-3 py-3 text-ink sm:px-4',
                     column.align === 'right' ? 'text-right' : 'text-left',
                     column.hideBelow ? hideClass[column.hideBelow] : '',
                   ].join(' ')}

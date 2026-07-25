@@ -134,9 +134,14 @@ function normalizeRow(raw: RawFilterResult): CodexTokenRow {
     liquidity: toNumber(raw.liquidity),
     volume24h: toNumber(raw.volume24),
     // Codex reports change as a ratio (-0.0075); expose it as a percentage.
+    // Freshly-listed tokens sometimes carry astronomical, meaningless changes
+    // (e.g. 1e79%); treat anything past a sane bound as unknown so it renders as
+    // "—" and never masquerades as a real mover.
     change24h: (() => {
       const ratio = toNumber(raw.change24);
-      return ratio === null ? null : ratio * 100;
+      if (ratio === null) return null;
+      const pct = ratio * 100;
+      return Number.isFinite(pct) && Math.abs(pct) < 100_000 ? pct : null;
     })(),
     holders: raw.holders ?? null,
     txns24h: toNumber(raw.txnCount24),
