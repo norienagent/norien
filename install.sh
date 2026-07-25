@@ -60,5 +60,6 @@ npm link --workspace @norien-live/cli >/dev/null 2>&1 || npm link --workspace @n
 
 bold "Done. Run: norien --help"
 printf '\n'
-info "The CLI talks to a Norien registry. With none deployed yet, point it at a"
-info "local one (npm run dev in the source) or pass --registry <url>."
+info "The CLI talks to the hosted registry at api.norien.live out of the box."
+info "Point it elsewhere with NORIEN_REGISTRY or --registry <url>."
+info "Try: norien markets   ·   norien skill run market-recap"

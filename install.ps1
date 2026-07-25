@@ -58,5 +58,6 @@ npm link --workspace '@norien-live/cli'
 
 Write-Host 'Done. Run: norien --help' -ForegroundColor Cyan
 Write-Host ''
-Info 'The CLI talks to a Norien registry. With none deployed yet, point it at a'
-Info 'local one (npm run dev in the source) or pass --registry <url>.'
+Info 'The CLI talks to the hosted registry at api.norien.live out of the box.'
+Info 'Point it elsewhere with NORIEN_REGISTRY or --registry <url>.'
+Info 'Try: norien markets   ·   norien skill run market-recap'

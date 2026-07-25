@@ -35,8 +35,8 @@ irm https://raw.githubusercontent.com/norienagent/norien/main/install.ps1 | iex
 
 </details>
 
-The installer checks for Node.js 20+, then installs the `norien` CLI — from npm
-once published, or from source until then. Prefer npm directly?
+The installer checks for Node.js 20+, then installs the `norien` CLI from npm
+(falling back to a source build if the registry is unreachable). Prefer npm directly?
 
 ```sh
 npm install -g @norien-live/cli
@@ -51,8 +51,9 @@ The CLI defaults to the hosted registry at **[api.norien.live](https://api.norie
 so it works out of the box. Point it elsewhere with `NORIEN_REGISTRY` or
 `--registry` — e.g. a local one via `npm run dev` from the source.
 
-> **Pre-release (v0.1.0).** The API, the web app, and the `@norien-live/*` npm
-> packages are all live. Interfaces may still change before v1.
+> **Pre-release.** The API, the web app, the CLI (`@norien-live/cli`), the MCP
+> server (`@norien-live/mcp`), and the SDKs are all live. Interfaces may still
+> change before v1.
 
 ---
 
@@ -355,15 +356,18 @@ Tools: `search`, `http-fetch`, `wallet`, `twitter`, `discord`, `notifications`,
 
 ## CLI
 
+End users install `@norien-live/cli` from npm (`npm i -g @norien-live/cli`). To
+develop it from source, link it instead:
+
 ```bash
 npm install          # the root `prepare` builds the packages
 npm run cli:link     # → npm link --workspace @norien-live/cli
 norien --help        # available from any directory
 ```
 
-`@norien-live/cli` is not published, so `norien` is a link into `packages/cli/dist`;
-a `npm run build:packages` is picked up without relinking, and
-`npm run cli:unlink` removes it. pnpm and the Windows shims are covered in
+Linked, `norien` points at `packages/cli/dist`, so a `npm run build:packages` is
+picked up without relinking, and `npm run cli:unlink` removes it. pnpm and the
+Windows shims are covered in
 [packages/cli/README.md](packages/cli/README.md#local-development).
 
 ```bash

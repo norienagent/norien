@@ -14,8 +14,8 @@ no private surface. Anything the CLI can do, the SDK and `curl` can do too.
 
 ## Local development
 
-The package is not published yet, so `norien` comes from a link into this
-repository rather than from the registry.
+For contributing to the CLI itself, run `norien` from a link into this
+repository rather than the published npm package, so edits are picked up live.
 
 ```bash
 npm install          # builds the packages, then:

@@ -11,11 +11,23 @@ import { withSentryConfig } from '@sentry/nextjs';
 
 const API_URL = process.env.NORIEN_API_URL ?? 'http://127.0.0.1:3000';
 
+// The canonical installers live at the repo root; norien.live/install.{sh,ps1}
+// redirect there so `curl -fsSL … | sh` (and `irm … | iex`) resolve to the real
+// script instead of the app's HTML 404. `-L` / irm both follow the redirect, and
+// there is a single source of truth on `main` — nothing to keep in sync.
+const RAW = 'https://raw.githubusercontent.com/norienagent/norien/main';
+
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@norien-live/web-ui'],
   async rewrites() {
     return [{ source: '/api/:path*', destination: `${API_URL}/api/:path*` }];
+  },
+  async redirects() {
+    return [
+      { source: '/install.sh', destination: `${RAW}/install.sh`, permanent: false },
+      { source: '/install.ps1', destination: `${RAW}/install.ps1`, permanent: false },
+    ];
   },
 };
 
