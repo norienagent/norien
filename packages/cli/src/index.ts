@@ -30,7 +30,7 @@ import {
   toolUpdate,
 } from './commands/tool.js';
 
-const VERSION = '0.1.2';
+const VERSION = '0.1.3';
 
 /**
  * Entry point.
