@@ -1,4 +1,5 @@
 import { env } from '../../config/env.js';
+import { parseSseDeltas } from './sse.js';
 
 /**
  * Groq — fast, free LLM inference for AI helpers.
@@ -53,6 +54,44 @@ export class GroqService {
 
       const data = (await response.json()) as { choices?: { message?: { content?: string } }[] };
       return data.choices?.[0]?.message?.content?.trim() ?? '';
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  /** Streaming variant of {@link chat}: yields content deltas as they arrive. */
+  async *chatStream(
+    messages: ChatMessage[],
+    options: { model?: string; maxTokens?: number; temperature?: number } = {},
+  ): AsyncGenerator<string, void, unknown> {
+    if (!this.configured) throw new Error('Groq is not configured.');
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+    try {
+      const response = await fetch(`${env.GROQ_URL}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          authorization: `Bearer ${env.GROQ_API_KEY as string}`,
+        },
+        body: JSON.stringify({
+          model: options.model ?? env.GROQ_MODEL,
+          messages,
+          temperature: options.temperature ?? 0.5,
+          max_tokens: options.maxTokens ?? 900,
+          stream: true,
+        }),
+        signal: controller.signal,
+      });
+
+      if (!response.ok || !response.body) {
+        const detail = await response.text().catch(() => '');
+        throw new Error(`Groq responded ${response.status}: ${detail.slice(0, 200)}`);
+      }
+
+      yield* parseSseDeltas(response.body);
     } finally {
       clearTimeout(timer);
     }

@@ -3,6 +3,7 @@
 // so a client component never pulls in `server-only`.
 export * from './lib/format';
 export * from './lib/config';
+export * from './lib/chat-stream';
 export * from './components/ui';
 export * from './components/token-logo';
 export * from './components/mobile-hint';

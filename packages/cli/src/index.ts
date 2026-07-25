@@ -4,6 +4,7 @@ import { Command, Option } from 'commander';
 import { type GlobalOptions, createContext } from './context.js';
 import { configureOutput, reportError, styles } from './ui.js';
 import { login, logout, profiles, whoami } from './commands/auth.js';
+import { chat } from './commands/chat.js';
 import { info, search } from './commands/discover.js';
 import { doctor } from './commands/doctor.js';
 import { install, list, uninstall, update } from './commands/lifecycle.js';
@@ -144,6 +145,30 @@ program
   .action(
     action((context, slug: string, options) =>
       info(context, slug, options as Parameters<typeof info>[2]),
+    ),
+  );
+
+// --- Chat -----------------------------------------------------------------
+
+program
+  .command('chat')
+  .argument('[agent]', 'Agent slug to chat with. Omit to talk to the Norien assistant.')
+  .description('Chat with an agent (in character) or the Norien assistant. Replies stream live.')
+  .option('-m, --message <text>', 'Send a single message and print the reply, instead of a REPL.')
+  .addHelpText(
+    'after',
+    `
+With an agent slug you chat with that published agent in character — a preview,
+so its code never runs and nothing goes on-chain. With no slug you talk to the
+Norien assistant about the product. Use -m for a one-shot reply (pipe-friendly).
+
+  norien chat                     Ask the Norien assistant anything
+  norien chat trading-agent       Chat with an agent in character
+  norien chat --message "hi"      One-shot, no prompt`,
+  )
+  .action(
+    action((context, agent: string | undefined, options) =>
+      chat(context, agent, options as Parameters<typeof chat>[2]),
     ),
   );
 

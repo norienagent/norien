@@ -2,6 +2,8 @@
 
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 
+import { streamChat } from '../lib/chat-stream';
+
 interface Message {
   role: 'user' | 'assistant';
   content: string;
@@ -78,23 +80,31 @@ export function AskNorien() {
   async function send(text: string) {
     const content = text.trim();
     if (!content || pending) return;
-    const next = [...messages, { role: 'user' as const, content }];
-    setMessages(next);
+    const base = [...messages, { role: 'user' as const, content }];
+    setMessages(base);
     setInput('');
     setError(null);
     setPending(true);
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ messages: next.slice(-12) }),
+
+    // Stream the reply into a single assistant bubble, created on the first
+    // chunk and updated in place as more arrive.
+    let acc = '';
+    let started = false;
+    const onText = (chunk: string) => {
+      acc += chunk;
+      setMessages((m) => {
+        if (!started) {
+          started = true;
+          return [...m, { role: 'assistant', content: acc }];
+        }
+        const copy = m.slice();
+        copy[copy.length - 1] = { role: 'assistant', content: acc };
+        return copy;
       });
-      if (!response.ok) {
-        const body = (await response.json().catch(() => null)) as { error?: { message?: string } } | null;
-        throw new Error(body?.error?.message ?? 'Could not answer just now.');
-      }
-      const { reply } = (await response.json()) as { reply: string };
-      setMessages((m) => [...m, { role: 'assistant', content: reply }]);
+    };
+
+    try {
+      await streamChat({ messages: base.slice(-12) }, onText);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong.');
     } finally {
@@ -171,7 +181,7 @@ export function AskNorien() {
                     </span>
                   </li>
                 ))}
-                {pending ? (
+                {pending && messages[messages.length - 1]?.role === 'user' ? (
                   <li className="flex justify-start">
                     <span className="rounded-2xl border border-line bg-canvas px-3.5 py-2.5 text-sm text-muted">
                       <span className="inline-flex gap-1">

@@ -2,7 +2,7 @@
 
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 
-import { Badge, Button } from '@norien-live/web-ui';
+import { Badge, Button, streamChat } from '@norien-live/web-ui';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -78,31 +78,38 @@ export function ChatPanel({
     const content = text.trim();
     if (!content || pending) return;
 
-    const next = [...messages, { role: 'user' as const, content }];
-    setMessages(next);
+    const base = [...messages, { role: 'user' as const, content }];
+    setMessages(base);
     setInput('');
     setError(null);
     setPending(true);
 
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          agent: { name: agent.name, description: agent.description, tools: agent.tools },
-          messages: next.slice(-16),
-        }),
+    // Stream into one assistant bubble, created on the first chunk.
+    let acc = '';
+    let started = false;
+    const onText = (chunk: string) => {
+      acc += chunk;
+      setMessages((m) => {
+        if (!started) {
+          started = true;
+          return [...m, { role: 'assistant', content: acc }];
+        }
+        const copy = m.slice();
+        copy[copy.length - 1] = { role: 'assistant', content: acc };
+        return copy;
       });
+    };
 
-      if (!response.ok) {
-        const body = (await response.json().catch(() => null)) as { error?: { message?: string } } | null;
-        throw new Error(body?.error?.message ?? 'The agent could not respond.');
-      }
-
-      const { reply } = (await response.json()) as { reply: string };
-      setMessages((m) => [...m, { role: 'assistant', content: reply }]);
+    try {
+      await streamChat(
+        {
+          agent: { name: agent.name, description: agent.description, tools: agent.tools },
+          messages: base.slice(-16),
+        },
+        onText,
+      );
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Something went wrong.');
+      setError(e instanceof Error ? e.message : 'The agent could not respond.');
     } finally {
       setPending(false);
     }
@@ -170,7 +177,7 @@ export function ChatPanel({
                 </span>
               </li>
             ))}
-            {pending ? (
+            {pending && messages[messages.length - 1]?.role === 'user' ? (
               <li className="flex justify-start">
                 <span className="rounded-2xl border border-line bg-canvas px-3.5 py-2.5 text-sm text-muted">
                   <span className="inline-flex gap-1">

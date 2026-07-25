@@ -1,4 +1,5 @@
 import { env } from '../../config/env.js';
+import { parseSseDeltas } from './sse.js';
 
 /**
  * Virtuals Compute — the LLM behind "chat with an agent".
@@ -56,6 +57,48 @@ export class VirtualsComputeService {
         choices?: { message?: { content?: string } }[];
       };
       return data.choices?.[0]?.message?.content?.trim() ?? '';
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  /**
+   * Streaming variant of {@link chat}: yields content deltas as the model
+   * produces them, so a caller can render tokens live instead of waiting for
+   * the whole completion.
+   */
+  async *chatStream(
+    messages: ChatMessage[],
+    options: { model?: string; maxTokens?: number; temperature?: number } = {},
+  ): AsyncGenerator<string, void, unknown> {
+    if (!this.configured) throw new Error('Virtuals Compute is not configured.');
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+    try {
+      const response = await fetch(`${env.VIRTUALS_COMPUTE_URL}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          authorization: `Bearer ${env.VIRTUALS_COMPUTE_API_KEY as string}`,
+        },
+        body: JSON.stringify({
+          model: options.model ?? env.VIRTUALS_COMPUTE_MODEL,
+          messages,
+          max_tokens: options.maxTokens ?? 800,
+          temperature: options.temperature ?? 0.7,
+          stream: true,
+        }),
+        signal: controller.signal,
+      });
+
+      if (!response.ok || !response.body) {
+        const detail = await response.text().catch(() => '');
+        throw new Error(`Virtuals Compute responded ${response.status}: ${detail.slice(0, 200)}`);
+      }
+
+      yield* parseSseDeltas(response.body);
     } finally {
       clearTimeout(timer);
     }

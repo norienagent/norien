@@ -141,6 +141,38 @@ function scrubIdentity(reply: string, agentName: string): string {
   return result;
 }
 
+/**
+ * The streaming counterpart to {@link scrubIdentity}: drops identity-revealing
+ * sentences from a chunk while keeping its separators, so newlines (and the
+ * bullet lists and paragraphs they carry) survive. Applied only to whole
+ * sentences, so it is fed chunks that end on a sentence or line boundary.
+ */
+function scrubChunk(text: string): string {
+  const parts = text.split(/([.!?]+[ \t]+|\n+)/);
+  let out = '';
+  for (let i = 0; i < parts.length; i += 2) {
+    const sentence = parts[i] ?? '';
+    const separator = parts[i + 1] ?? '';
+    if (sentence && IDENTITY_TELL.test(sentence)) {
+      // Drop the sentence; keep a newline separator so structure holds, but
+      // discard a plain space so no gap is left behind.
+      out += separator.includes('\n') ? separator : '';
+    } else {
+      out += sentence + separator;
+    }
+  }
+  return out;
+}
+
+/** Index just past the last sentence/line boundary in a buffer, or -1. */
+function completeUpTo(buffer: string): number {
+  const boundary = /[.!?]+[ \t]+|\n+/g;
+  let index = -1;
+  let match: RegExpExecArray | null;
+  while ((match = boundary.exec(buffer)) !== null) index = match.index + match[0].length;
+  return index;
+}
+
 export const chatRoutes: FastifyPluginAsyncZod = async (app) => {
   app.post(
     '/api/chat',
@@ -176,6 +208,103 @@ export const chatRoutes: FastifyPluginAsyncZod = async (app) => {
         return reply.send({ reply: clean || '…' });
       } catch (error) {
         throw AppError.internal('The chat model could not respond. Please try again.', error);
+      }
+    },
+  );
+
+  /**
+   * Streaming chat, as server-sent events.
+   *
+   * Emits `data: {"text": "..."}` frames as the reply forms and a final
+   * `data: {"done": true}`; an error mid-stream arrives as `data: {"error": ...}`.
+   * Tokens are held back to whole-sentence boundaries so the identity scrub can
+   * still drop a self-disclosing sentence before it reaches the client — the
+   * one thing raw token streaming would leak. Falls back to a single completion
+   * for a provider that does not stream.
+   */
+  app.post(
+    '/api/chat/stream',
+    {
+      schema: {
+        tags: ['AI'],
+        summary: 'Chat with an agent (streaming)',
+        description:
+          'Server-sent events variant of /api/chat. Streams the reply as it forms; a preview that never executes the agent’s code.',
+        body: chatBody,
+      },
+    },
+    async (request, reply) => {
+      const provider = chatProvider();
+      if (!provider) {
+        throw AppError.badRequest('Chat is not enabled on this deployment.');
+      }
+
+      const { agent, messages } = request.body;
+      const agentName = agent?.name ?? 'this agent';
+      const conversation: ChatMessage[] = [
+        { role: 'system', content: systemPrompt(agent) },
+        ...messages.map((m) => ({ role: m.role, content: m.content })),
+      ];
+
+      reply.hijack();
+      const raw = reply.raw;
+      raw.writeHead(200, {
+        'Content-Type': 'text/event-stream; charset=utf-8',
+        'Cache-Control': 'no-cache, no-transform',
+        Connection: 'keep-alive',
+        // Stop reverse proxies (nginx and the like) from buffering the stream.
+        'X-Accel-Buffering': 'no',
+      });
+      const send = (event: Record<string, unknown>): void => {
+        raw.write(`data: ${JSON.stringify(event)}\n\n`);
+      };
+
+      let buffer = '';
+      let emitted = false;
+
+      const flushComplete = (): void => {
+        const at = completeUpTo(buffer);
+        if (at <= 0) return;
+        const clean = scrubChunk(buffer.slice(0, at));
+        buffer = buffer.slice(at);
+        if (clean) {
+          send({ text: clean });
+          emitted = true;
+        }
+      };
+
+      try {
+        for await (const delta of provider.chatStream(conversation, { maxTokens: 800 })) {
+          buffer += delta;
+          flushComplete();
+        }
+        const tail = scrubChunk(buffer);
+        if (tail.trim()) {
+          send({ text: tail });
+          emitted = true;
+        }
+        if (!emitted) {
+          // A provider that did not actually stream (or a reply that scrubbed to
+          // nothing) still gets one honest answer.
+          const answer = await provider.chat(conversation, { maxTokens: 800 });
+          send({ text: scrubIdentity(answer, agentName) });
+        }
+        send({ done: true });
+      } catch (error) {
+        request.log.error({ err: error }, 'chat stream failed');
+        if (!emitted) {
+          try {
+            const answer = await provider.chat(conversation, { maxTokens: 800 });
+            send({ text: scrubIdentity(answer, agentName) });
+            send({ done: true });
+          } catch {
+            send({ error: 'The chat model could not respond. Please try again.' });
+          }
+        } else {
+          send({ error: 'The reply was cut short. Please try again.' });
+        }
+      } finally {
+        raw.end();
       }
     },
   );
