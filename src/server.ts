@@ -1,3 +1,7 @@
+// Must be first: Sentry patches core modules on load, so it has to run before
+// the app (and its provider clients) are imported.
+import './instrument.js';
+
 import { buildApp } from './app.js';
 import { env, isProduction, isTest } from './config/env.js';
 import { closeDb, getDb } from './db/client.js';

@@ -129,6 +129,12 @@ const envSchema = z.object({
   // to the other if the preferred one has no key.
   CHAT_PROVIDER: z.enum(['virtuals', 'groq']).default('virtuals'),
 
+  // Error tracking. Read directly in `src/instrument.ts` (which runs before this
+  // module loads); declared here only so the value is documented and validated.
+  // Optional: no DSN disables reporting entirely, so local runs stay silent.
+  SENTRY_DSN: optionalString,
+  SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0.1),
+
   /** Per-request timeout for every outbound provider call, in milliseconds. */
   REQUEST_TIMEOUT: z.coerce.number().int().positive().default(10_000),
   /** Default cache lifetime for provider responses, in seconds. */

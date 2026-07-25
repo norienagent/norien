@@ -1,8 +1,23 @@
+import * as Sentry from '@sentry/node';
 import type { FastifyError, FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { hasZodFastifySchemaValidationErrors, isResponseSerializationError } from 'fastify-type-provider-zod';
 
 import { isProduction } from '../config/env.js';
 import { AppError, type ErrorDetail, isAppError } from '../core/errors.js';
+
+/**
+ * Reports a genuine server failure to Sentry with the request attached.
+ *
+ * Only 5xx-class errors reach here; client mistakes (validation, not-found,
+ * rate limits) are deliberately excluded so the issue stream stays signal, not
+ * noise. A no-op when Sentry has no DSN, so tests and local runs are unaffected.
+ */
+function report(error: unknown, request: FastifyRequest): void {
+  Sentry.captureException(error, {
+    tags: { request_id: request.id, route: request.routeOptions?.url ?? request.url },
+    contexts: { request: { method: request.method, url: request.url } },
+  });
+}
 
 /**
  * The single place an error becomes a response.
@@ -64,7 +79,10 @@ export function registerErrorHandler(app: FastifyInstance): void {
 
   app.setErrorHandler((error: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
     if (isAppError(error)) {
-      if (error.statusCode >= 500) request.log.error({ err: error }, 'domain error');
+      if (error.statusCode >= 500) {
+        request.log.error({ err: error }, 'domain error');
+        report(error, request);
+      }
       void reply
         .status(error.statusCode)
         .send(buildBody(error.code, error.message, request.id, error.details));
@@ -88,6 +106,7 @@ export function registerErrorHandler(app: FastifyInstance): void {
     // caller's -- log it loudly and return 500 rather than leaking a 4xx.
     if (isResponseSerializationError(error)) {
       request.log.error({ err: error, route: error.method }, 'response serialization failed');
+      report(error, request);
       void reply
         .status(500)
         .send(buildBody('INTERNAL', 'The server produced an invalid response.', request.id));
@@ -117,6 +136,7 @@ export function registerErrorHandler(app: FastifyInstance): void {
     }
 
     request.log.error({ err: error }, 'unhandled error');
+    report(error, request);
 
     void reply
       .status(500)
