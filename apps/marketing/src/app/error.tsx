@@ -1,5 +1,6 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { useEffect } from 'react';
 
 import { Button, Card, ErrorState } from '@norien-live/web-ui';
@@ -14,6 +15,7 @@ import { Button, Card, ErrorState } from '@norien-live/web-ui';
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {
   useEffect(() => {
     console.error(error);
+    Sentry.captureException(error);
   }, [error]);
 
   return (

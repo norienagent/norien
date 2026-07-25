@@ -26,5 +26,4 @@ export default withSentryConfig(nextConfig, {
   project: 'javascript-nextjs',
   silent: !process.env.CI,
   authToken: process.env.SENTRY_AUTH_TOKEN,
-  disableLogger: true,
 });
