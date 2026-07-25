@@ -10,6 +10,7 @@ export * from './components/ask-norien';
 export * from './components/controls';
 export * from './components/brand';
 export * from './components/marketing';
+export * from './components/animated-terminal';
 export * from './components/auth';
 export * from './components/auth-buttons';
 export * from './components/sign-out';

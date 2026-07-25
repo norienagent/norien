@@ -22,6 +22,7 @@ const PROVIDER_LABELS: Record<string, string> = {
   blockscout: 'Chain explorer',
   github: 'Repository data',
   rpc: 'Chain node',
+  alchemy: 'On-chain data',
 };
 
 /** The display label for a data source id, never the vendor's brand name. */

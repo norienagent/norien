@@ -4,13 +4,13 @@ import { Suspense } from 'react';
 import { api } from '@norien-live/web-ui/api';
 import { APP_URL, count, DOCS_URL } from '@norien-live/web-ui';
 import {
+  AnimatedTerminal,
   CodeBlock,
   Container,
   Eyebrow,
   FeatureCard,
   Section,
   SectionTitle,
-  Terminal,
 } from '@norien-live/web-ui';
 import { ButtonLink, Skeleton } from '@norien-live/web-ui';
 
@@ -71,7 +71,7 @@ function Hero() {
           </Suspense>
         </div>
 
-        <Terminal
+        <AnimatedTerminal
           caption="norien"
           lines={[
             '$ norien search trading',
@@ -229,7 +229,7 @@ function Cli() {
           </ul>
         </div>
 
-        <Terminal
+        <AnimatedTerminal
           caption="markets"
           lines={[
             '$ norien markets --limit 3',
@@ -286,7 +286,7 @@ function Runtime() {
   return (
     <Section id="runtime">
       <div className="grid items-center gap-12 lg:grid-cols-2">
-        <Terminal
+        <AnimatedTerminal
           caption="supervisor"
           lines={[
             '$ norien run research-agent',
