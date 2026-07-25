@@ -36,6 +36,13 @@
       "when": 1784879708450,
       "tag": "0004_nifty_champions",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1785004898161,
+      "tag": "0005_skills",
+      "breakpoints": true
     }
   ]
 }

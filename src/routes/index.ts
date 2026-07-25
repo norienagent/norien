@@ -12,6 +12,7 @@ import { publishRoutes } from './publish.routes.js';
 import { rootRoutes } from './root.routes.js';
 import { runtimeRoutes } from './runtime.routes.js';
 import { searchRoutes } from './search.routes.js';
+import { skillRoutes } from './skills.routes.js';
 import { toolRoutes } from './tools.routes.js';
 
 /**
@@ -24,6 +25,7 @@ export const apiRoutes: FastifyPluginAsyncZod = async (app) => {
   await app.register(healthRoutes);
   await app.register(agentRoutes);
   await app.register(toolRoutes);
+  await app.register(skillRoutes);
   await app.register(runtimeRoutes);
   await app.register(searchRoutes);
   await app.register(installRoutes);

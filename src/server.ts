@@ -7,6 +7,7 @@ import { env, isProduction, isTest } from './config/env.js';
 import { closeDb, getDb } from './db/client.js';
 import { applyMigrations } from './db/migrate.js';
 import { seed } from './db/seed.js';
+import { ensureDefaultSkills } from './db/skills-seed.js';
 import { AgentRepository } from './repositories/agent.repository.js';
 
 /**
@@ -32,6 +33,8 @@ async function seedIfEmpty(log: (line: string) => void): Promise<void> {
 async function main(): Promise<void> {
   await applyMigrations();
   await seedIfEmpty((line) => process.stdout.write(`${line}\n`));
+  // Idempotent: keeps the starter skills present on every deployment.
+  await ensureDefaultSkills(await getDb(), (line) => process.stdout.write(`${line}\n`));
 
   const app = await buildApp();
 

@@ -137,12 +137,16 @@ function Features() {
     <Section id="features">
       <SectionTitle
         title="Everything an agent needs to ship"
-        detail="Four layers that compose. Use one, or use all of them behind a single API."
+        detail="Primitives that compose. Use one, or use all of them behind a single API."
       />
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <FeatureCard title="Versioned registry" href={`${APP_URL}/registry`}>
           Immutable version records with a mutable head. Install a pinned version and get the exact
           manifest that was published.
+        </FeatureCard>
+        <FeatureCard title="Skills" href={`${APP_URL}/skills`}>
+          Runnable capabilities, grounded in live data. Publish a skill once; anyone can run it and
+          get a real, data-backed result.
         </FeatureCard>
         <FeatureCard title="Local runtime" href={`${APP_URL}/runtime`}>
           A supervisor that starts agents, streams logs, probes health, and restarts them when they

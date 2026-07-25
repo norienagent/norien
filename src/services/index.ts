@@ -4,6 +4,7 @@ import { InstallationService } from './installation.service.js';
 import { PublishService } from './publish.service.js';
 import { RuntimeService } from './runtime.service.js';
 import { SearchService } from './search.service.js';
+import { SkillService } from './skill.service.js';
 import { ToolService } from './tool.service.js';
 import { createRepositories } from './repositories.js';
 
@@ -17,6 +18,7 @@ import { createRepositories } from './repositories.js';
 export interface Services {
   agents: AgentService;
   tools: ToolService;
+  skills: SkillService;
   installations: InstallationService;
   search: SearchService;
   publish: PublishService;
@@ -28,6 +30,7 @@ export function createServices(db: Database): Services {
   return {
     agents: new AgentService(db),
     tools: new ToolService(db),
+    skills: new SkillService(db),
     installations: new InstallationService(db),
     search: new SearchService(db),
     publish: new PublishService(db),
@@ -38,6 +41,7 @@ export function createServices(db: Database): Services {
 export {
   AgentService,
   ToolService,
+  SkillService,
   InstallationService,
   SearchService,
   PublishService,

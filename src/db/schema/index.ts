@@ -2,5 +2,6 @@ export * from './_shared.js';
 export * from './users.js';
 export * from './agents.js';
 export * from './tools.js';
+export * from './skills.js';
 export * from './installations.js';
 export * from './api-keys.js';

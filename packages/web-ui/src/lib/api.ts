@@ -444,6 +444,21 @@ interface FetchOptions {
   nullOn404?: boolean;
 }
 
+export interface Skill {
+  slug: string;
+  name: string;
+  description: string;
+  version: string;
+  category: string;
+  author: string;
+  tags: string[];
+  instructions: string;
+  data_source: 'none' | 'markets' | 'portfolio' | 'token' | 'registry';
+  input_hint: string | null;
+  examples: string[];
+  updated_at: string;
+}
+
 async function request<T>(path: string, options: FetchOptions = {}): Promise<T | null> {
   const response = await fetch(`${API_URL}${path}`, {
     // Norien already caches provider responses; this second layer keeps a page
@@ -573,6 +588,14 @@ export const api = {
       revalidate: 30,
       nullOn404: true,
     });
+  },
+
+  skills(params: { limit?: number; offset?: number; q?: string; category?: string; tag?: string } = {}) {
+    return request<RegistryPage<Skill>>(`/api/skills${query(params)}`, { revalidate: 20 });
+  },
+
+  skill(slug: string) {
+    return request<Skill>(`/api/skills/${encodeURIComponent(slug)}`, { revalidate: 20, nullOn404: true });
   },
 
   /** Registry search — agents and tools. Distinct from `search()`, which is market-wide. */

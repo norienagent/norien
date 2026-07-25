@@ -22,6 +22,7 @@ const NAV: { href: string; label: string; icon: ReactNode }[] = [
   { href: '/projects', label: 'Projects', icon: <IconLayers /> },
   { href: '/registry', label: 'Registry', icon: <IconBox /> },
   { href: '/tools', label: 'Tools', icon: <IconTool /> },
+  { href: '/skills', label: 'Skills', icon: <IconSkill /> },
   { href: '/runtime', label: 'Runtime', icon: <IconPlay /> },
   { href: '/publish', label: 'Publish', icon: <IconUpload /> },
   { href: '/api-keys', label: 'API Keys', icon: <IconKey /> },
@@ -224,6 +225,15 @@ function IconTool() {
   return (
     <svg {...iconProps}>
       <path d="M12.5 3a4 4 0 00-4.9 5.2l-4.4 4.4a1.5 1.5 0 002.1 2.1l4.4-4.4A4 4 0 0016.5 6l-2 2-2-1-1-2 2-2z" />
+    </svg>
+  );
+}
+
+function IconSkill() {
+  return (
+    <svg {...iconProps}>
+      <path d="M10 2l1.7 4.6L16 8l-4.3 1.4L10 14l-1.7-4.6L4 8l4.3-1.4L10 2z" />
+      <path d="M16 12l.7 1.9L18.5 15l-1.8.6L16 18l-.7-2.4L13.5 15l1.8-1.1L16 12z" opacity="0.55" />
     </svg>
   );
 }

@@ -30,6 +30,7 @@ export default function CliReferencePage() {
           '$ norien run trading-agent',
           '$ norien logs trading-agent -f',
           '$ norien chat trading-agent',
+          '$ norien skill run market-recap',
           '$ norien doctor',
         ]}
       />
@@ -42,6 +43,14 @@ export default function CliReferencePage() {
           never runs — or omit it to ask the Norien assistant about the product. Use{' '}
           <code>-m</code> for a single, pipe-friendly reply. See{' '}
           <Link href="/features/chat">Chat with an agent</Link> for the full feature.
+        </p>
+
+        <h2>Skills</h2>
+        <p>
+          <code>norien skill run &lt;slug&gt;</code> runs a published skill and streams a result
+          grounded in Norien&apos;s live data. <code>norien skill search</code> lists them and{' '}
+          <code>norien skill publish</code> ships your own from a <code>skill.json</code>. See{' '}
+          <Link href="/features/skills">Skills</Link>.
         </p>
       </Prose>
       <CodeBlock>{`norien chat                  # ask the Norien assistant anything

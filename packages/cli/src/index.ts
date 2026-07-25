@@ -10,6 +10,7 @@ import { doctor } from './commands/doctor.js';
 import { install, list, uninstall, update } from './commands/lifecycle.js';
 import { publish } from './commands/publish.js';
 import { logs, restart, run, runtimeDaemon, status, stop } from './commands/runtime.js';
+import { skillInfo, skillPublish, skillRun, skillSearch } from './commands/skill.js';
 import {
   contract as contractCommand,
   markets as marketsCommand,
@@ -413,6 +414,64 @@ program
   .argument('<slug>', 'Project slug, e.g. aave.')
   .description('Project overview: TVL, chains, and GitHub statistics.')
   .action(action((context, slug: string) => projectCommand(context, slug)));
+
+// --- Skills ---------------------------------------------------------------
+
+const skill = program
+  .command('skill')
+  .description('Discover, run, and publish skills — grounded AI capabilities.');
+
+skill
+  .command('search')
+  .alias('list')
+  .argument('[keyword]', 'Term to search for. Omit to list all skills.')
+  .description('Search the skill catalogue.')
+  .option('-l, --limit <n>', 'Maximum results.', (value) => Number.parseInt(value, 10), 20)
+  .action(
+    action((context, keyword: string | undefined, options) =>
+      skillSearch(context, keyword, options as Parameters<typeof skillSearch>[2]),
+    ),
+  );
+
+skill
+  .command('info')
+  .argument('<slug>', 'Skill slug.')
+  .description('Show a skill: what it does, its data source, and how to run it.')
+  .action(action((context, slug: string) => skillInfo(context, slug)));
+
+skill
+  .command('run')
+  .argument('<slug>', 'Skill slug.')
+  .argument('[input]', 'Input for the skill (e.g. a wallet address). Reads --message otherwise.')
+  .description('Run a skill and stream the grounded result.')
+  .option('-m, --message <text>', 'Input, as an alternative to the positional argument.')
+  .addHelpText(
+    'after',
+    `
+Skills are grounded in Norien's live data. Examples:
+
+  norien skill run market-recap
+  norien skill run review-wallet 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+  norien skill run explain-token <token-address>`,
+  )
+  .action(
+    action((context, slug: string, input: string | undefined, options) =>
+      skillRun(context, slug, input, options as Parameters<typeof skillRun>[3]),
+    ),
+  );
+
+skill
+  .command('publish')
+  .description('Publish the skill.json in the current directory.')
+  .option('--file <path>', 'Path to the skill manifest.', 'skill.json')
+  .addHelpText(
+    'after',
+    `
+skill.json fields: slug, name, description, instructions, data_source
+(one of: none, markets, portfolio, token, registry), plus optional
+category, tags, input_hint, examples.`,
+  )
+  .action(action((context, options) => skillPublish(context, options as Parameters<typeof skillPublish>[1])));
 
 // --- Tool marketplace -----------------------------------------------------
 
