@@ -20,6 +20,16 @@ export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: { default: TITLE, template: `%s · ${APP_NAME}` },
   description: DESCRIPTION,
+  // OG and Twitter images come from src/app/opengraph-image.png and
+  // twitter-image.png, so a shared link still renders a branded card.
+  openGraph: {
+    type: 'website',
+    url: APP_URL,
+    siteName: APP_NAME,
+    title: TITLE,
+    description: DESCRIPTION,
+  },
+  twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION },
   // Next.js also auto-detects src/app/icon.png and apple-icon.png as favicons.
   robots: { index: false, follow: false },
 };

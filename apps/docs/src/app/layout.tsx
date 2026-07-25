@@ -25,15 +25,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(DOCS_URL),
   title: { default: TITLE, template: `%s · ${TITLE}` },
   description: DESCRIPTION,
+  // Images come from src/app/opengraph-image.png and twitter-image.png.
   openGraph: {
     type: 'website',
     url: DOCS_URL,
     siteName: TITLE,
     title: TITLE,
     description: DESCRIPTION,
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: APP_NAME }],
   },
-  twitter: { card: 'summary', title: TITLE, description: DESCRIPTION, images: ['/logo.png'] },
+  twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION },
 };
 
 /**

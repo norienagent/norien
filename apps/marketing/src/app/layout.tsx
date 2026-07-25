@@ -14,19 +14,19 @@ export const metadata: Metadata = {
   title: { default: TITLE, template: `%s · ${APP_NAME}` },
   description: DESCRIPTION,
   // Next.js also auto-detects src/app/icon.png and apple-icon.png as favicons.
+  // The OG and Twitter images come from src/app/opengraph-image.png and
+  // twitter-image.png (Next's file convention), so no images are listed here.
   openGraph: {
     type: 'website',
     url: SITE_URL,
     siteName: APP_NAME,
     title: TITLE,
     description: DESCRIPTION,
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: APP_NAME }],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: TITLE,
     description: DESCRIPTION,
-    images: ['/logo.png'],
   },
 };
 
