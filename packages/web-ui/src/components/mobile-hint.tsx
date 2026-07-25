@@ -39,7 +39,8 @@ export function MobileHint() {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-x-3 bottom-3 z-50 mx-auto flex max-w-md items-start gap-3 rounded-xl border border-line bg-card px-4 py-3 shadow-lg">
+    // Sits above the Ask Norien pill (bottom-4 right-4), so the two never overlap.
+    <div className="fixed inset-x-3 bottom-20 z-50 mx-auto flex max-w-md items-start gap-3 rounded-xl border border-line bg-card px-4 py-3 shadow-lg">
       <span aria-hidden className="mt-0.5 text-accent">
         <svg viewBox="0 0 20 20" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.6">
           <rect x="6" y="2.5" width="8" height="15" rx="2" />

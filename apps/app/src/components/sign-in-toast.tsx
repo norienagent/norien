@@ -37,12 +37,14 @@ export function SignInToast() {
 
   if (!show) return null;
 
+  // Top-right, clear of the header — keeps it out of the bottom-right cluster
+  // (Ask Norien pill, mobile hint) so nothing ever stacks on top of it.
   return (
     <div
       role="status"
       aria-live="polite"
       style={{ animation: 'toast-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both' }}
-      className="fixed bottom-4 right-4 z-50 flex items-center gap-2.5 rounded-lg border border-line bg-card px-4 py-3 text-sm font-medium text-ink shadow-lg"
+      className="fixed right-4 top-20 z-50 flex items-center gap-2.5 rounded-lg border border-line bg-card px-4 py-3 text-sm font-medium text-ink shadow-lg"
     >
       <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-up/15 text-xs text-up">
         ✓

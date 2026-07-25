@@ -18,11 +18,11 @@ import { useEffect, useRef, useState } from 'react';
  *   on screen (an IntersectionObserver pauses it when scrolled away).
  */
 
-const TYPE_MS = 24; // per character while typing
-const NEWLINE_PAUSE = 160; // extra beat at the end of a line, like pressing enter
-const DELETE_MS = 9; // per character while clearing
-const HOLD_FULL = 2400; // dwell on the finished block
-const HOLD_EMPTY = 600; // dwell before typing again
+const TYPE_MS = 52; // per character while typing
+const NEWLINE_PAUSE = 240; // extra beat at the end of a line, like pressing enter
+const DELETE_MS = 26; // per character while clearing
+const HOLD_FULL = 3200; // dwell on the finished block
+const HOLD_EMPTY = 800; // dwell before typing again
 
 type Phase = 'holdFull' | 'deleting' | 'holdEmpty' | 'typing';
 
