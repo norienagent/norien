@@ -24,3 +24,6 @@ norien_tools/
 norien.lock.json
 norien.tools.lock.json
 railway.env
+
+# Local problem/repro recordings — never commit
+/problem/
