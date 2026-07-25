@@ -1,0 +1,48 @@
+{
+  "name": "@norien-live/mcp",
+  "version": "0.1.0",
+  "description": "Norien MCP server — Robinhood Chain market data, wallet portfolios, the agent registry, and runnable skills, for any MCP client (Claude Desktop, Cursor, ChatGPT, …).",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "norien-mcp": "dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "typescript": "^7.0.2"
+  },
+  "keywords": [
+    "norien",
+    "mcp",
+    "model-context-protocol",
+    "robinhood-chain",
+    "ai-agents",
+    "crypto"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://norien.live",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/norienagent/norien.git",
+    "directory": "packages/mcp"
+  }
+}

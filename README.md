@@ -85,6 +85,7 @@ No branding, landing page, or payments — those are later phases.
 | --- | --- |
 | [src/](src/) | The registry server (Fastify + Drizzle + Postgres) |
 | [packages/cli/](packages/cli/) | `@norien-live/cli` — the `norien` command |
+| [packages/mcp/](packages/mcp/) | `@norien-live/mcp` — the MCP server for Claude Desktop, Cursor, ChatGPT, Codex |
 | [packages/runtime/](packages/runtime/) | `@norien-live/runtime` — the supervisor that executes agents |
 | [packages/tools/](packages/tools/) | `@norien-live/tools` — the tool plugin system (validate, install, execute) |
 | [src/services/external/](src/services/external/) | External data integration — six providers behind one unified API |
@@ -566,6 +567,70 @@ HTTP client, filesystem, wallet, discord, telegram, github, browser, web
 scraper, email, logger, scheduler.
 
 Full details: [packages/tools/README.md](packages/tools/README.md).
+
+---
+
+## Skills
+
+A **skill** is the primitive between a tool and an agent: a runnable capability
+grounded in Norien's own live data. A skill pairs a plain-language playbook with
+a *data source* — the market list, a wallet's portfolio, one token, or the
+registry — and running it resolves that data, hands it to a fast model as
+grounded context, and streams a real, data-backed result. No code to deploy;
+publish a `skill.json` and anyone can run it.
+
+```bash
+norien skill search recap
+norien skill run market-recap
+norien skill run review-wallet 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+norien skill run explain-token <token-address>
+norien skill publish            # from a directory with skill.json
+```
+
+Five starter skills ship seeded: `market-recap`, `review-wallet`,
+`explain-token`, `find-agent`, `draft-agent`. The data source is a fixed, safe
+set — never arbitrary code — so running someone else's skill is as safe as
+reading their instructions.
+
+```
+GET  /api/skills                 list & search
+GET  /api/skills/:slug           one skill
+POST /api/skills                 publish (upsert by slug)
+POST /api/skills/:slug/run       run — streams the result as server-sent events
+```
+
+Full details: [docs.norien.live/features/skills](https://docs.norien.live/features/skills).
+
+---
+
+## MCP server
+
+Norien ships an **MCP (Model Context Protocol) server** so any MCP client —
+Claude Desktop, Cursor, ChatGPT, Codex — can use Norien as an agent's data and
+skills layer. It pairs naturally with Robinhood's official Agentic Trading MCP:
+**Norien is the intel, Robinhood is the execution.**
+
+```jsonc
+// claude_desktop_config.json  (or ~/.cursor/mcp.json)
+{
+  "mcpServers": {
+    "norien": { "command": "npx", "args": ["-y", "@norien-live/mcp"] }
+  }
+}
+```
+
+It talks to the public REST API — reads need no key — and exposes seven tools:
+`get_markets`, `get_token`, `get_portfolio`, `search_registry`, `list_skills`,
+`run_skill`, `ask_norien`. Point it at a local backend with
+`NORIEN_API_URL`.
+
+```bash
+npx @norien-live/mcp        # run it directly
+npm i -g @norien-live/mcp   # or install the `norien-mcp` binary
+```
+
+Full details: [packages/mcp/README.md](packages/mcp/README.md) ·
+[docs.norien.live/mcp](https://docs.norien.live/mcp).
 
 ---
 

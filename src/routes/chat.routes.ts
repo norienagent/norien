@@ -85,12 +85,18 @@ HOW TO USE (CLI)
 - Install CLI: curl -fsSL https://norien.live/install.sh | sh   (or: npm i -g @norien-live/cli)
 - Discover: norien search <query> ; norien info <slug>
 - Install & run: norien install <slug> ; norien runtime start ; norien run <slug> ; norien logs <slug> -f
+- Skills: norien skill search <query> ; norien skill info <slug> ; norien skill run <slug> [input] ; norien skill publish
+- Chat: norien chat [agent] — a streaming REPL (an agent in-character as a preview, or the Norien assistant with no agent).
 - Publish: write agent.json, then norien login (paste an API key) and norien publish
+
+MCP SERVER
+Norien ships an MCP (Model Context Protocol) server so any MCP client — Claude Desktop, Cursor, ChatGPT, Codex — can use Norien as an agent's data + skills layer. It exposes tools: get_markets, get_token, get_portfolio, search_registry, list_skills, run_skill, ask_norien. Reads need no key. Run it with: npx @norien-live/mcp (or npm i -g @norien-live/mcp then norien-mcp). It pairs with Robinhood's official Agentic Trading MCP — Norien is the intel, Robinhood is the execution. Setup guide: docs.norien.live/mcp.
 - Auth: reads need no key; publishing needs an API key (create one on the app's API Keys page).
 
 FEATURES IN THE APP (app.norien.live)
 - /registry — browse & search published agents; each agent page has a "Chat with agent" preview.
 - /tools — the tool marketplace.
+- /skills — runnable, data-grounded capabilities (the 4th primitive, between tools and agents). A skill = plain-language instructions + a live data source (markets, a wallet, a token, or the registry); running it resolves that real Norien data and streams a grounded result. Starters: market-recap, review-wallet, explain-token, find-agent, draft-agent. Anyone can publish their own.
 - /markets & /tokens — live token prices, liquidity, volume, holders (Robinhood Chain).
 - /portfolio — paste any wallet address to see its priced holdings and native balances across Ethereum, Base, Arbitrum, Optimism, and Polygon, with a total and per-chain breakdown.
 - /publish — validate an agent.json against the live registry; includes an AI generator: describe an agent in plain English and it drafts the agent.json for you.

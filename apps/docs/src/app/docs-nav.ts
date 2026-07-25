@@ -62,6 +62,7 @@ export const DOCS_NAV: DocGroup[] = [
     links: [
       { href: '/cli', label: 'CLI' },
       { href: '/sdk', label: 'SDKs' },
+      { href: '/mcp', label: 'MCP server' },
       { href: '/api-reference', label: 'REST API' },
     ],
   },

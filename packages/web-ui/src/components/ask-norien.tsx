@@ -52,9 +52,10 @@ function render(text: string): ReactNode {
 
 const SUGGESTIONS = [
   'What is Norien?',
+  'What are Skills?',
+  'How do I connect the MCP server?',
   'How do I publish an agent?',
   'How do I check a wallet portfolio?',
-  'How does the runtime work?',
 ];
 
 /**
