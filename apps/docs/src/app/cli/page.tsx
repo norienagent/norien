@@ -29,9 +29,24 @@ export default function CliReferencePage() {
           '$ norien install trading-agent',
           '$ norien run trading-agent',
           '$ norien logs trading-agent -f',
+          '$ norien chat trading-agent',
           '$ norien doctor',
         ]}
       />
+
+      <Prose>
+        <h2>Chat</h2>
+        <p>
+          <code>norien chat</code> opens a live conversation in your terminal, replies streaming in as
+          they form. Pass an agent slug to talk to that agent in character — a preview, so its code
+          never runs — or omit it to ask the Norien assistant about the product. Use{' '}
+          <code>-m</code> for a single, pipe-friendly reply. See{' '}
+          <Link href="/features/chat">Chat with an agent</Link> for the full feature.
+        </p>
+      </Prose>
+      <CodeBlock>{`norien chat                  # ask the Norien assistant anything
+norien chat trading-agent    # chat with an agent, in character
+norien chat -m "hi"          # one-shot reply, no prompt`}</CodeBlock>
 
       <Prose>
         <h2>Composability</h2>

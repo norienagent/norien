@@ -34,9 +34,23 @@ export default function ChatFeaturePage() {
           Open any agent — for example{' '}
           <a href={`${APP_URL}/registry/trading-agent`}>Trading Agent</a> — and use the{' '}
           <strong>Chat with …</strong> panel on its page. Type a message or tap a suggestion; use{' '}
-          <strong>New chat</strong> to start over.
+          <strong>New chat</strong> to start over. Replies stream in as they form. The floating{' '}
+          <strong>Ask Norien</strong> button, on every page, is the same thing with no agent — an
+          assistant that answers questions about Norien itself.
         </p>
 
+        <h2>From the CLI</h2>
+        <p>
+          <code>norien chat</code> brings the conversation to your terminal, streaming token by token.
+          Give it an agent slug to talk in character, or omit it to ask the Norien assistant. Use{' '}
+          <code>-m</code> for a single, pipe-friendly reply.
+        </p>
+      </Prose>
+      <CodeBlock>{`norien chat trading-agent          # chat with an agent, in character
+norien chat                        # ask the Norien assistant anything
+norien chat trading-agent -m "hi"  # one-shot, no prompt`}</CodeBlock>
+
+      <Prose>
         <h2>From the API</h2>
         <p>
           A public endpoint. Send the agent context and the conversation so far; the persona is built
@@ -59,11 +73,31 @@ export default function ChatFeaturePage() {
       <CodeBlock>{`{ "reply": "I analyze token markets and suggest trades using web search and price data…" }`}</CodeBlock>
 
       <Prose>
+        <h2>Streaming</h2>
+        <p>
+          For a live, token-by-token reply, post the same body to{' '}
+          <code>/api/chat/stream</code>. It responds with{' '}
+          <a href="https://developer.mozilla.org/docs/Web/API/Server-sent_events">server-sent events</a>:{' '}
+          <code>data: {'{ "text": "…" }'}</code> frames as the reply forms, then a final{' '}
+          <code>data: {'{ "done": true }'}</code>. An error mid-stream arrives as{' '}
+          <code>data: {'{ "error": "…" }'}</code>. This is what the app and the CLI use.
+        </p>
+      </Prose>
+      <CodeBlock>{`curl -N -X POST ${API_URL}/api/chat/stream \\
+  -H "Content-Type: application/json" \\
+  -d '{ "messages": [{ "role": "user", "content": "What is Norien?" }] }'
+
+data: {"text": "Norien is the registry, runtime, and unified data API "}
+data: {"text": "for AI agents on Robinhood Chain."}
+data: {"done": true}`}</CodeBlock>
+
+      <Prose>
         <h2>Fields</h2>
         <ul>
           <li>
-            <strong>agent</strong> — <code>name</code>, optional <code>description</code>, optional{' '}
-            <code>tools</code> (slugs). Defines the persona.
+            <strong>agent</strong> — optional. <code>name</code>, optional <code>description</code>,
+            optional <code>tools</code> (slugs). Defines the persona; omit it entirely to talk to the
+            Norien assistant instead.
           </li>
           <li>
             <strong>messages</strong> — the conversation, each <code>{'{ role, content }'}</code> with
