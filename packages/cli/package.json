@@ -1,6 +1,6 @@
 {
   "name": "@norien-live/cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Official command-line interface for the Norien agent registry.",
   "license": "MIT",
   "type": "module",
