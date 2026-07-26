@@ -71,7 +71,7 @@ async function runSkill(slug: string, input: string): Promise<string> {
   return out;
 }
 
-const server = new McpServer({ name: 'norien', version: '0.1.0' });
+const server = new McpServer({ name: 'norien', version: '0.1.1' });
 
 // The SDK's registerTool generics infer extremely deep and trip TS2589; a loose
 // local binding sidesteps it without changing any runtime behaviour.
@@ -160,6 +160,91 @@ reg(
   async ({ query }) => {
     try {
       const result = await getJson<{ data: unknown[] }>(`/search?q=${encodeURIComponent(query)}&type=all&limit=15`);
+      return ok(result.data);
+    } catch (error) {
+      return fail(error instanceof Error ? error.message : String(error));
+    }
+  },
+);
+
+reg(
+  'search_tools',
+  {
+    description:
+      'Search the Norien tool marketplace — reusable capabilities agents install and run (npm, MCP, Docker, or HTTP tools). Returns each tool with its input schema.',
+    inputSchema: { query: z.string().describe('What the tool should do, e.g. "wallet" or "http".') },
+  },
+  async ({ query }) => {
+    try {
+      const result = await getJson<{ data: Record<string, unknown>[] }>(
+        `/tools/search?q=${encodeURIComponent(query)}&limit=15`,
+      );
+      return ok(
+        result.data.map((t) => ({
+          slug: t.slug,
+          name: t.name,
+          description: t.description,
+          category: t.category,
+          runtime: t.runtime,
+          input_schema: t.input_schema,
+          downloads: t.downloads,
+        })),
+      );
+    } catch (error) {
+      return fail(error instanceof Error ? error.message : String(error));
+    }
+  },
+);
+
+reg(
+  'get_tool',
+  {
+    description:
+      "One tool's full definition: description, runtime, permissions, and the JSON Schemas for its input and output — everything needed to call it.",
+    inputSchema: { slug: z.string().describe('Tool slug, e.g. http-client.') },
+  },
+  async ({ slug }) => {
+    try {
+      const result = await getJson<{ data: unknown }>(`/tools/${encodeURIComponent(slug)}`);
+      return ok(result.data);
+    } catch (error) {
+      return fail(error instanceof Error ? error.message : String(error));
+    }
+  },
+);
+
+reg(
+  'get_agent',
+  {
+    description:
+      'One published agent: its manifest, required tools, permissions, runtime, and install command.',
+    inputSchema: { slug: z.string().describe('Agent slug, e.g. research-agent.') },
+  },
+  async ({ slug }) => {
+    try {
+      const result = await getJson<{ data: unknown }>(`/agents/${encodeURIComponent(slug)}`);
+      return ok(result.data);
+    } catch (error) {
+      return fail(error instanceof Error ? error.message : String(error));
+    }
+  },
+);
+
+reg(
+  'get_token_chart',
+  {
+    description:
+      'OHLCV price history for a token on Robinhood Chain over a window (24h, 7d, 30d, 90d). Prices are USD.',
+    inputSchema: {
+      address: z.string().describe('Token contract address.'),
+      range: z.enum(['24h', '7d', '30d', '90d']).optional().describe('Window (default 7d).'),
+    },
+  },
+  async ({ address, range }) => {
+    try {
+      const result = await getJson<{ data: unknown }>(
+        `/api/token/${encodeURIComponent(address)}/chart?range=${range ?? '7d'}`,
+      );
       return ok(result.data);
     } catch (error) {
       return fail(error instanceof Error ? error.message : String(error));

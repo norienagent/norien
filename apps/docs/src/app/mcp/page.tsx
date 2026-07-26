@@ -42,7 +42,17 @@ export default function McpPage() {
             Arbitrum, Optimism, and Polygon.
           </li>
           <li>
+            <code>get_token_chart</code> — OHLCV price history over 24h / 7d / 30d / 90d.
+          </li>
+          <li>
             <code>search_registry</code> — find agents and tools to install.
+          </li>
+          <li>
+            <code>search_tools</code> / <code>get_tool</code> — browse the tool marketplace with
+            each tool&apos;s input schema.
+          </li>
+          <li>
+            <code>get_agent</code> — one agent&apos;s manifest, tools, and requirements.
           </li>
           <li>
             <code>list_skills</code> / <code>run_skill</code> — list and run data-grounded skills.

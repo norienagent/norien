@@ -50,7 +50,11 @@ gainers on Robinhood Chain?" and it calls `get_markets`.
 | `get_markets` | Live token list: price, 24h change, volume, liquidity, market cap, holders. Sort by volume, gainers, liquidity, market cap, trending. |
 | `get_token` | Market data and metadata for one token, by contract address. |
 | `get_portfolio` | A wallet's priced holdings across Ethereum, Base, Arbitrum, Optimism, and Polygon. |
+| `get_token_chart` | OHLCV price history over 24h / 7d / 30d / 90d (USD). |
 | `search_registry` | Find agents and tools to install. |
+| `search_tools` | Search the tool marketplace; returns each tool's input schema. |
+| `get_tool` | One tool's full definition (schemas, permissions, runtime). |
+| `get_agent` | One agent's manifest, tools, and requirements. |
 | `list_skills` | List runnable, data-grounded Norien skills. |
 | `run_skill` | Run a skill and return its grounded result. |
 | `ask_norien` | Ask the Norien assistant anything about the product. |

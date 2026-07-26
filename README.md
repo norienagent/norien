@@ -626,10 +626,10 @@ skills layer. It pairs naturally with Robinhood's official Agentic Trading MCP:
 }
 ```
 
-It talks to the public REST API — reads need no key — and exposes seven tools:
-`get_markets`, `get_token`, `get_portfolio`, `search_registry`, `list_skills`,
-`run_skill`, `ask_norien`. Point it at a local backend with
-`NORIEN_API_URL`.
+It talks to the public REST API — reads need no key — and exposes eleven tools:
+`get_markets`, `get_token`, `get_token_chart`, `get_portfolio`,
+`search_registry`, `search_tools`, `get_tool`, `get_agent`, `list_skills`,
+`run_skill`, `ask_norien`. Point it at a local backend with `NORIEN_API_URL`.
 
 ```bash
 npx @norien-live/mcp        # run it directly

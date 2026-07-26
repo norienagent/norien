@@ -1,6 +1,6 @@
 {
   "name": "@norien-live/mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Norien MCP server — Robinhood Chain market data, wallet portfolios, the agent registry, and runnable skills, for any MCP client (Claude Desktop, Cursor, ChatGPT, …).",
   "license": "MIT",
   "type": "module",
