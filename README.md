@@ -371,6 +371,7 @@ Windows shims are covered in
 [packages/cli/README.md](packages/cli/README.md#local-development).
 
 ```bash
+norien init my-agent           # scaffold a runnable agent (agent.json + entrypoint)
 norien login                   # store credentials in ~/.norien/config.json
 norien search trading          # ranked search across agents and tools
 norien info trading-agent      # manifest, tools, permissions, runtime, env

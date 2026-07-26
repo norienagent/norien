@@ -24,6 +24,7 @@ export default function CliReferencePage() {
       </Prose>
       <Terminal
         lines={[
+          '$ norien init my-agent',
           '$ norien search trading',
           '$ norien info trading-agent',
           '$ norien install trading-agent',
@@ -34,6 +35,20 @@ export default function CliReferencePage() {
           '$ norien doctor',
         ]}
       />
+
+      <Prose>
+        <h2>Start a new agent</h2>
+        <p>
+          <code>norien init</code> scaffolds a runnable agent in one step — a valid{' '}
+          <code>agent.json</code>, a zero-dependency entrypoint that already serves{' '}
+          <code>/health</code>, a README, and <code>.env.example</code>. It publishes as-is and runs
+          as-is; pick <code>node</code> or <code>python</code>.
+        </p>
+      </Prose>
+      <CodeBlock>{`norien init my-agent --runtime node -y
+cd my-agent
+norien publish --dry-run     # validate against the registry
+norien publish               # after: norien login`}</CodeBlock>
 
       <Prose>
         <h2>Chat</h2>

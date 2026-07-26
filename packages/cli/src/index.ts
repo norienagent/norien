@@ -7,6 +7,7 @@ import { login, logout, profiles, whoami } from './commands/auth.js';
 import { chat } from './commands/chat.js';
 import { info, search } from './commands/discover.js';
 import { doctor } from './commands/doctor.js';
+import { init } from './commands/init.js';
 import { install, list, uninstall, update } from './commands/lifecycle.js';
 import { publish } from './commands/publish.js';
 import { logs, restart, run, runtimeDaemon, status, stop } from './commands/runtime.js';
@@ -30,7 +31,7 @@ import {
   toolUpdate,
 } from './commands/tool.js';
 
-const VERSION = '0.1.3';
+const VERSION = '0.1.4';
 
 /**
  * Entry point.
@@ -230,6 +231,33 @@ program
   );
 
 // --- Publishing -----------------------------------------------------------
+
+program
+  .command('init')
+  .argument('[directory]', 'Where to scaffold. Defaults to the current directory.')
+  .description('Scaffold a new agent: agent.json, entrypoint, README, env files.')
+  .option('--name <name>', 'Agent name.')
+  .option('--slug <slug>', 'Publish slug (defaults to a slug of the name).')
+  .option('--description <text>', 'One-line description.')
+  .addOption(new Option('--runtime <runtime>', 'Agent runtime.').choices(['node', 'python']))
+  .option('--tool <slug...>', 'Tool the agent requires (repeatable).')
+  .option('-y, --yes', 'Skip prompts and use defaults.')
+  .option('--force', 'Overwrite existing files.')
+  .addHelpText(
+    'after',
+    `
+Creates a runnable agent you can publish as-is: a valid agent.json, a
+zero-dependency entrypoint that already serves /health, a README, and
+.env.example / .gitignore.
+
+  norien init my-agent --runtime node -y
+  cd my-agent && norien publish --dry-run`,
+  )
+  .action(
+    action((context, directory: string | undefined, options) =>
+      init(context, directory, options as Parameters<typeof init>[2]),
+    ),
+  );
 
 program
   .command('publish')
