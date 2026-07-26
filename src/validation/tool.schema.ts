@@ -205,6 +205,7 @@ export const toolResponseSchema = z.object({
   documentation: z.string().nullable(),
   visibility: visibilityField,
   install_command: z.string(),
+  downloads: z.number().int().nonnegative(),
   created_at: z.iso.datetime(),
   updated_at: z.iso.datetime(),
 });

@@ -43,6 +43,13 @@
       "when": 1785004898161,
       "tag": "0005_skills",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1785046945192,
+      "tag": "0006_install_counts",
+      "breakpoints": true
     }
   ]
 }

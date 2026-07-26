@@ -292,6 +292,7 @@ export interface Agent {
   commands: AgentCommands;
   install_command: string;
   api_endpoint: string;
+  downloads: number;
   visibility: string;
   manifest: Record<string, unknown>;
   created_at: string;
@@ -338,6 +339,7 @@ export interface Tool {
   documentation: string | null;
   visibility: string;
   install_command: string;
+  downloads: number;
   created_at: string;
   updated_at: string;
 }

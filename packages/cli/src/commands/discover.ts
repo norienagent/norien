@@ -253,7 +253,8 @@ export async function info(
 }
 
 function formatDownloads(value: number | undefined): string {
-  return typeof value === 'number' ? value.toLocaleString('en-US') : '';
+  // Zero reads as no signal, so the column self-hides until installs exist.
+  return typeof value === 'number' && value > 0 ? value.toLocaleString('en-US') : '';
 }
 
 function truncate(text: string, max: number): string {

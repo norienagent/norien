@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { index, jsonb, pgTable, text, uniqueIndex, uuid, varchar } from 'drizzle-orm/pg-core';
+import { index, integer, jsonb, pgTable, text, uniqueIndex, uuid, varchar } from 'drizzle-orm/pg-core';
 
 import {
   createdAt,
@@ -86,6 +86,9 @@ export const tools = pgTable(
 
     documentation: text('documentation'),
     visibility: visibilityEnum('visibility').notNull().default('public'),
+
+    /** Cumulative installs, denormalised for cheap sorting and display. */
+    installCount: integer('install_count').notNull().default(0),
 
     createdAt: createdAt(),
     updatedAt: updatedAt(),

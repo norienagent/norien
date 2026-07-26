@@ -22,7 +22,7 @@ export interface AgentListFilters {
   visibility?: 'public' | 'private' | undefined;
   /** Who is asking. Drives private-row visibility. */
   viewerId: string | null;
-  sort: 'created_at' | 'updated_at' | 'name' | 'slug';
+  sort: 'created_at' | 'updated_at' | 'name' | 'slug' | 'downloads';
   order: 'asc' | 'desc';
 }
 
@@ -31,6 +31,7 @@ const SORT_COLUMNS = {
   updated_at: agents.updatedAt,
   name: agents.name,
   slug: agents.slug,
+  downloads: agents.installCount,
 } as const;
 
 export class AgentRepository {
@@ -153,6 +154,14 @@ export class AgentRepository {
 
     if (!row) throw new Error(`Agent ${id} disappeared during update.`);
     return row;
+  }
+
+  /** Bumps the denormalised install counter. Called once per fresh install. */
+  async incrementInstallCount(id: string): Promise<void> {
+    await this.db
+      .update(agents)
+      .set({ installCount: sql`${agents.installCount} + 1` })
+      .where(eq(agents.id, id));
   }
 
   async softDelete(id: string): Promise<void> {

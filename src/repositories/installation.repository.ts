@@ -54,7 +54,7 @@ export class InstallationRepository {
     userId: string;
     agentId: string;
     installedVersion: string;
-  }): Promise<InstallationRow> {
+  }): Promise<{ row: InstallationRow; created: boolean }> {
     const existing = await this.findActive(values.userId, values.agentId);
 
     if (existing) {
@@ -65,12 +65,12 @@ export class InstallationRepository {
         .returning();
 
       if (!row) throw new Error('Failed to update installation.');
-      return row;
+      return { row, created: false };
     }
 
     const [row] = await this.db.insert(installations).values(values).returning();
     if (!row) throw new Error('Failed to create installation.');
-    return row;
+    return { row, created: true };
   }
 
   /** Tombstones rather than deletes, preserving install history. */

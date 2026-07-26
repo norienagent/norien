@@ -30,6 +30,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           <RuntimeBadge runtime={tool.runtime} />
           <span className="text-xs text-muted">
             by {tool.author} · updated {relativeTime(tool.updated_at)}
+            {tool.downloads > 0 ? ` · ${tool.downloads.toLocaleString()} installs` : ''}
           </span>
         </div>
       </header>

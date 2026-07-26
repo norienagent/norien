@@ -154,11 +154,13 @@ describe('search', () => {
     expect(result.data.every((hit) => hit.type === 'agent')).toBe(true);
   });
 
-  it('omits the downloads column while the registry serves no counts', async () => {
+  it('hides the downloads column until an agent has installs', async () => {
     const result = await cli(['search', 'trading']);
 
     expect(result.stdout).toContain('trading-agent');
-    // Nothing fabricated: no column, rather than a permanently blank one.
+    // The registry now serves install counts, but a freshly seeded catalogue is
+    // all zeros — which reads as no signal, so the column self-hides rather than
+    // showing a wall of zeros. It appears the moment a real install lands.
     expect(result.stdout.toLowerCase()).not.toContain('downloads');
   });
 

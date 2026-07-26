@@ -428,17 +428,19 @@ Exit codes: `0` success, `1` error, `2` bad usage, `3` not authenticated,
 
 Full reference: [packages/cli/README.md](packages/cli/README.md).
 
-### Two honest gaps
+### One honest gap
 
 - **API keys are stored and sent, but not yet verified.** The registry
   identifies callers by handle (`x-norien-actor`); the `Authorization: Bearer`
   header is declared in the OpenAPI document but not enforced. The CLI and both
   SDKs send both, so nothing changes here when verification lands. Treat the
   current setup as identification, not as a security boundary.
-- **`norien search` has no Downloads column** because no endpoint exposes
-  install counts. The table renders the column only when the field is present,
-  so it appears on its own once the registry serves it — rather than showing a
-  fabricated or permanently blank value.
+
+`norien search` now carries a **Downloads column**: agents and tools expose a
+`downloads` install count, and `--sort downloads` ranks by it. The table renders
+the column only once some result has a non-zero count, so a freshly seeded
+catalogue shows no wall of zeros — the column appears on its own the moment real
+installs land.
 
 ---
 
@@ -905,9 +907,8 @@ Not implemented, but each has a seam in place:
 | --- | --- |
 | Auth, API keys, sessions | `resolvePrincipal` in `middleware/auth.ts`. The CLI and SDKs already send `Authorization: Bearer`, so only the server changes. On the web side, `/login` and `/signup` are the finished layout with GitHub and Google buttons waiting on Supabase Auth. |
 | Teams, organisations | `Principal.organisationId` and `assertCanMutate` |
-| Webhooks, downloads, ratings, audit log | `core/events.ts` — services publish facts |
+| Webhooks, ratings, audit log | `core/events.ts` — services publish facts |
 | Semantic search | Register a strategy in `services/search/` |
-| Download counts | Add the field to the agent response; the CLI renders the column automatically |
 | API versioning | `routes/index.ts` is a plugin — mount it under `/v1` |
 | Cursor pagination | `meta.has_more` / `next_offset` already model it |
 | Managed Postgres | Set `DATABASE_URL`; the driver switch is in `db/client.ts` |

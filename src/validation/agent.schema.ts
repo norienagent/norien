@@ -134,6 +134,7 @@ export const agentResponseSchema = z.object({
   commands: z.record(z.string(), z.string()),
   install_command: z.string(),
   api_endpoint: z.string().nullable(),
+  downloads: z.number().int().nonnegative(),
   visibility: visibilityField,
   manifest: z.record(z.string(), z.unknown()),
   created_at: z.iso.datetime(),

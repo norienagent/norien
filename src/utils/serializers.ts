@@ -59,6 +59,7 @@ export function serializeAgent(row: AgentRow) {
     commands: serializeCommands(row.commands),
     install_command: row.installCommand ?? renderInstallCommand(row.slug, row.latestVersion),
     api_endpoint: row.apiEndpoint ?? defaultApiEndpoint(row.slug),
+    downloads: row.installCount,
     visibility: row.visibility,
     manifest: row.manifest,
     created_at: iso(row.createdAt),
@@ -103,6 +104,7 @@ export function serializeTool(row: ToolRow) {
     documentation: row.documentation,
     visibility: row.visibility,
     install_command: renderToolInstallCommand(row.slug, row.latestVersion),
+    downloads: row.installCount,
     created_at: iso(row.createdAt),
     updated_at: iso(row.updatedAt),
   };

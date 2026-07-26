@@ -68,11 +68,18 @@ export class InstallationService {
 
       const user = await repos.users.ensureByHandle(actor.handle);
 
-      const installation = await repos.installations.upsert({
+      const { row: installation, created } = await repos.installations.upsert({
         userId: user.id,
         agentId: agent.id,
         installedVersion: version,
       });
+
+      // Only a genuinely new install bumps the counter; a version-move or a
+      // retried install of the same agent must not inflate it.
+      if (created) {
+        await repos.agents.incrementInstallCount(agent.id);
+        agent.installCount += 1;
+      }
 
       // Described at the resolved version, not at the catalogue head, so the
       // manifest and dependencies match exactly what was installed.

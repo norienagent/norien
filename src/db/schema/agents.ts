@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm';
 import {
   index,
+  integer,
   jsonb,
   pgTable,
   primaryKey,
@@ -96,6 +97,9 @@ export const agents = pgTable(
 
     visibility: visibilityEnum('visibility').notNull().default('public'),
     manifest: jsonb('manifest').$type<AgentManifest>().notNull(),
+
+    /** Cumulative installs, denormalised for cheap sorting and display. */
+    installCount: integer('install_count').notNull().default(0),
 
     createdAt: createdAt(),
     updatedAt: updatedAt(),

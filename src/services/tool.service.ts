@@ -85,8 +85,7 @@ export class ToolService {
    *
    * Resolves a version or range to a concrete published version and returns the
    * full manifest plus its dependency tools, so a client can materialise the
-   * tool locally in one round trip. Deliberately resolve-only: install counts
-   * and usage metrics are a later phase, so nothing is recorded here.
+   * tool locally in one round trip. Each call bumps the tool's download counter.
    */
   async install(
     slug: string,
@@ -95,6 +94,10 @@ export class ToolService {
   ): Promise<ToolInstallResult> {
     const tool = await this.loadReadable(slug, principal);
     const repos = this.repos();
+
+    // Count the install (downloads-style: every install call, like npm).
+    await repos.tools.incrementInstallCount(tool.id);
+    tool.installCount += 1;
 
     const available = await repos.toolVersions.listVersionStrings(tool.id);
     const resolved = resolveVersionRange(range, available) ?? tool.latestVersion;

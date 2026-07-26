@@ -1,8 +1,18 @@
 import Link from 'next/link';
 
 import type { Agent, Tool } from '@norien-live/web-ui/api';
-import { relativeTime } from '@norien-live/web-ui';
+import { count, relativeTime } from '@norien-live/web-ui';
 import { Badge, Empty } from '@norien-live/web-ui';
+
+/** A compact install count. Hidden at zero so a fresh catalogue stays clean. */
+function Downloads({ value }: { value: number }) {
+  if (!value) return null;
+  return (
+    <span className="text-xs text-muted" title={`${value.toLocaleString()} installs`}>
+      ↓ {count(value)}
+    </span>
+  );
+}
 
 /**
  * Registry and marketplace presentation.
@@ -106,6 +116,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
             {agent.required_tools.length} tool{agent.required_tools.length === 1 ? '' : 's'}
           </Badge>
         ) : null}
+        <Downloads value={agent.downloads} />
         <span className="ml-auto text-xs text-muted">{agent.author}</span>
       </div>
     </Link>
@@ -129,6 +140,7 @@ export function ToolCard({ tool }: { tool: Tool }) {
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <Badge tone="accent">{tool.category}</Badge>
         <RuntimeBadge runtime={tool.runtime} />
+        <Downloads value={tool.downloads} />
         <span className="ml-auto text-xs text-muted">{tool.author}</span>
       </div>
     </Link>

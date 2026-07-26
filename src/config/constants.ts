@@ -109,8 +109,8 @@ export type ToolRuntimeName = (typeof TOOL_RUNTIMES)[number];
 
 export const MAX_TOOL_DEPENDENCIES = 25;
 
-export const SORTABLE_AGENT_FIELDS = ['created_at', 'updated_at', 'name', 'slug'] as const;
-export const SORTABLE_TOOL_FIELDS = ['created_at', 'updated_at', 'name', 'slug'] as const;
+export const SORTABLE_AGENT_FIELDS = ['created_at', 'updated_at', 'name', 'slug', 'downloads'] as const;
+export const SORTABLE_TOOL_FIELDS = ['created_at', 'updated_at', 'name', 'slug', 'downloads'] as const;
 
 export const MANIFEST_FILENAME = 'agent.json';
 

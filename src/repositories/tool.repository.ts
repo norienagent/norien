@@ -1,4 +1,4 @@
-import { arrayContains, asc, desc, eq, inArray } from 'drizzle-orm';
+import { arrayContains, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import type { SQL } from 'drizzle-orm';
 
 import type { Executor } from '../db/client.js';
@@ -14,7 +14,7 @@ export interface ToolListFilters {
   author?: string | undefined;
   visibility?: 'public' | 'private' | undefined;
   viewerId: string | null;
-  sort: 'created_at' | 'updated_at' | 'name' | 'slug';
+  sort: 'created_at' | 'updated_at' | 'name' | 'slug' | 'downloads';
   order: 'asc' | 'desc';
 }
 
@@ -23,6 +23,7 @@ const SORT_COLUMNS = {
   updated_at: tools.updatedAt,
   name: tools.name,
   slug: tools.slug,
+  downloads: tools.installCount,
 } as const;
 
 export class ToolRepository {
@@ -130,6 +131,14 @@ export class ToolRepository {
     const [row] = await this.db.insert(tools).values(values).returning();
     if (!row) throw new Error('Failed to insert tool.');
     return row;
+  }
+
+  /** Bumps the denormalised install counter (one per resolve/install call). */
+  async incrementInstallCount(id: string): Promise<void> {
+    await this.db
+      .update(tools)
+      .set({ installCount: sql`${tools.installCount} + 1` })
+      .where(eq(tools.id, id));
   }
 
   async update(id: string, patch: Partial<NewToolRow>): Promise<ToolRow> {

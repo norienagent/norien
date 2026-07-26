@@ -88,10 +88,7 @@ export interface Agent {
   manifest: AgentManifest;
   created_at: string;
   updated_at: string;
-  /**
-   * Not served by the registry today. Declared so clients can render it the
-   * moment install counts are exposed, without an SDK release.
-   */
+  /** Cumulative installs. Optional only for backwards compatibility. */
   downloads?: number;
 }
 

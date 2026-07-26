@@ -39,6 +39,7 @@ export default async function AgentPage({ params }: { params: Promise<{ slug: st
             <RuntimeBadge runtime={agent.runtime} />
             <span className="text-xs text-muted">
               by {agent.author} · updated {relativeTime(agent.updated_at)}
+              {agent.downloads > 0 ? ` · ${agent.downloads.toLocaleString()} installs` : ''}
             </span>
           </div>
         </div>
