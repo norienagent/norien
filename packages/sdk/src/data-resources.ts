@@ -7,9 +7,11 @@ import type {
   DataPage,
   ListMarketProjectsParams,
   ListMarketTokensParams,
+  MarketChartRange,
   MarketProject,
   MarketSearchResult,
   MarketToken,
+  MarketTokenChart,
   ProvidersResponse,
 } from './data-types.js';
 
@@ -40,6 +42,17 @@ export class TokensResource {
   get(address: string, options: { chainId?: number } = {}): Promise<Aggregated<MarketToken>> {
     return this.http.get<Aggregated<MarketToken>>(
       `/api/token/${encodeURIComponent(address)}`,
+      options,
+    );
+  }
+
+  /** OHLCV price history (USD) over a window: 24h, 7d, 30d, or 90d. */
+  chart(
+    address: string,
+    options: { range?: MarketChartRange; chainId?: number } = {},
+  ): Promise<Aggregated<MarketTokenChart>> {
+    return this.http.get<Aggregated<MarketTokenChart>>(
+      `/api/token/${encodeURIComponent(address)}/chart`,
       options,
     );
   }

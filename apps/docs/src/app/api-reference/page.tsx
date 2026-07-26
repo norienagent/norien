@@ -31,8 +31,9 @@ GET  /search                    POST /publish
 GET  /api/tokens                GET  /api/contracts/:address
 GET  /api/trending              GET  /api/wallets/:address
 GET  /api/token/:address        GET  /api/search
-GET  /api/projects              GET  /api/chain
-GET  /api/project/:slug         GET  /api/providers
+GET  /api/token/:address/chart  GET  /api/chain
+GET  /api/projects              GET  /api/providers
+GET  /api/project/:slug
 
 # Account
 GET  /api/keys                  POST /api/keys

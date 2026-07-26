@@ -74,6 +74,26 @@ export interface MarketToken {
   txns24h?: number | null;
 }
 
+export type MarketChartRange = '24h' | '7d' | '30d' | '90d';
+
+export interface MarketChartPoint {
+  t: number;
+  o: number;
+  h: number;
+  l: number;
+  c: number;
+  v: number;
+}
+
+export interface MarketTokenChart {
+  address: string;
+  chainId: number;
+  range: MarketChartRange;
+  resolution: string;
+  change: number | null;
+  points: MarketChartPoint[];
+}
+
 export interface RepositoryStats {
   fullName: string;
   url: string;
