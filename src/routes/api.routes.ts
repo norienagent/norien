@@ -18,6 +18,8 @@ import {
   providersResponseSchema,
   searchQuery,
   searchResultSchema,
+  tokenChartQuery,
+  tokenChartSchema,
   tokenParams,
   tokenQuery,
   tokenSchema,
@@ -104,6 +106,30 @@ export const dataApiRoutes: FastifyPluginAsyncZod = async (app) => {
 
       return { ...result, data: result.data };
     },
+  );
+
+  app.get(
+    '/api/token/:address/chart',
+    {
+      schema: {
+        tags: ['Market Data'],
+        summary: 'Token price history',
+        description:
+          'OHLCV candles for one token over a window (24h, 7d, 30d, 90d). Prices are USD. Defaults to the native chain and a 7-day window.',
+        params: tokenParams,
+        querystring: tokenChartQuery,
+        response: {
+          200: envelope(tokenChartSchema),
+          422: errorResponseSchema,
+        },
+      },
+    },
+    async (request) =>
+      aggregatorService.getTokenChart(
+        request.params.address,
+        request.query.chainId,
+        request.query.range,
+      ),
   );
 
   app.get(

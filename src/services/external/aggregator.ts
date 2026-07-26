@@ -98,6 +98,26 @@ export interface Portfolio {
   tokens: PortfolioToken[];
 }
 
+/** Selectable chart windows, each mapped to a lookback and a candle size. */
+export type ChartRange = '24h' | '7d' | '30d' | '90d';
+
+const CHART_WINDOWS: Readonly<Record<ChartRange, { seconds: number; resolution: string }>> = {
+  '24h': { seconds: 24 * 3600, resolution: '15' },
+  '7d': { seconds: 7 * 24 * 3600, resolution: '60' },
+  '30d': { seconds: 30 * 24 * 3600, resolution: '240' },
+  '90d': { seconds: 90 * 24 * 3600, resolution: '720' },
+};
+
+/** A token's OHLCV price history over one window. */
+export interface TokenChart {
+  address: string;
+  chainId: number;
+  range: ChartRange;
+  resolution: string;
+  change: number | null;
+  points: { t: number; o: number; h: number; l: number; c: number; v: number }[];
+}
+
 export class AggregatorService {
   constructor(
     private readonly codex: CodexService = codexService,
@@ -203,6 +223,36 @@ export class AggregatorService {
       limit,
       ranking: 'trendingScore24',
     });
+  }
+
+  /**
+   * A token's price history (OHLCV) over one window, from Codex. Degrades to an
+   * empty series with the source marked unavailable rather than failing — the
+   * token page still renders, just without the chart.
+   */
+  async getTokenChart(
+    address: string,
+    chainId: number,
+    range: ChartRange,
+  ): Promise<Aggregated<TokenChart>> {
+    const window = CHART_WINDOWS[range];
+    const to = Math.floor(Date.now() / 1000);
+    const from = to - window.seconds;
+
+    const result = await attempt('codex', this.codex.configured, () =>
+      this.codex.getBars(address, chainId, from, to, window.resolution),
+    );
+
+    const points = result.value ?? [];
+    const first = points[0]?.c;
+    const last = points[points.length - 1]?.c;
+    const change =
+      first !== undefined && last !== undefined && first !== 0 ? (last - first) / first : null;
+
+    return wrap(
+      { address, chainId, range, resolution: window.resolution, change, points },
+      [result.report],
+    );
   }
 
   /**

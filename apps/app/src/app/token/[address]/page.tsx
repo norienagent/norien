@@ -1,8 +1,10 @@
 import Link from 'next/link';
 
 import { api } from '@norien-live/web-ui/api';
-import { count, dash, percent, price, shortAddress, usd } from '@norien-live/web-ui';
+import { count, dash, price, shortAddress, usd } from '@norien-live/web-ui';
 import { Badge, Card, Change, DegradedNotice, MissingResource, Row, SourceList, Stat, TokenLogo } from '@norien-live/web-ui';
+
+import { PriceChart } from '../../../components/price-chart';
 
 /**
  * Token detail.
@@ -25,6 +27,7 @@ export default async function TokenPage({
 
   const token = result.data;
   const links = token.links;
+  const chart = await api.tokenChart(token.address, { range: '7d', chainId: token.chain.id });
 
   return (
     <>
@@ -42,6 +45,14 @@ export default async function TokenPage({
       </header>
 
       <DegradedNotice sources={result.sources} degraded={result.degraded} />
+
+      <div className="mb-4">
+        <PriceChart
+          address={token.address}
+          chainId={token.chain.id}
+          initial={chart?.data ?? null}
+        />
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Stat label="Price" value={price(token.price)} hint={<Change value={token.change24h} />} />
@@ -92,10 +103,6 @@ export default async function TokenPage({
         </Card>
       </div>
 
-      <div className="mt-4">
-        <PriceStrip token={token} />
-      </div>
-
       {token.categories && token.categories.length > 0 ? (
         <div className="mt-4">
           <Card title="Categories">
@@ -133,43 +140,6 @@ export default async function TokenPage({
         <SourceList sources={result.sources} />
       </div>
     </>
-  );
-}
-
-/**
- * A 24h range strip.
- *
- * The market API exposes a 24h change but no historical series, so this shows
- * the honest thing — where the current price sits across the implied 24h move —
- * rather than drawing an invented candlestick chart.
- */
-function PriceStrip({ token }: { token: { price: number | null; change24h: number | null } }) {
-  if (token.price === null || token.change24h === null) return null;
-
-  const change = token.change24h / 100;
-  const start = change === -1 ? token.price : token.price / (1 + change);
-  const low = Math.min(start, token.price);
-  const high = Math.max(start, token.price);
-  const span = high - low;
-  const position = span === 0 ? 50 : ((token.price - low) / span) * 100;
-
-  return (
-    <Card title="24h range">
-      <div className="flex items-center justify-between text-xs text-muted">
-        <span>{price(low)}</span>
-        <span>{percent(token.change24h)} over 24h</span>
-        <span>{price(high)}</span>
-      </div>
-      <div className="relative mt-3 h-1.5 rounded-full bg-sunken">
-        <span
-          aria-hidden
-          className={`absolute -top-1 size-3.5 rounded-full border-2 border-card ${
-            token.change24h >= 0 ? 'bg-up' : 'bg-down'
-          }`}
-          style={{ left: `calc(${position}% - 0.4375rem)` }}
-        />
-      </div>
-    </Card>
   );
 }
 

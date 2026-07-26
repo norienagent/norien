@@ -55,6 +55,16 @@ export type CodexRanking =
   | 'marketCap'
   | 'change24';
 
+/** One OHLCV candle. Prices are USD (Codex `getBars` default). */
+export interface CodexBar {
+  t: number;
+  o: number;
+  h: number;
+  l: number;
+  c: number;
+  v: number;
+}
+
 interface GraphQLResponse<T> {
   data?: T;
   errors?: { message: string }[];
@@ -261,6 +271,62 @@ export class CodexService {
 
     const row = data.filterTokens.results?.[0];
     return row ? normalizeRow(row) : null;
+  }
+
+  /**
+   * OHLCV candles for a token, for price charts. Prices are USD — we pass no
+   * `quoteToken`, which is Codex's USD default; passing `token0` instead returns
+   * the *paired* token's price (e.g. a stablecoin charting as ~1880, not ~1.00).
+   *
+   * Codex returns parallel arrays plus a status; empty buckets arrive as nulls,
+   * which are dropped so the series is gap-free.
+   */
+  async getBars(
+    address: string,
+    networkId: number,
+    from: number,
+    to: number,
+    resolution: string,
+  ): Promise<CodexBar[]> {
+    const symbol = `${address}:${networkId}`;
+    const document = `{
+      getBars(symbol: ${JSON.stringify(symbol)}, from: ${from}, to: ${to}, resolution: ${JSON.stringify(resolution)}) {
+        t o h l c v s
+      }
+    }`;
+
+    const data = await this.query<{
+      getBars: {
+        t: (number | null)[];
+        o: (number | null)[];
+        h: (number | null)[];
+        l: (number | null)[];
+        c: (number | null)[];
+        v: (number | null)[];
+        s: string;
+      };
+    }>(document, {
+      cacheKey: `codex:bars:${networkId}:${address.toLowerCase()}:${resolution}:${from}:${to}`,
+      cacheTtlMs: 60_000,
+    });
+
+    const bars = data.getBars;
+    const out: CodexBar[] = [];
+    for (let i = 0; i < bars.t.length; i += 1) {
+      const t = bars.t[i];
+      const c = toNumber(bars.c[i]);
+      // A null timestamp or close means the bucket had no trades; skip it.
+      if (t === null || t === undefined || c === null) continue;
+      out.push({
+        t,
+        o: toNumber(bars.o[i]) ?? c,
+        h: toNumber(bars.h[i]) ?? c,
+        l: toNumber(bars.l[i]) ?? c,
+        c,
+        v: toNumber(bars.v[i]) ?? 0,
+      });
+    }
+    return out;
   }
 }
 

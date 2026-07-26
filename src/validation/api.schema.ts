@@ -44,6 +44,11 @@ export const listTokensQuery = z.object({
 export const tokenParams = z.object({ address: addressParam });
 export const tokenQuery = z.object({ chainId: chainIdField });
 
+export const tokenChartQuery = z.object({
+  chainId: chainIdField,
+  range: z.enum(['24h', '7d', '30d', '90d']).default('7d'),
+});
+
 export const trendingQuery = z.object({
   chainId: chainIdField.optional(),
   limit: limitField,
@@ -127,6 +132,25 @@ export const tokenSchema = z.object({
   links: tokenLinksSchema.optional(),
   fdv: z.number().nullable().optional(),
   txns24h: z.number().nullable().optional(),
+});
+
+/** A token's OHLCV price history. */
+export const tokenChartSchema = z.object({
+  address: z.string(),
+  chainId: z.number(),
+  range: z.string(),
+  resolution: z.string(),
+  change: z.number().nullable(),
+  points: z.array(
+    z.object({
+      t: z.number(),
+      o: z.number(),
+      h: z.number(),
+      l: z.number(),
+      c: z.number(),
+      v: z.number(),
+    }),
+  ),
 });
 
 const repositorySchema = z.object({

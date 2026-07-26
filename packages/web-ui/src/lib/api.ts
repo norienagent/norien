@@ -87,6 +87,26 @@ export interface Token {
   txns24h?: number | null;
 }
 
+export type ChartRange = '24h' | '7d' | '30d' | '90d';
+
+export interface ChartPoint {
+  t: number;
+  o: number;
+  h: number;
+  l: number;
+  c: number;
+  v: number;
+}
+
+export interface TokenChart {
+  address: string;
+  chainId: number;
+  range: ChartRange;
+  resolution: string;
+  change: number | null;
+  points: ChartPoint[];
+}
+
 export interface Repository {
   fullName: string;
   url: string;
@@ -505,6 +525,12 @@ export const api = {
   token(address: string, chainId?: number) {
     return request<Aggregated<Token>>(`/api/token/${address}${query({ chainId })}`, {
       nullOn404: true,
+    });
+  },
+
+  tokenChart(address: string, params: { range?: ChartRange; chainId?: number } = {}) {
+    return request<Aggregated<TokenChart>>(`/api/token/${address}/chart${query(params)}`, {
+      revalidate: 60,
     });
   },
 
