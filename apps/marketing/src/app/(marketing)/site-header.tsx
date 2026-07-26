@@ -15,7 +15,8 @@ import { APP_URL, Brand, ButtonLink, Container, DOCS_URL, GitHubLink, XLink } fr
  * balanced three-part row: logo · navigation · actions.
  */
 
-const LINKS: { href: string; label: string; external?: boolean }[] = [
+const LINKS: { href: string; label: string; external?: boolean; token?: boolean }[] = [
+  { href: `${APP_URL}/norien`, label: '$NORIEN', external: true, token: true },
   { href: DOCS_URL, label: 'Docs', external: true },
   { href: '/pricing', label: 'Pricing' },
   { href: '/changelog', label: 'Changelog' },
@@ -97,25 +98,20 @@ export function SiteHeader() {
       >
         <Container className="py-3">
           <nav className="flex flex-col" aria-label="Mobile">
-            {LINKS.map((link) =>
-              link.external ? (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className="border-b border-line py-3.5 text-[15px] font-medium text-ink last:border-0"
-                >
+            {LINKS.map((link) => {
+              const cls = `border-b border-line py-3.5 text-[15px] font-medium last:border-0 ${
+                link.token ? 'font-semibold text-accent' : 'text-ink'
+              }`;
+              return link.external ? (
+                <a key={link.href} href={link.href} className={cls}>
                   {link.label}
                 </a>
               ) : (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="border-b border-line py-3.5 text-[15px] font-medium text-ink last:border-0"
-                >
+                <Link key={link.href} href={link.href} className={cls}>
                   {link.label}
                 </Link>
-              ),
-            )}
+              );
+            })}
             <div className="flex flex-col gap-2 pt-4">
               <Link
                 href="/login"
@@ -142,12 +138,15 @@ function NavLink({
   link,
   active,
 }: {
-  link: { href: string; label: string; external?: boolean };
+  link: { href: string; label: string; external?: boolean; token?: boolean };
   active: boolean;
 }) {
-  const className = `rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-    active ? 'text-accent' : 'text-muted hover:text-ink'
-  }`;
+  // The token link is a highlighted chip so it reads as the headline action.
+  const className = link.token
+    ? 'rounded-lg border border-accent/30 bg-accent-soft px-3 py-1.5 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-white'
+    : `rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+        active ? 'text-accent' : 'text-muted hover:text-ink'
+      }`;
   return link.external ? (
     <a href={link.href} className={className}>
       {link.label}

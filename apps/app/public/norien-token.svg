@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="$NORIEN token">
+  <defs>
+    <radialGradient id="nc-face" cx="50%" cy="36%" r="78%">
+      <stop offset="0%" stop-color="#9C7C53"/>
+      <stop offset="55%" stop-color="#7A5A3A"/>
+      <stop offset="100%" stop-color="#5A4126"/>
+    </radialGradient>
+    <linearGradient id="nc-gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.24"/>
+      <stop offset="45%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="96" fill="url(#nc-face)"/>
+  <circle cx="100" cy="100" r="96" fill="url(#nc-gloss)"/>
+  <circle cx="100" cy="100" r="87" fill="none" stroke="#F6F2EA" stroke-opacity="0.22" stroke-width="2"/>
+  <g fill="#F6F2EA">
+    <rect x="76" y="62" width="48" height="19" rx="6" opacity="0.5"/>
+    <rect x="64" y="91" width="72" height="19" rx="6" opacity="0.78"/>
+    <rect x="52" y="120" width="96" height="19" rx="6"/>
+  </g>
+</svg>
