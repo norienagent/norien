@@ -603,7 +603,16 @@ export const api = {
     });
   },
 
-  tools(params: { limit?: number; offset?: number; category?: string; runtime?: string; tag?: string } = {}) {
+  tools(
+    params: {
+      limit?: number;
+      offset?: number;
+      category?: string;
+      runtime?: string;
+      tag?: string;
+      author?: string;
+    } = {},
+  ) {
     return request<RegistryPage<Tool>>(`/tools${query(params)}`, { revalidate: 30 });
   },
 
@@ -618,7 +627,9 @@ export const api = {
     });
   },
 
-  skills(params: { limit?: number; offset?: number; q?: string; category?: string; tag?: string } = {}) {
+  skills(
+    params: { limit?: number; offset?: number; q?: string; category?: string; tag?: string; author?: string } = {},
+  ) {
     return request<RegistryPage<Skill>>(`/api/skills${query(params)}`, { revalidate: 20 });
   },
 

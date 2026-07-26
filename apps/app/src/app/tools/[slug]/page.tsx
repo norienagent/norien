@@ -29,7 +29,11 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           <Badge>{tool.category}</Badge>
           <RuntimeBadge runtime={tool.runtime} />
           <span className="text-xs text-muted">
-            by {tool.author} · updated {relativeTime(tool.updated_at)}
+            by{' '}
+            <Link href={`/u/${tool.author}`} className="text-accent underline underline-offset-2">
+              @{tool.author}
+            </Link>{' '}
+            · updated {relativeTime(tool.updated_at)}
             {tool.downloads > 0 ? ` · ${tool.downloads.toLocaleString()} installs` : ''}
           </span>
         </div>
