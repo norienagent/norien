@@ -5,6 +5,7 @@ import { count, dash, price, shortAddress, usd } from '@norien-live/web-ui';
 import { Badge, Card, Change, DegradedNotice, MissingResource, Row, SourceList, Stat, TokenLogo } from '@norien-live/web-ui';
 
 import { PriceChart } from '../../../components/price-chart';
+import { WatchButton } from '../../../components/watch-button';
 
 /**
  * Token detail.
@@ -33,7 +34,7 @@ export default async function TokenPage({
     <>
       <header className="mb-6 flex items-center gap-4">
         <TokenLogo src={token.logo} symbol={token.symbol} className="size-12" />
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h1 className="truncate text-2xl font-semibold tracking-tight text-ink">
             {token.name} <span className="font-normal text-muted">{token.symbol}</span>
           </h1>
@@ -42,6 +43,15 @@ export default async function TokenPage({
             <span className="font-mono">{shortAddress(token.address, 8)}</span>
           </p>
         </div>
+        <WatchButton
+          variant="labelled"
+          token={{
+            address: token.address,
+            chainId: token.chain.id,
+            symbol: token.symbol,
+            name: token.name,
+          }}
+        />
       </header>
 
       <DegradedNotice sources={result.sources} degraded={result.degraded} />

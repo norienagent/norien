@@ -19,6 +19,7 @@ const NAV: { href: string; label: string; icon: ReactNode }[] = [
   { href: '/markets', label: 'Markets', icon: <IconChart /> },
   { href: '/new', label: 'New launches', icon: <IconBolt /> },
   { href: '/portfolio', label: 'Portfolio', icon: <IconWallet /> },
+  { href: '/watchlist', label: 'Watchlist', icon: <IconStar /> },
   { href: '/search', label: 'Search', icon: <IconSearch /> },
   { href: '/projects', label: 'Projects', icon: <IconLayers /> },
   { href: '/registry', label: 'Registry', icon: <IconBox /> },
@@ -234,6 +235,14 @@ function IconBolt() {
   return (
     <svg {...iconProps}>
       <path d="M11 2L4 11h5l-1 7 7-9h-5l1-7z" />
+    </svg>
+  );
+}
+
+function IconStar() {
+  return (
+    <svg {...iconProps}>
+      <path d="M10 2.5l2.35 4.76 5.25.76-3.8 3.7.9 5.23L10 14.98l-4.7 2.47.9-5.23-3.8-3.7 5.25-.76L10 2.5z" />
     </svg>
   );
 }
