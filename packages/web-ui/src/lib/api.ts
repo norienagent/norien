@@ -85,6 +85,7 @@ export interface Token {
   };
   fdv?: number | null;
   txns24h?: number | null;
+  createdAt?: number | null;
 }
 
 export type ChartRange = '24h' | '7d' | '30d' | '90d';
@@ -522,6 +523,10 @@ export const api = {
 
   trending(params: { limit?: number; chainId?: number } = {}) {
     return request<Aggregated<Page<Token>>>(`/api/trending${query(params)}`, { revalidate: 20 });
+  },
+
+  newTokens(params: { limit?: number; chainId?: number } = {}) {
+    return request<Aggregated<Page<Token>>>(`/api/new${query(params)}`, { revalidate: 15 });
   },
 
   token(address: string, chainId?: number) {

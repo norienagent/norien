@@ -59,6 +59,8 @@ export interface Token {
   links?: TokenLinks;
   fdv?: number | null;
   txns24h?: number | null;
+  /** Unix seconds the token was first indexed — its launch time. */
+  createdAt?: number | null;
 }
 
 export interface TokenLinks {

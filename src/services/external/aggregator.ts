@@ -151,6 +151,7 @@ export class AggregatorService {
       volume24h: row.volume24h,
       change24h: row.change24h,
       chain: this.chainRef(row.networkId, networks),
+      createdAt: row.createdAt,
     };
   }
 
@@ -223,6 +224,28 @@ export class AggregatorService {
       limit,
       ranking: 'trendingScore24',
     });
+  }
+
+  /**
+   * Newest tokens by launch time — the "new launches" radar. Ranks by Codex's
+   * `createdAt`, so the freshest listings on the chain come first.
+   */
+  async getNewTokens(chainId: number | undefined, limit: number): Promise<Aggregated<Paged<Token>>> {
+    const networks = await this.networkMap();
+    const { value, report } = await attempt('codex', this.codex.configured, () =>
+      this.codex.listTokens({
+        ...(chainId !== undefined ? { networkIds: [chainId] } : {}),
+        limit,
+        ranking: 'createdAt',
+      }),
+    );
+
+    const rows = value ?? [];
+    const items = rows.map((row) => this.toToken(row, networks));
+    return wrap(
+      { items, meta: { total: items.length, limit, offset: 0, hasMore: false } },
+      [report],
+    );
   }
 
   /**

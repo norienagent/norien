@@ -77,6 +77,21 @@ export const dataApiRoutes: FastifyPluginAsyncZod = async (app) => {
   );
 
   app.get(
+    '/api/new',
+    {
+      schema: {
+        tags: ['Market Data'],
+        summary: 'New token launches',
+        description:
+          'The newest tokens on the chain, ranked by launch time (most recent first). Defaults to the native chain.',
+        querystring: trendingQuery,
+        response: { 200: envelope(paged(tokenSchema)), 422: errorResponseSchema },
+      },
+    },
+    async (request) => aggregatorService.getNewTokens(request.query.chainId, request.query.limit),
+  );
+
+  app.get(
     '/api/token/:address',
     {
       schema: {

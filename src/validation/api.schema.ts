@@ -132,6 +132,7 @@ export const tokenSchema = z.object({
   links: tokenLinksSchema.optional(),
   fdv: z.number().nullable().optional(),
   txns24h: z.number().nullable().optional(),
+  createdAt: z.number().nullable().optional(),
 });
 
 /** A token's OHLCV price history. */

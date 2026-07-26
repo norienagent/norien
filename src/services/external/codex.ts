@@ -46,6 +46,8 @@ export interface CodexTokenRow {
   change24h: number | null;
   holders: number | null;
   txns24h: number | null;
+  /** Unix seconds when Codex first indexed the token — its launch time. */
+  createdAt: number | null;
 }
 
 export type CodexRanking =
@@ -53,7 +55,8 @@ export type CodexRanking =
   | 'volume24'
   | 'liquidity'
   | 'marketCap'
-  | 'change24';
+  | 'change24'
+  | 'createdAt';
 
 /** One OHLCV candle. Prices are USD (Codex `getBars` default). */
 export interface CodexBar {
@@ -99,6 +102,7 @@ interface RawFilterResult {
   change24: string | null;
   holders: number | null;
   txnCount24: string | null;
+  createdAt: number | null;
 }
 
 const TOKEN_SELECTION = `
@@ -120,6 +124,7 @@ const TOKEN_SELECTION = `
   change24
   holders
   txnCount24
+  createdAt
 `;
 
 function normalizeRow(raw: RawFilterResult): CodexTokenRow {
@@ -155,6 +160,7 @@ function normalizeRow(raw: RawFilterResult): CodexTokenRow {
     })(),
     holders: raw.holders ?? null,
     txns24h: toNumber(raw.txnCount24),
+    createdAt: raw.createdAt ?? null,
   };
 }
 
