@@ -40,7 +40,8 @@ export function NewLaunches({ initial }: { initial: Token[] }) {
     let cancelled = false;
     const load = async () => {
       try {
-        const res = await fetch('/api/new?limit=30');
+        // no-store so the browser/CDN never serves a stale list on the poll.
+        const res = await fetch('/api/new?limit=30', { cache: 'no-store' });
         if (!res.ok) return;
         const body = (await res.json()) as Aggregated<Page<Token>>;
         if (cancelled) return;

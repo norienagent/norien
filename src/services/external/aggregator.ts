@@ -237,6 +237,8 @@ export class AggregatorService {
         ...(chainId !== undefined ? { networkIds: [chainId] } : {}),
         limit,
         ranking: 'createdAt',
+        // A live radar can't run on the default 5-minute cache — keep it fresh.
+        cacheTtlMs: 8_000,
       }),
     );
 

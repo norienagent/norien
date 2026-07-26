@@ -171,6 +171,8 @@ export interface ListTokensOptions {
   ranking?: CodexRanking;
   /** Free-text match against name and symbol. */
   phrase?: string;
+  /** Override the default cache TTL — e.g. a short window for the new-launch feed. */
+  cacheTtlMs?: number;
 }
 
 export class CodexService {
@@ -250,6 +252,7 @@ export class CodexService {
       document,
       {
         cacheKey: `codex:tokens:${ranking}:${limit}:${offset}:${options.networkIds?.join(',') ?? 'all'}:${options.phrase ?? ''}`,
+        ...(options.cacheTtlMs !== undefined ? { cacheTtlMs: options.cacheTtlMs } : {}),
       },
     );
 
