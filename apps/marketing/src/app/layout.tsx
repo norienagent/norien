@@ -28,6 +28,12 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
   },
+  // Virtuals Protocol site-ownership verification.
+  verification: {
+    other: {
+      'virtual-protocol-site-verification': '6604e6a63f65b420e504639b13367520',
+    },
+  },
 };
 
 /**
