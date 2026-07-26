@@ -18,6 +18,7 @@ const NAV: { href: string; label: string; icon: ReactNode }[] = [
   { href: '/', label: 'Dashboard', icon: <IconGrid /> },
   { href: '/markets', label: 'Markets', icon: <IconChart /> },
   { href: '/new', label: 'New launches', icon: <IconBolt /> },
+  { href: '/signals', label: 'Signals', icon: <IconSignal /> },
   { href: '/portfolio', label: 'Portfolio', icon: <IconWallet /> },
   { href: '/watchlist', label: 'Watchlist', icon: <IconStar /> },
   { href: '/search', label: 'Search', icon: <IconSearch /> },
@@ -243,6 +244,14 @@ function IconStar() {
   return (
     <svg {...iconProps}>
       <path d="M10 2.5l2.35 4.76 5.25.76-3.8 3.7.9 5.23L10 14.98l-4.7 2.47.9-5.23-3.8-3.7 5.25-.76L10 2.5z" />
+    </svg>
+  );
+}
+
+function IconSignal() {
+  return (
+    <svg {...iconProps}>
+      <path d="M3 14l4-5 3 3 4-7 3 4" />
     </svg>
   );
 }

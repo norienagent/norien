@@ -12,6 +12,7 @@ import { publishRoutes } from './publish.routes.js';
 import { rootRoutes } from './root.routes.js';
 import { runtimeRoutes } from './runtime.routes.js';
 import { searchRoutes } from './search.routes.js';
+import { signalsRoutes } from './signals.routes.js';
 import { skillRoutes } from './skills.routes.js';
 import { toolRoutes } from './tools.routes.js';
 
@@ -32,6 +33,8 @@ export const apiRoutes: FastifyPluginAsyncZod = async (app) => {
   await app.register(publishRoutes);
   // The unified external-data API.
   await app.register(dataApiRoutes);
+  // AI Signals — data-derived market observations + grounded AI brief.
+  await app.register(signalsRoutes);
   // Logo image proxy, so vendor CDNs never appear in the frontend.
   await app.register(imageRoutes);
   // Personal API key management.

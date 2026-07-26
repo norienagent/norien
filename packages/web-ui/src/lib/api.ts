@@ -88,6 +88,28 @@ export interface Token {
   createdAt?: number | null;
 }
 
+export type SignalTag =
+  | 'momentum-up'
+  | 'momentum-down'
+  | 'high-activity'
+  | 'fresh-launch'
+  | 'thin-risky';
+
+export interface Signal {
+  symbol: string;
+  name: string;
+  address: string;
+  price: number | null;
+  change24h: number | null;
+  volume24h: number | null;
+  liquidity: number | null;
+  holders: number | null;
+  ageHours: number | null;
+  activity: number | null;
+  tags: SignalTag[];
+  score: number;
+}
+
 export type ChartRange = '24h' | '7d' | '30d' | '90d';
 
 export interface ChartPoint {
@@ -527,6 +549,13 @@ export const api = {
 
   newTokens(params: { limit?: number; chainId?: number } = {}) {
     return request<Aggregated<Page<Token>>>(`/api/new${query(params)}`, { revalidate: 15 });
+  },
+
+  signals() {
+    return request<{ data: { signals: Signal[]; generatedAt: string; degraded: boolean } }>(
+      '/api/signals',
+      { revalidate: 30 },
+    );
   },
 
   token(address: string, chainId?: number) {

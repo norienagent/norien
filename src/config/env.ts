@@ -125,9 +125,20 @@ const envSchema = z.object({
   GROQ_URL: z.string().url().default('https://api.groq.com/openai/v1'),
   GROQ_MODEL: z.string().default('llama-3.3-70b-versatile'),
 
+  // OpenRouter — OpenAI-compatible gateway with free models. Powers AI Signals
+  // (and can back chat). Optional: no key disables it.
+  OPENROUTER_API_KEY: optionalString,
+  OPENROUTER_URL: z.string().url().default('https://openrouter.ai/api/v1'),
+  // A currently-available free instruct model. Override with OPENROUTER_MODEL if
+  // a slug is deprecated (OpenRouter rotates free models).
+  OPENROUTER_MODEL: z.string().default('google/gemma-4-31b-it:free'),
+
   // Which provider powers chat (agent chat + the Norien assistant). Falls back
-  // to the other if the preferred one has no key.
-  CHAT_PROVIDER: z.enum(['virtuals', 'groq']).default('virtuals'),
+  // to another if the preferred one has no key.
+  CHAT_PROVIDER: z.enum(['virtuals', 'groq', 'openrouter']).default('virtuals'),
+
+  // Which provider powers AI Signals. Defaults to OpenRouter (free tier).
+  SIGNALS_PROVIDER: z.enum(['openrouter', 'groq', 'virtuals']).default('openrouter'),
 
   // Error tracking. Read directly in `src/instrument.ts` (which runs before this
   // module loads); declared here only so the value is documented and validated.

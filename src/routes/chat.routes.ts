@@ -4,19 +4,26 @@ import { z } from 'zod';
 import { env } from '../config/env.js';
 import { AppError } from '../core/errors.js';
 import { groqService } from '../services/ai/groq.js';
+import { openRouterService } from '../services/ai/openrouter.js';
 import { type ChatMessage, virtualsComputeService } from '../services/ai/virtuals.js';
 import { errorResponseSchema } from '../validation/common.js';
 
 /**
  * The chat provider is chosen by `CHAT_PROVIDER` (default `virtuals`, i.e.
- * Claude Sonnet), falling back to whatever is configured. Both services expose
+ * Claude Sonnet), falling back to whatever is configured. Every service exposes
  * the same `chat(messages, options)` surface.
  */
 function chatProvider() {
-  const preferred = env.CHAT_PROVIDER === 'groq' ? groqService : virtualsComputeService;
+  const preferred =
+    env.CHAT_PROVIDER === 'groq'
+      ? groqService
+      : env.CHAT_PROVIDER === 'openrouter'
+        ? openRouterService
+        : virtualsComputeService;
   if (preferred.configured) return preferred;
   if (virtualsComputeService.configured) return virtualsComputeService;
   if (groqService.configured) return groqService;
+  if (openRouterService.configured) return openRouterService;
   return null;
 }
 
@@ -100,6 +107,7 @@ FEATURES IN THE APP (app.norien.live)
 - /skills — runnable, data-grounded capabilities (the 4th primitive, between tools and agents). A skill = plain-language instructions + a live data source (markets, a wallet, a token, or the registry); running it resolves that real Norien data and streams a grounded result. Starters: market-recap, review-wallet, explain-token, find-agent, draft-agent. Anyone can publish their own.
 - /markets & /tokens — live token prices, liquidity, volume, holders (Robinhood Chain). Each token page has an interactive price chart (24h/7d/30d/90d) and a star to add it to your watchlist.
 - /new — new-launches radar: the freshest tokens on the chain, newest first, updating live.
+- /signals — AI Signals: notable moves computed from live data (momentum, high activity, fresh launches, thin-liquidity risk), plus an optional grounded AI read. Observations, NOT financial advice.
 - /watchlist — the tokens you star, with live prices and per-token ±% price alerts (browser notifications). Saved on your device.
 - /portfolio — paste any wallet address to see its priced holdings and native balances across Ethereum, Base, Arbitrum, Optimism, and Polygon, with a total and per-chain breakdown.
 - /u/<handle> — a publisher's public profile: all the agents, tools, and skills they've shipped, with install counts.
@@ -109,7 +117,7 @@ FEATURES IN THE APP (app.norien.live)
 - /search — global search across market data and the registry.
 
 API (api.norien.live, public reads)
-Examples: GET /api/tokens , GET /api/token/:address , GET /api/token/:address/chart , GET /api/new , GET /api/portfolio/:address , GET /agents , GET /search , GET /health. Full reference at api.norien.live/docs and docs.norien.live.
+Examples: GET /api/tokens , GET /api/token/:address , GET /api/token/:address/chart , GET /api/new , GET /api/signals , GET /api/portfolio/:address , GET /agents , GET /search , GET /health. Full reference at api.norien.live/docs and docs.norien.live.
 
 STYLE: Keep answers short. Prefer pointing to the exact page (e.g. app.norien.live/portfolio) or command. Use markdown (bold, bullet lists, \`code\`) when it helps.`;
 

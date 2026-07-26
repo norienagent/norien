@@ -31,9 +31,10 @@ GET  /search                    POST /publish
 GET  /api/tokens                GET  /api/contracts/:address
 GET  /api/trending              GET  /api/wallets/:address
 GET  /api/new                   GET  /api/search
-GET  /api/token/:address        GET  /api/chain
-GET  /api/token/:address/chart  GET  /api/providers
-GET  /api/projects
+GET  /api/signals               GET  /api/chain
+GET  /api/token/:address        GET  /api/providers
+GET  /api/token/:address/chart
+GET  /api/projects              POST /api/signals/brief  (SSE)
 GET  /api/project/:slug
 
 # Account
