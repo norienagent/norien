@@ -1,31 +1,27 @@
 import type { Metadata } from 'next';
 
-import { api } from '@norien-live/web-ui/api';
-import { count, price, usd } from '@norien-live/web-ui';
-
-import { CopyAddress } from '../../components/copy-button';
 import { PriceChart } from '../../components/price-chart';
 
 /**
  * $NORIEN — the official token page.
  *
- * Live: real market data + chart from Norien's own data API, contract address
- * with copy, and the trade/registry links.
+ * Pre-launch: everything is "coming soon", but the page is production-grade so
+ * launch is a one-line flip. Set NORIEN_TOKEN_ADDRESS to the deployed contract
+ * and the real chart + live market data light up automatically.
  */
 
-const NORIEN_TOKEN_ADDRESS = '0xc53E73B5AeF6BeE1384C90AE6Eb9216A5C33979f';
+// Flip this to the deployed contract at launch — the chart and market row go live.
+const NORIEN_TOKEN_ADDRESS: string | null = null;
 const NORIEN_CHAIN_ID = 4663; // Robinhood Chain
 
 const X_URL = 'https://x.com/norienlive';
 const GITHUB_URL = 'https://github.com/norienagent/norien';
 const DOCS_URL = process.env.NEXT_PUBLIC_DOCS_URL ?? 'https://docs.norien.live';
-const DEFINED_URL = `https://www.defined.fi/robinhood/${NORIEN_TOKEN_ADDRESS.toLowerCase()}`;
-const VIRTUALS_URL = 'https://app.virtuals.io/virtuals/123009';
 
 export const metadata: Metadata = {
   title: '$NORIEN — the Norien token',
   description:
-    'The official utility token for the Norien network on Robinhood Chain. Live now.',
+    'The official utility token for the Norien network on Robinhood Chain. Coming soon.',
 };
 
 const UTILITY = [
@@ -55,20 +51,8 @@ const UTILITY = [
   },
 ];
 
-export default async function NorienTokenPage() {
-  const [tokenRes, chartRes] = await Promise.all([
-    api.token(NORIEN_TOKEN_ADDRESS, NORIEN_CHAIN_ID),
-    api.tokenChart(NORIEN_TOKEN_ADDRESS, { range: '24h', chainId: NORIEN_CHAIN_ID }),
-  ]);
-  const token = tokenRes?.data ?? null;
-  const change = token?.change24h ?? null;
-
-  const stats = [
-    { label: 'Price', value: token ? price(token.price) : '—' },
-    { label: 'Market cap', value: token ? usd(token.marketCap) : '—' },
-    { label: 'Supply', value: token ? count(token.totalSupply ?? null) : '—' },
-    { label: 'Holders', value: token ? count(token.holders ?? null) : '—' },
-  ];
+export default function NorienTokenPage() {
+  const live = NORIEN_TOKEN_ADDRESS !== null;
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -85,101 +69,54 @@ export default async function NorienTokenPage() {
             The utility token powering the Norien network on Robinhood Chain — the registry, runtime,
             data API, and agent economy.
           </p>
-
-          <span className="mt-6 inline-flex items-center gap-2 rounded-full border border-up/30 bg-up/10 px-4 py-1.5 text-sm font-medium text-up">
-            <span className="size-2 animate-pulse rounded-full bg-up" />
-            Live on Robinhood Chain
+          <span className="mt-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent-soft px-4 py-1.5 text-sm font-medium text-accent">
+            <span className="size-2 animate-pulse rounded-full bg-accent" />
+            Coming soon
           </span>
 
-          {token ? (
-            <div className="mt-6 flex items-baseline justify-center gap-3">
-              <span className="text-3xl font-semibold tabular-nums text-ink">{price(token.price)}</span>
-              {change != null ? (
-                <span
-                  className={`text-base font-medium tabular-nums ${change >= 0 ? 'text-up' : 'text-down'}`}
-                >
-                  {change >= 0 ? '+' : ''}
-                  {Math.abs(change) >= 1000 ? `${Math.round(change).toLocaleString()}%` : `${change.toFixed(2)}%`}{' '}
-                  24h
-                </span>
-              ) : null}
-            </div>
-          ) : null}
-
-          <div className="mt-6 flex w-full max-w-xl justify-center">
-            <CopyAddress address={NORIEN_TOKEN_ADDRESS} />
-          </div>
-
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <SocialButton href={DEFINED_URL} label="Trade on Defined" icon={<ChartIcon />} primary />
-            <SocialButton href={VIRTUALS_URL} label="Virtuals" icon={<DotIcon />} />
-            <SocialButton href={X_URL} label="X" icon={<XIcon />} />
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <SocialButton href={X_URL} label="Follow on X" icon={<XIcon />} primary />
             <SocialButton href={GITHUB_URL} label="GitHub" icon={<GitHubIcon />} />
             <SocialButton href={DOCS_URL} label="Docs" icon={<DocIcon />} />
           </div>
         </div>
       </section>
 
-      {/* Live market row */}
+      {/* Market row (coming soon until live) */}
       <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {stats.map((s) => (
+        {[
+          { label: 'Price', value: null },
+          { label: 'Market cap', value: null },
+          { label: 'Supply', value: null },
+          { label: 'Holders', value: null },
+        ].map((s) => (
           <div key={s.label} className="rounded-2xl border border-line bg-card px-5 py-4">
             <div className="text-xs font-medium uppercase tracking-wide text-muted">{s.label}</div>
-            <div className="mt-1.5 text-lg font-semibold tabular-nums text-ink">{s.value}</div>
+            <div className="mt-1.5 text-lg font-semibold text-ink">
+              {s.value ?? <span className="text-muted">Soon</span>}
+            </div>
           </div>
         ))}
       </section>
 
-      {/* Real chart */}
+      {/* Chart — real when live, elegant placeholder until then */}
       <section className="mt-6">
-        <PriceChart
-          address={NORIEN_TOKEN_ADDRESS}
-          chainId={NORIEN_CHAIN_ID}
-          initial={chartRes?.data ?? null}
-        />
-      </section>
-
-      {/* Contract details */}
-      <section className="mt-6 rounded-2xl border border-line bg-card p-6">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Detail label="Contract" mono value={NORIEN_TOKEN_ADDRESS} />
-          <Detail label="Chain" value="Robinhood Chain" />
-          <Detail label="Token" value={token?.name ?? 'Norien'} />
-          <Detail label="Total supply" value={token ? count(token.totalSupply ?? null) : '—'} />
-        </div>
-        <div className="mt-5 flex flex-wrap gap-3">
-          <a
-            href={DEFINED_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-sm font-medium text-accent underline underline-offset-2"
-          >
-            View on Defined ↗
-          </a>
-          <a
-            href={VIRTUALS_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-sm font-medium text-accent underline underline-offset-2"
-          >
-            View on Virtuals ↗
-          </a>
-          <a
-            href={`/token/${NORIEN_TOKEN_ADDRESS}`}
-            className="text-sm font-medium text-accent underline underline-offset-2"
-          >
-            Full token page ↗
-          </a>
-        </div>
+        {live ? (
+          <PriceChart address={NORIEN_TOKEN_ADDRESS as string} chainId={NORIEN_CHAIN_ID} initial={null} />
+        ) : (
+          <ComingSoonChart />
+        )}
       </section>
 
       {/* Utility */}
       <section className="mt-12">
         <div className="text-center">
-          <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">Built to be used</h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+            Built to be used
+          </h2>
           <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-muted">
-            $NORIEN is a utility token — value flows from what the network does. Utility rolls out
-            across the platform.
+            $NORIEN is a utility token — value flows from what the network does. Planned utility,
+            rolling out after launch.
           </p>
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -195,19 +132,28 @@ export default async function NorienTokenPage() {
         </div>
       </section>
 
-      <p className="mt-8 text-center text-xs leading-relaxed text-muted">
-        Informational only — not financial advice, not an offer. Utility is planned and subject to
-        change. Do your own research.
-      </p>
-    </div>
-  );
-}
+      {/* Launch strip */}
+      <section className="mt-8 rounded-2xl border border-line bg-card p-6 sm:flex sm:items-center sm:justify-between sm:gap-6">
+        <div>
+          <div className="text-base font-semibold text-ink">Launching on Robinhood Chain</div>
+          <div className="mt-1 text-sm text-muted">
+            Contract address and the live chart go here on launch. Follow{' '}
+            <a href={X_URL} target="_blank" rel="noreferrer noopener" className="text-accent underline underline-offset-2">
+              @norienlive
+            </a>{' '}
+            so you don&apos;t miss it.
+          </div>
+        </div>
+        <div className="mt-4 flex gap-3 sm:mt-0 sm:shrink-0">
+          <SocialButton href={X_URL} label="Follow on X" icon={<XIcon />} primary />
+          <SocialButton href={GITHUB_URL} label="GitHub" icon={<GitHubIcon />} />
+        </div>
+      </section>
 
-function Detail({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
-  return (
-    <div>
-      <div className="text-xs font-medium uppercase tracking-wide text-muted">{label}</div>
-      <div className={`mt-1 break-all text-sm text-ink ${mono ? 'font-mono' : ''}`}>{value}</div>
+      <p className="mt-6 text-center text-xs leading-relaxed text-muted">
+        Informational only — not financial advice, not an offer, and not a promise of value. Utility
+        is planned and subject to change. Do your own research.
+      </p>
     </div>
   );
 }
@@ -236,6 +182,54 @@ function TokenCoin({ className = '' }: { className?: string }) {
         <rect x="52" y="120" width="96" height="19" rx="6" />
       </g>
     </svg>
+  );
+}
+
+/** Placeholder that reads as the real chart, so launch is a seamless swap. */
+function ComingSoonChart() {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-line bg-card">
+      <div className="flex items-center justify-between border-b border-line px-5 py-3">
+        <span className="text-sm font-medium text-ink">Price</span>
+        <div className="flex gap-1">
+          {['24H', '7D', '30D', '90D'].map((r, i) => (
+            <span
+              key={r}
+              className={`rounded-md px-2 py-1 text-xs font-medium ${i === 1 ? 'bg-accent text-white' : 'text-muted'}`}
+            >
+              {r}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div className="relative h-[240px]">
+        <svg viewBox="0 0 700 240" preserveAspectRatio="none" className="h-full w-full opacity-40">
+          <defs>
+            <linearGradient id="cs-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="0.18" />
+              <stop offset="100%" stopColor="var(--color-accent)" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M0 170 C 80 150, 120 120, 180 130 S 300 90, 360 110 S 480 60, 560 80 S 660 40, 700 55"
+            fill="none"
+            stroke="var(--color-accent)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M0 170 C 80 150, 120 120, 180 130 S 300 90, 360 110 S 480 60, 560 80 S 660 40, 700 55 L700 240 L0 240 Z"
+            fill="url(#cs-fill)"
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+          <span className="rounded-full border border-line bg-canvas/80 px-4 py-1.5 text-sm font-medium text-ink backdrop-blur-sm">
+            Live chart · coming soon
+          </span>
+          <span className="text-xs text-muted">Powered by Norien&apos;s real OHLCV data at launch</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -288,22 +282,6 @@ function DocIcon() {
     <svg viewBox="0 0 20 20" className="size-[16px]" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
       <path d="M5 3.5h7l3 3v10H5z" strokeLinejoin="round" />
       <path d="M12 3.5v3h3M7.5 10h5M7.5 13h5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function ChartIcon() {
-  return (
-    <svg viewBox="0 0 20 20" className="size-[16px]" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
-      <path d="M3 14l4-5 3 3 4-7 3 4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function DotIcon() {
-  return (
-    <svg viewBox="0 0 20 20" className="size-[16px]" fill="currentColor" aria-hidden>
-      <circle cx="10" cy="10" r="5" />
     </svg>
   );
 }

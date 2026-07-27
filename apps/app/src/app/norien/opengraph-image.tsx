@@ -68,13 +68,13 @@ export default function Image() {
               gap: 12,
               fontSize: 26,
               fontWeight: 600,
-              color: '#3f6b47',
+              color: ACCENT,
               letterSpacing: 3,
               textTransform: 'uppercase',
             }}
           >
-            <div style={{ width: 12, height: 12, borderRadius: 12, backgroundColor: '#3f6b47' }} />
-            Live on Robinhood Chain
+            <div style={{ width: 12, height: 12, borderRadius: 12, backgroundColor: ACCENT }} />
+            Coming soon
           </div>
         </div>
       </div>
